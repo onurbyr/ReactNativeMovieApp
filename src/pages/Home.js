@@ -1,8 +1,12 @@
-import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, FlatList, Image, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {api,apiKey,apiImgUrl} from '../../services/api/api';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import MovieDetails from './MovieDetails';
 
-const Home = () => {
+
+
+const HomeScreen = ({navigation} ) => {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
@@ -28,12 +32,21 @@ const Home = () => {
       });
       setPage(page+1)
       addElement(response.data.results)
+      console.log(response.data.results)
     } catch (error) {
       console.log(error.message);
     }
     finally {
       setLoading(false);
     }
+  };
+
+
+  const onPress = (id) => {
+    // navigation.navigate('MovieDetails')
+    navigation.navigate('MovieDetails', {
+      itemId: id
+    });
   };
 
   return (
@@ -52,7 +65,7 @@ const Home = () => {
           keyExtractor={({ id }, index) => id}
           numColumns={2}
           renderItem={({ item }) => (
-            <View style={styles.items}>
+            <TouchableOpacity style={styles.items} onPress={()=>(onPress(item.id))}>
                 <Image
                 style={{width:150, height:250, borderRadius:10}}
                 source={{
@@ -65,11 +78,7 @@ const Home = () => {
               <Text style={styles.itemsText2}>
                   {item.vote_average}
               </Text>
-            </View>
-              
-
-            
-            
+            </TouchableOpacity>     
           )}
         />
       )}
@@ -124,6 +133,28 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     }
 });
+
+
+
+const Stack = createNativeStackNavigator();
+
+const Home = () => {
+  return (
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen 
+      name="HomeScreen" 
+      component={HomeScreen} 
+      options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+      name="MovieDetails" 
+      component={MovieDetails} 
+      //options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+
+  )
+};
 
 
 
