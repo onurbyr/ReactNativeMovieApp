@@ -32,7 +32,7 @@ const HomeScreen = ({navigation} ) => {
       });
       setPage(page+1)
       addElement(response.data.results)
-      console.log(response.data.results)
+      //console.log(response.data.results)
     } catch (error) {
       console.log(error.message);
     }
@@ -149,7 +149,7 @@ const Home = () => {
       <Stack.Screen 
       name="MovieDetails" 
       component={MovieDetails} 
-      //options={{ headerShown: false }}
+      options={{ headerShown: false }}
       />
     </Stack.Navigator>
 
