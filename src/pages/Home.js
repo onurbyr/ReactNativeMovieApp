@@ -69,7 +69,7 @@ const HomeScreen = ({navigation} ) => {
                 <Image
                 style={{width:150, height:250, borderRadius:10}}
                 source={{
-                    uri: apiImgUrl.API_IMAGE_URL+item.poster_path,
+                    uri: apiImgUrl.API_IMAGE_URL+'/w500'+item.poster_path,
                 }}
               />
               <Text style={styles.itemsText}>
