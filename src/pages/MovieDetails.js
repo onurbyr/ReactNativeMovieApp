@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -81,58 +82,50 @@ const MovieDetails = ({navigation, route}) => {
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <View style={{flex: 1}}>
-          <View style={styles.buttonImage}>
-            <ImageBackground
-              source={{
-                uri: apiImgUrl.API_IMAGE_URL + '/w1280' + data.backdrop_path,
-              }}
-              resizeMode="stretch"
-              style={{flex: 1}}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}>
-                <MaterialIcons
-                  name="arrow-back-ios"
-                  color={'white'}
-                  size={20}
-                  style={{paddingLeft: 5}}
-                />
-              </TouchableOpacity>
-            </ImageBackground>
-          </View>
-          <View style={styles.info}>
-            <Text style={styles.title}>{data.original_title}</Text>
-            <View style={styles.titleMinutes}>
-              <Ionicons
-                name="time-outline"
+        <ScrollView style={{flex: 1}}>
+          <ImageBackground
+            source={{
+              uri: apiImgUrl.API_IMAGE_URL + '/w1280' + data.backdrop_path,
+            }}
+            resizeMode="stretch"
+            style={{height: 250}}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}>
+              <MaterialIcons
+                name="arrow-back-ios"
                 color={'white'}
-                size={12}
-                style={styles.minutesIcon}
+                size={20}
+                style={{paddingLeft: 5}}
               />
-              <Text style={styles.minutes}>{data.runtime + ' minutes'}</Text>
-              <Ionicons
-                name="star"
-                color={'white'}
-                size={12}
-                style={styles.starsIcon}
-              />
-              <Text style={styles.stars}>{data.vote_average + ' (Tmdb)'}</Text>
-            </View>
-            <Hr />
+            </TouchableOpacity>
+          </ImageBackground>
+          <Text style={styles.title}>{data.original_title}</Text>
+          <View style={styles.titleMinutes}>
+            <Ionicons
+              name="time-outline"
+              color={'white'}
+              size={12}
+              style={styles.minutesIcon}
+            />
+            <Text style={styles.minutes}>{data.runtime + ' minutes'}</Text>
+            <Ionicons
+              name="star"
+              color={'white'}
+              size={12}
+              style={styles.starsIcon}
+            />
+            <Text style={styles.stars}>{data.vote_average + ' (Tmdb)'}</Text>
           </View>
-          <View style={styles.info2}>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.releaseDateText}>Release Date</Text>
-              <Text style={styles.genreText}>Genre</Text>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.releaseDate}>{dateConvert()}</Text>
-            </View>
+          <Hr />
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.releaseDateText}>Release Date</Text>
+            <Text style={styles.genreText}>Genre</Text>
           </View>
-          <View style={styles.info3}></View>
-          <View style={styles.info4}></View>
-        </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.releaseDate}>{dateConvert()}</Text>
+          </View>
+        </ScrollView>
       )}
     </SafeAreaView>
   );
@@ -143,9 +136,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#15141F',
   },
-  buttonImage: {
-    flex: 2,
-  },
   backButton: {
     width: 44,
     height: 44,
@@ -155,9 +145,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(52, 52, 52, 0.6)',
-  },
-  info: {
-    flex: 1,
   },
   titleMinutes: {
     flexDirection: 'row',
@@ -191,9 +178,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginTop: 15,
   },
-  info2: {
-    flex: 1,
-  },
   releaseDateText: {
     fontSize: 14,
     color: '#ffffff',
@@ -212,12 +196,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontFamily: 'Lato',
     marginLeft: 50,
-  },
-  info3: {
-    flex: 1,
-  },
-  info4: {
-    flex: 1,
   },
 });
 
