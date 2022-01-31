@@ -12,17 +12,27 @@ import {
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import NetInfo from '@react-native-community/netinfo';
 
 const MovieDetails = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [isConnected, setConnected] = useState(false);
 
   const {itemId} = route.params;
 
   useEffect(() => {
+    getNetInfo();
     getMovieDetails();
     dateConvert();
   }, []);
+
+  const getNetInfo = () => {
+    // To get the network state once
+    NetInfo.fetch().then(state => {
+      setConnected(state.isConnected);
+    });
+  };
 
   //getdata with axios3 (baseurl)
   const getMovieDetails = async navigation => {
@@ -41,19 +51,6 @@ const MovieDetails = ({navigation, route}) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const Hr = () => {
-    return (
-      <View
-        style={{
-          borderBottomColor: '#515151',
-          borderBottomWidth: 0.8,
-          margin: 20,
-          opacity: 0.3,
-        }}
-      />
-    );
   };
 
   const dateConvert = () => {
@@ -77,6 +74,20 @@ const MovieDetails = ({navigation, route}) => {
     return date;
   };
 
+  const Hr = () => {
+    return (
+      <View
+        style={{
+          borderBottomColor: '#515151',
+          borderBottomWidth: 0.8,
+          margin: 20,
+          opacity: 0.3,
+        }}
+      />
+    );
+  };
+
+  if (isConnected)
   return (
     <SafeAreaView style={styles.container}>
       {isLoading ? (
@@ -127,6 +138,31 @@ const MovieDetails = ({navigation, route}) => {
           </View>
         </ScrollView>
       )}
+    </SafeAreaView>
+  );
+
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: '#15141F',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <TouchableOpacity
+        style={[styles.backButton, {position: 'absolute', left: 0, top: 0}]}
+        onPress={() => navigation.goBack()}>
+        <MaterialIcons
+          name="arrow-back-ios"
+          color={'white'}
+          size={20}
+          style={{paddingLeft: 5}}
+        />
+      </TouchableOpacity>
+      <Text style={{color: '#ffffff'}}>
+        Check your connection and try again.
+      </Text>
     </SafeAreaView>
   );
 };
