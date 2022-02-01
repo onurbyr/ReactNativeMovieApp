@@ -44,7 +44,6 @@ const MovieDetails = ({navigation, route}) => {
       });
       //console.log(response.data);
       setData(response.data);
-      console.log(response.data);
     } catch (error) {
       // handle error
       console.log(error.message);
@@ -88,58 +87,66 @@ const MovieDetails = ({navigation, route}) => {
   };
 
   if (isConnected)
-  return (
-    <SafeAreaView style={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <ScrollView style={{flex: 1}}>
-          <ImageBackground
-            source={{
-              uri: apiImgUrl.API_IMAGE_URL + '/w1280' + data.backdrop_path,
-            }}
-            resizeMode="stretch"
-            style={{height: 250}}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}>
-              <MaterialIcons
-                name="arrow-back-ios"
+    return (
+      <SafeAreaView style={styles.container}>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <ScrollView style={{flex: 1}}>
+            <ImageBackground
+              source={{
+                uri: apiImgUrl.API_IMAGE_URL + '/w1280' + data.backdrop_path,
+              }}
+              resizeMode="stretch"
+              style={{height: 250}}>
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}>
+                <MaterialIcons
+                  name="arrow-back-ios"
+                  color={'white'}
+                  size={20}
+                  style={{paddingLeft: 5}}
+                />
+              </TouchableOpacity>
+            </ImageBackground>
+            <Text style={styles.title}>{data.original_title}</Text>
+            <View style={styles.titleMinutes}>
+              <Ionicons
+                name="time-outline"
                 color={'white'}
-                size={20}
-                style={{paddingLeft: 5}}
+                size={12}
+                style={styles.minutesIcon}
               />
-            </TouchableOpacity>
-          </ImageBackground>
-          <Text style={styles.title}>{data.original_title}</Text>
-          <View style={styles.titleMinutes}>
-            <Ionicons
-              name="time-outline"
-              color={'white'}
-              size={12}
-              style={styles.minutesIcon}
-            />
-            <Text style={styles.minutes}>{data.runtime + ' minutes'}</Text>
-            <Ionicons
-              name="star"
-              color={'white'}
-              size={12}
-              style={styles.starsIcon}
-            />
-            <Text style={styles.stars}>{data.vote_average + ' (Tmdb)'}</Text>
-          </View>
-          <Hr />
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.releaseDateText}>Release Date</Text>
-            <Text style={styles.genreText}>Genre</Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.releaseDate}>{dateConvert()}</Text>
-          </View>
-        </ScrollView>
-      )}
-    </SafeAreaView>
-  );
+              <Text style={styles.minutes}>{data.runtime + ' minutes'}</Text>
+              <Ionicons
+                name="star"
+                color={'white'}
+                size={12}
+                style={styles.starsIcon}
+              />
+              <Text style={styles.stars}>{data.vote_average + ' (Tmdb)'}</Text>
+            </View>
+            <Hr />
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.releaseDateText}>Release Date</Text>
+              <Text style={styles.genreText}>Genre</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.releaseDate}>{dateConvert()}</Text>
+              <ScrollView horizontal={true} style={styles.genreScrollView}>
+                {data.genres.map(n => (
+                  <View key={n.id} style={styles.genreBox}>
+                    <Text style={styles.genreText2}>{n.name}</Text>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+            <Hr />
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    );
 
   return (
     <SafeAreaView
@@ -215,12 +222,14 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   releaseDateText: {
+    flex: 1,
     fontSize: 14,
     color: '#ffffff',
     fontFamily: 'Lato',
     marginLeft: 25,
   },
   releaseDate: {
+    flex: 1,
     fontSize: 12,
     color: '#ffffff',
     fontFamily: 'Lato-Light',
@@ -228,10 +237,32 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   genreText: {
+    flex: 1,
     fontSize: 14,
     color: '#ffffff',
     fontFamily: 'Lato',
-    marginLeft: 50,
+  },
+  genreScrollView: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  genreBox: {
+    width: 80,
+    height: 32,
+    backgroundColor: '#212028',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#58575D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 5,
+    paddingHorizontal:2
+  },
+  genreText2: {
+    fontSize: 12,
+    fontFamily: 'Lato-Light',
+    color: '#ffffff',
   },
 });
 
