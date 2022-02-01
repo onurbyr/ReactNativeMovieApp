@@ -23,11 +23,11 @@ const MyTabs = () => {
         tabBarActiveTintColor: '#FD8266',
         tabBarInactiveTintColor: 'lightgray',
         tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: '#15141F',
-          position: 'absolute',
-          borderTopWidth: 0,
-        },
+        // tabBarStyle: {
+        //   backgroundColor: '#15141F',
+        //   position: 'absolute',
+        //   borderTopWidth: 0,
+        // },
       }}>
       <Tab.Screen
         name="Home"

@@ -110,7 +110,7 @@ const MovieDetails = ({navigation, route}) => {
                 />
               </TouchableOpacity>
             </ImageBackground>
-            <Text style={styles.title}>{data.original_title}</Text>
+            <Text style={styles.title}>{data.title}</Text>
             <View style={styles.titleMinutes}>
               <Ionicons
                 name="time-outline"
