@@ -8,6 +8,7 @@ import {
   ImageBackground,
   SafeAreaView,
   ScrollView,
+  Image,
 } from 'react-native';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -143,6 +144,34 @@ const MovieDetails = ({navigation, route}) => {
               </ScrollView>
             </View>
             <Hr />
+            <Text style={styles.overviewText}>Overview</Text>
+            <Text style={styles.overview}>{data.overview}</Text>
+            <Hr />
+            <Text style={styles.pcText}>Production Companies</Text>
+            <ScrollView horizontal={true} style={styles.pcScrollView}>
+              {data.production_companies.map(
+                n =>
+                  n.logo_path && (
+                    <View key={n.id} style={{marginRight: 25}}>
+                      <Image
+                        style={{width: 150, height: 40}}
+                        source={{
+                          uri: apiImgUrl.API_IMAGE_URL + '/w300' + n.logo_path,
+                        }}
+                        resizeMode="contain"
+                      />
+                      <Text
+                        style={{
+                          color: '#ffffff',
+                          textAlign: 'center',
+                          marginVertical: 10,
+                        }}>
+                        {n.name}
+                      </Text>
+                    </View>
+                  ),
+              )}
+            </ScrollView>
           </ScrollView>
         )}
       </SafeAreaView>
@@ -223,7 +252,7 @@ const styles = StyleSheet.create({
   },
   releaseDateText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 16,
     color: '#ffffff',
     fontFamily: 'Lato',
     marginLeft: 25,
@@ -238,7 +267,7 @@ const styles = StyleSheet.create({
   },
   genreText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 16,
     color: '#ffffff',
     fontFamily: 'Lato',
   },
@@ -257,12 +286,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 5,
-    paddingHorizontal:2
+    paddingHorizontal: 2,
   },
   genreText2: {
     fontSize: 12,
     fontFamily: 'Lato-Light',
     color: '#ffffff',
+  },
+  overviewText: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontFamily: 'Lato',
+    marginLeft: 25,
+  },
+  overview: {
+    fontSize: 12,
+    color: '#ffffff',
+    fontFamily: 'Lato-Light',
+    marginLeft: 25,
+    marginTop: 5,
+    marginRight: 25,
+  },
+  pcText: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontFamily: 'Lato',
+    marginLeft: 25,
+  },
+  pcScrollView: {
+    marginLeft: 25,
+    marginTop: 5,
   },
 });
 
