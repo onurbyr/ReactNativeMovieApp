@@ -19,6 +19,7 @@ const MovieDetails = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [isConnected, setConnected] = useState(false);
+  const [recommend, setRecommend] = useState([]);
 
   const {itemId} = route.params;
 
@@ -26,6 +27,7 @@ const MovieDetails = ({navigation, route}) => {
     getNetInfo();
     getMovieDetails();
     dateConvert();
+    getMovieRecommend();
   }, []);
 
   const getNetInfo = () => {
@@ -50,6 +52,23 @@ const MovieDetails = ({navigation, route}) => {
       console.log(error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getMovieRecommend = async navigation => {
+    try {
+      const response = await api.get('/movie/' + itemId + '/recommendations', {
+        params: {
+          api_key: apiKey.API_KEY,
+        },
+      });
+      //console.log(response.data.results);
+      setRecommend(response.data.results);
+    } catch (error) {
+      // handle error
+      console.log(error.message);
+    } finally {
+      //setLoading(false);
     }
   };
 
@@ -147,30 +166,30 @@ const MovieDetails = ({navigation, route}) => {
             <Text style={styles.overviewText}>Overview</Text>
             <Text style={styles.overview}>{data.overview}</Text>
             <Hr />
-            <Text style={styles.pcText}>Production Companies</Text>
-            <ScrollView horizontal={true} style={styles.pcScrollView}>
-              {data.production_companies.map(
-                n =>
-                  n.logo_path && (
-                    <View key={n.id} style={{marginRight: 25}}>
-                      <Image
-                        style={{width: 150, height: 40}}
-                        source={{
-                          uri: apiImgUrl.API_IMAGE_URL + '/w300' + n.logo_path,
-                        }}
-                        resizeMode="contain"
-                      />
-                      <Text
-                        style={{
-                          color: '#ffffff',
-                          textAlign: 'center',
-                          marginVertical: 10,
-                        }}>
-                        {n.name}
-                      </Text>
-                    </View>
-                  ),
-              )}
+            <Text style={styles.rmText}>Recommendations</Text>
+            <ScrollView horizontal={true} style={styles.rmScrollView}>
+              {recommend
+                .filter((i, index) => index < 5)
+                .map((n, index) => (
+                  <View key={n.id} style={{marginRight: 25,width:150}}>
+                    <Image
+                      style={{width: 150, height: 80, borderRadius: 10}}
+                      source={{
+                        uri:
+                          apiImgUrl.API_IMAGE_URL + '/w300' + n.backdrop_path,
+                      }}
+                      resizeMode="contain"
+                    />
+                    <Text
+                      style={{
+                        color: '#ffffff',
+                        textAlign: 'center',
+                        marginVertical: 10,
+                      }}>
+                      {n.title}
+                    </Text>
+                  </View>
+                ))}
             </ScrollView>
           </ScrollView>
         )}
@@ -307,13 +326,13 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginRight: 25,
   },
-  pcText: {
+  rmText: {
     fontSize: 16,
     color: '#ffffff',
     fontFamily: 'Lato',
     marginLeft: 25,
   },
-  pcScrollView: {
+  rmScrollView: {
     marginLeft: 25,
     marginTop: 5,
   },
