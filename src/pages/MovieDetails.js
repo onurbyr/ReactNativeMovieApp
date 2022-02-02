@@ -121,7 +121,7 @@ const MovieDetails = ({navigation, route}) => {
               style={{height: 250}}>
               <TouchableOpacity
                 style={styles.backButton}
-                onPress={() => navigation.goBack()}>
+                onPress={() => navigation.navigate('HomeScreen')}>
                 <MaterialIcons
                   name="arrow-back-ios"
                   color={'white'}
@@ -171,7 +171,15 @@ const MovieDetails = ({navigation, route}) => {
               {recommend
                 .filter((i, index) => index < 5)
                 .map((n, index) => (
-                  <View key={n.id} style={{marginRight: 25,width:150}}>
+                  <TouchableOpacity
+                   key={n.id} 
+                   style={{marginRight: 25,width:150}}
+                   onPress={() => (
+                    navigation.push('MovieDetails', {
+                      itemId: n.id
+                    })
+                   )
+                  }>
                     <Image
                       style={{width: 150, height: 80, borderRadius: 10}}
                       source={{
@@ -188,7 +196,7 @@ const MovieDetails = ({navigation, route}) => {
                       }}>
                       {n.title}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 ))}
             </ScrollView>
           </ScrollView>
