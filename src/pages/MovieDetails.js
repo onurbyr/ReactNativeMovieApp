@@ -112,94 +112,96 @@ const MovieDetails = ({navigation, route}) => {
         {isLoading ? (
           <ActivityIndicator />
         ) : (
-          <ScrollView style={{flex: 1}}>
-            <ImageBackground
-              source={{
-                uri: apiImgUrl.API_IMAGE_URL + '/w1280' + data.backdrop_path,
-              }}
-              resizeMode="stretch"
-              style={{height: 250}}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.navigate('HomeScreen')}>
-                <MaterialIcons
-                  name="arrow-back-ios"
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.navigate('HomeScreen')}>
+              <MaterialIcons
+                name="arrow-back-ios"
+                color={'white'}
+                size={20}
+                style={{paddingLeft: 5}}
+              />
+            </TouchableOpacity>
+            <ScrollView style={{flex: 1}}>
+              <Image
+                source={{
+                  uri: apiImgUrl.API_IMAGE_URL + '/w1280' + data.backdrop_path,
+                }}
+                resizeMode="stretch"
+                style={{height: 250}}></Image>
+              <Text style={styles.title}>{data.title}</Text>
+              <View style={styles.titleMinutes}>
+                <Ionicons
+                  name="time-outline"
                   color={'white'}
-                  size={20}
-                  style={{paddingLeft: 5}}
+                  size={12}
+                  style={styles.minutesIcon}
                 />
-              </TouchableOpacity>
-            </ImageBackground>
-            <Text style={styles.title}>{data.title}</Text>
-            <View style={styles.titleMinutes}>
-              <Ionicons
-                name="time-outline"
-                color={'white'}
-                size={12}
-                style={styles.minutesIcon}
-              />
-              <Text style={styles.minutes}>{data.runtime + ' minutes'}</Text>
-              <Ionicons
-                name="star"
-                color={'white'}
-                size={12}
-                style={styles.starsIcon}
-              />
-              <Text style={styles.stars}>{data.vote_average + ' (Tmdb)'}</Text>
-            </View>
-            <Hr />
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.releaseDateText}>Release Date</Text>
-              <Text style={styles.genreText}>Genre</Text>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={styles.releaseDate}>{dateConvert()}</Text>
-              <ScrollView horizontal={true} style={styles.genreScrollView}>
-                {data.genres.map(n => (
-                  <View key={n.id} style={styles.genreBox}>
-                    <Text style={styles.genreText2}>{n.name}</Text>
-                  </View>
-                ))}
+                <Text style={styles.minutes}>{data.runtime + ' minutes'}</Text>
+                <Ionicons
+                  name="star"
+                  color={'white'}
+                  size={12}
+                  style={styles.starsIcon}
+                />
+                <Text style={styles.stars}>
+                  {data.vote_average + ' (Tmdb)'}
+                </Text>
+              </View>
+              <Hr />
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.releaseDateText}>Release Date</Text>
+                <Text style={styles.genreText}>Genre</Text>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.releaseDate}>{dateConvert()}</Text>
+                <ScrollView horizontal={true} style={styles.genreScrollView}>
+                  {data.genres.map(n => (
+                    <View key={n.id} style={styles.genreBox}>
+                      <Text style={styles.genreText2}>{n.name}</Text>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+              <Hr />
+              <Text style={styles.overviewText}>Overview</Text>
+              <Text style={styles.overview}>{data.overview}</Text>
+              <Hr />
+              <Text style={styles.rmText}>Recommendations</Text>
+              <ScrollView horizontal={true} style={styles.rmScrollView}>
+                {recommend
+                  .filter((i, index) => index < 5)
+                  .map((n, index) => (
+                    <TouchableOpacity
+                      key={n.id}
+                      style={{marginRight: 25, width: 150}}
+                      onPress={() =>
+                        navigation.push('MovieDetails', {
+                          itemId: n.id,
+                        })
+                      }>
+                      <Image
+                        style={{width: 150, height: 80, borderRadius: 10}}
+                        source={{
+                          uri:
+                            apiImgUrl.API_IMAGE_URL + '/w300' + n.backdrop_path,
+                        }}
+                        resizeMode="contain"
+                      />
+                      <Text
+                        style={{
+                          color: '#ffffff',
+                          textAlign: 'center',
+                          marginVertical: 10,
+                        }}>
+                        {n.title}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
               </ScrollView>
-            </View>
-            <Hr />
-            <Text style={styles.overviewText}>Overview</Text>
-            <Text style={styles.overview}>{data.overview}</Text>
-            <Hr />
-            <Text style={styles.rmText}>Recommendations</Text>
-            <ScrollView horizontal={true} style={styles.rmScrollView}>
-              {recommend
-                .filter((i, index) => index < 5)
-                .map((n, index) => (
-                  <TouchableOpacity
-                   key={n.id} 
-                   style={{marginRight: 25,width:150}}
-                   onPress={() => (
-                    navigation.push('MovieDetails', {
-                      itemId: n.id
-                    })
-                   )
-                  }>
-                    <Image
-                      style={{width: 150, height: 80, borderRadius: 10}}
-                      source={{
-                        uri:
-                          apiImgUrl.API_IMAGE_URL + '/w300' + n.backdrop_path,
-                      }}
-                      resizeMode="contain"
-                    />
-                    <Text
-                      style={{
-                        color: '#ffffff',
-                        textAlign: 'center',
-                        marginVertical: 10,
-                      }}>
-                      {n.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
             </ScrollView>
-          </ScrollView>
+          </View>
         )}
       </SafeAreaView>
     );
@@ -214,7 +216,7 @@ const MovieDetails = ({navigation, route}) => {
         justifyContent: 'center',
       }}>
       <TouchableOpacity
-        style={[styles.backButton, {position: 'absolute', left: 0, top: 0}]}
+        style={[styles.backButton, {left: 0, top: 0}]}
         onPress={() => navigation.goBack()}>
         <MaterialIcons
           name="arrow-back-ios"
@@ -244,6 +246,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(52, 52, 52, 0.6)',
+    position: 'absolute',
+    zIndex: 1,
   },
   titleMinutes: {
     flexDirection: 'row',
