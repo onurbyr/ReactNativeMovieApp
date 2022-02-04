@@ -3,6 +3,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from './src/pages/Home';
+import Search from './src/pages/Search';
 import IconFeather from 'react-native-vector-icons/Feather';
 
 const SettingsScreen = () => {
@@ -23,11 +24,11 @@ const MyTabs = () => {
         tabBarActiveTintColor: '#FD8266',
         tabBarInactiveTintColor: 'lightgray',
         tabBarShowLabel: false,
-        // tabBarStyle: {
-        //   backgroundColor: '#15141F',
-        //   position: 'absolute',
-        //   borderTopWidth: 0,
-        // },
+        tabBarStyle: {
+          backgroundColor: '#15141F',
+          position: 'absolute',
+          borderTopWidth: 0,
+        },
       }}>
       <Tab.Screen
         name="Home"
@@ -38,7 +39,15 @@ const MyTabs = () => {
           ),
         }}
       />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <IconFeather name="search" color={color} size={20} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };

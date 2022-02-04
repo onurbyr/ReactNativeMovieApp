@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#15141F',
-    color: '#ffffff',
   },
   headerView: {
     flex: 1,
