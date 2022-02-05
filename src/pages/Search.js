@@ -1,26 +1,29 @@
 import {View, Text, SafeAreaView, StyleSheet, TextInput} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {api, apiKey, apiImgUrl} from '../../services/api/api';
 
-const Tab = createMaterialTopTabNavigator();
-
-const Movies = () => {
-  return (
-    <View style={styles.container}>
-      <Text>Movies</Text>
-    </View>
-  );
+const searchItems = async mediaType => {
+  try {
+    const response = await api.get('/search/' + mediaType, {
+      params: {
+        api_key: apiKey.API_KEY,
+        query: 'spider',
+      },
+    });
+    //console.log(response.data);
+    return response.data;
+    //setData(response.data);
+  } catch (error) {
+    // handle error
+    console.log(error.message);
+  } finally {
+    //setLoading(false);
+  }
 };
-const TvSeries = () => {
-  return (
-    <View style={styles.container}>
-      <Text>Tv Series</Text>
-    </View>
-  );
-};
 
-const Search = () => {
+const Search = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.textHeader}>
@@ -37,6 +40,7 @@ const Search = () => {
           style={styles.input}
           placeholderTextColor="#BBBBBB"
           placeholder="Search"
+          onChangeText={text => navigation.jumpTo('Movies', {input: text})}
         />
       </View>
       <Tab.Navigator
@@ -55,9 +59,40 @@ const Search = () => {
           },
         }}>
         <Tab.Screen name="Movies" component={Movies} />
-        <Tab.Screen name="Tv Series" component={TvSeries} />
+        <Tab.Screen name="TvSeries" component={TvSeries} />
       </Tab.Navigator>
     </SafeAreaView>
+  );
+};
+
+const Tab = createMaterialTopTabNavigator();
+
+const Movies = ({navigation, route}) => {
+  const [data, setData] = useState([]);
+  //route?.params?.input ? console.log(route.params.input):console.log('bos')
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      const search = async () => {
+        const asyncdata = await searchItems('movie');
+        setData(asyncdata);
+      };
+      search();
+    });
+    return unsubscribe;
+  }, [navigation]);
+  return (
+    <View style={styles.container}>
+      <Text>Movies</Text>
+      <Text></Text>
+    </View>
+  );
+};
+const TvSeries = () => {
+  return (
+    <View style={styles.container}>
+      <Text>Tv Series</Text>
+    </View>
   );
 };
 
