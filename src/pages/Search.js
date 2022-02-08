@@ -1,10 +1,17 @@
-import {View, Text, SafeAreaView, StyleSheet, TextInput} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  TextInput,
+  FlatList,
+} from 'react-native';
 import React, {useEffect, useState, createContext, useContext} from 'react';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 
-const TypeContext = createContext({});
+const InputContext = createContext();
 
 const searchItems = async (mediaType, input) => {
   try {
@@ -14,8 +21,8 @@ const searchItems = async (mediaType, input) => {
         query: input,
       },
     });
-    console.log(response.data);
-    return response.data;
+    //console.log(response.data);
+    return response.data.results;
     //setData(response.data);
   } catch (error) {
     // handle error
@@ -26,9 +33,9 @@ const searchItems = async (mediaType, input) => {
 };
 
 const Search = ({navigation}) => {
-  const [type, setType] = useState('Movies');
+  const [value, onChangeText] = useState('');
   return (
-    <TypeContext.Provider value={{type, setType}}>
+    <InputContext.Provider value={value}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.textHeader}>
           Find Movies, Tv series,{'\n'}and more...
@@ -44,7 +51,9 @@ const Search = ({navigation}) => {
             style={styles.input}
             placeholderTextColor="#BBBBBB"
             placeholder="Search"
-            onChangeText={text => navigation.jumpTo(type, {input: text})}
+            //onChangeText={text => navigation.jumpTo(type, {input: text})}
+            onChangeText={text => onChangeText(text)}
+            value={value}
           />
         </View>
         <Tab.Navigator
@@ -66,36 +75,40 @@ const Search = ({navigation}) => {
           <Tab.Screen name="TvSeries" component={TvSeries} />
         </Tab.Navigator>
       </SafeAreaView>
-    </TypeContext.Provider>
+    </InputContext.Provider>
   );
 };
 
 const Tab = createMaterialTopTabNavigator();
 
-const RenderItems = ({navigation, route, type, apiType}) => {
-  const {setType} = useContext(TypeContext);
+const RenderItems = ({navigation, apiType}) => {
   const [data, setData] = useState([]);
-  const [input, setInput] = useState('');
+  const value = useContext(InputContext);
 
   const search = async () => {
-    const asyncdata = await searchItems(apiType, route.params.input);
+    const asyncdata = await searchItems(apiType, value);
     setData(asyncdata);
   };
 
   useEffect(() => {
-    route?.params?.input && search();
+    value && search();
 
     const unsubscribe = navigation.addListener('focus', () => {
-      setType(type);
-      route?.params?.input && search();
+      value && search();
     });
     return unsubscribe;
-  }, [route, navigation]);
+  }, [value, navigation]);
 
-  if (route?.params?.input) {
+  if (value) {
     return (
       <View style={styles.container}>
-        <Text>Movies</Text>
+        <FlatList
+          data={data}
+          keyExtractor={({id}, index) => id}
+          renderItem={({item}) =>
+            item.title ? <Text>{item.title}</Text> : <Text>{item.name}</Text>
+          }
+        />
       </View>
     );
   } else {
@@ -107,21 +120,11 @@ const RenderItems = ({navigation, route, type, apiType}) => {
   }
 };
 
-const Movies = ({navigation, route}) => (
-  <RenderItems
-    navigation={navigation}
-    route={route}
-    type={'Movies'}
-    apiType={'movie'}
-  />
+const Movies = ({navigation}) => (
+  <RenderItems navigation={navigation} apiType={'movie'} />
 );
-const TvSeries = ({navigation, route}) => (
-  <RenderItems
-    navigation={navigation}
-    route={route}
-    type={'TvSeries'}
-    apiType={'tv'}
-  />
+const TvSeries = ({navigation}) => (
+  <RenderItems navigation={navigation} apiType={'tv'} />
 );
 
 const styles = StyleSheet.create({
