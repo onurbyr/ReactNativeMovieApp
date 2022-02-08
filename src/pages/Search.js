@@ -5,14 +5,20 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import React, {useEffect, useState, createContext, useContext} from 'react';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import NoImage from '../images/noimage.png';
+import NoAvatar from '../images/noavatar.png';
 
 const InputContext = createContext();
+const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
+const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
 
 const searchItems = async (mediaType, input, setLoading) => {
   try {
@@ -74,6 +80,7 @@ const Search = () => {
           }}>
           <Tab.Screen name="Movies" component={Movies} />
           <Tab.Screen name="TvSeries" component={TvSeries} />
+          <Tab.Screen name="People" component={People} />
         </Tab.Navigator>
       </SafeAreaView>
     </InputContext.Provider>
@@ -93,7 +100,7 @@ const RenderItems = ({apiType}) => {
   };
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     value && search();
   }, [value]);
 
@@ -101,14 +108,44 @@ const RenderItems = ({apiType}) => {
     return (
       <SafeAreaView style={styles.container}>
         {isLoading ? (
-          <ActivityIndicator/>
+          <ActivityIndicator />
         ) : (
           <FlatList
             data={data}
             keyExtractor={({id}) => id}
-            renderItem={({item}) =>
-              item.title ? <Text>{item.title}</Text> : <Text>{item.name}</Text>
-            }
+            numColumns={2}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.items}
+                //onPress={() => onPress(item.id)}
+              >
+                {apiType == 'person' ? (
+                  <Image
+                    style={{width: 150, height: 220, borderRadius: 10}}
+                    source={{
+                      uri: item.profile_path
+                        ? apiImgUrl.API_IMAGE_URL + '/w500' + item.profile_path
+                        : NO_AVATAR_IMAGE
+                    }}
+                    resizeMode={'contain'}
+                  />
+                ) : (
+                  <Image
+                    style={{width: 150, height: 220, borderRadius: 10}}
+                    source={{
+                      uri: item.poster_path
+                        ? apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path
+                        : NO_IMAGE
+                    }}
+                    resizeMode={'contain'}
+                  />
+                )}
+                <Text style={styles.itemsText}>
+                  {item.title ? item.title : item.name}
+                </Text>
+                <Text style={styles.itemsText2}>{item.vote_average}</Text>
+              </TouchableOpacity>
+            )}
           />
         )}
       </SafeAreaView>
@@ -124,6 +161,7 @@ const RenderItems = ({apiType}) => {
 
 const Movies = () => <RenderItems apiType={'movie'} />;
 const TvSeries = () => <RenderItems apiType={'tv'} />;
+const People = () => <RenderItems apiType={'person'} />;
 
 const styles = StyleSheet.create({
   container: {
@@ -151,6 +189,23 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: '#BBBBBB',
+  },
+  items: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 20,
+  },
+  itemsText: {
+    marginTop: 10,
+    fontSize: 12,
+    color: '#ffffff',
+    textAlign: 'center',
+  },
+  itemsText2: {
+    marginTop: 5,
+    fontSize: 12,
+    color: '#ffffff',
+    textAlign: 'center',
   },
 });
 
