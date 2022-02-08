@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
+  ActivityIndicator
 } from 'react-native';
 import React, {useEffect, useState, createContext, useContext} from 'react';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -13,7 +14,7 @@ import {api, apiKey, apiImgUrl} from '../../services/api/api';
 
 const InputContext = createContext();
 
-const searchItems = async (mediaType, input) => {
+const searchItems = async (mediaType, input, setLoading) => {
   try {
     const response = await api.get('/search/' + mediaType, {
       params: {
@@ -28,11 +29,11 @@ const searchItems = async (mediaType, input) => {
     // handle error
     console.log(error.message);
   } finally {
-    //setLoading(false);
+    setLoading(false);
   }
 };
 
-const Search = ({navigation}) => {
+const Search = () => {
   const [value, onChangeText] = useState('');
   return (
     <InputContext.Provider value={value}>
@@ -81,51 +82,48 @@ const Search = ({navigation}) => {
 
 const Tab = createMaterialTopTabNavigator();
 
-const RenderItems = ({navigation, apiType}) => {
+const RenderItems = ({apiType}) => {
   const [data, setData] = useState([]);
   const value = useContext(InputContext);
+  const [isLoading, setLoading] = useState(true);
 
   const search = async () => {
-    const asyncdata = await searchItems(apiType, value);
+    const asyncdata = await searchItems(apiType, value, setLoading);
     setData(asyncdata);
   };
 
   useEffect(() => {
+    setLoading(true)
     value && search();
-
-    const unsubscribe = navigation.addListener('focus', () => {
-      value && search();
-    });
-    return unsubscribe;
-  }, [value, navigation]);
+  }, [value]);
 
   if (value) {
     return (
-      <View style={styles.container}>
-        <FlatList
-          data={data}
-          keyExtractor={({id}, index) => id}
-          renderItem={({item}) =>
-            item.title ? <Text>{item.title}</Text> : <Text>{item.name}</Text>
-          }
-        />
-      </View>
+      <SafeAreaView style={styles.container}>
+        {isLoading ? (
+          <ActivityIndicator/>
+        ) : (
+          <FlatList
+            data={data}
+            keyExtractor={({id}) => id}
+            renderItem={({item}) =>
+              item.title ? <Text>{item.title}</Text> : <Text>{item.name}</Text>
+            }
+          />
+        )}
+      </SafeAreaView>
     );
   } else {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <Text>Bos</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 };
 
-const Movies = ({navigation}) => (
-  <RenderItems navigation={navigation} apiType={'movie'} />
-);
-const TvSeries = ({navigation}) => (
-  <RenderItems navigation={navigation} apiType={'tv'} />
-);
+const Movies = () => <RenderItems apiType={'movie'} />;
+const TvSeries = () => <RenderItems apiType={'tv'} />;
 
 const styles = StyleSheet.create({
   container: {
