@@ -113,7 +113,7 @@ const RenderItems = ({apiType}) => {
       <SafeAreaView style={styles.container}>
         {isLoading ? (
           <ActivityIndicator />
-        ) : (
+        ) : Object.keys(data).length !== 0 ? (
           <FlatList
             data={data}
             keyExtractor={({id}) => id}
@@ -151,6 +151,19 @@ const RenderItems = ({apiType}) => {
               </TouchableOpacity>
             )}
           />
+        ) : (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{color: 'white', paddingBottom: 50}}>
+              There are no
+              {apiType == 'movie'
+                ? ' movies '
+                : apiType == 'tv'
+                ? ' TV series '
+                : ' people '}
+              that matched your query.
+            </Text>
+          </View>
         )}
       </SafeAreaView>
     );
