@@ -101,7 +101,11 @@ const RenderItems = ({apiType}) => {
 
   useEffect(() => {
     setLoading(true);
-    value && search();
+
+    const delayDebounceFn = setTimeout(() => {
+      value && search();
+    }, 100);
+    return () => clearTimeout(delayDebounceFn);
   }, [value]);
 
   if (value) {
@@ -125,7 +129,7 @@ const RenderItems = ({apiType}) => {
                     source={{
                       uri: item.profile_path
                         ? apiImgUrl.API_IMAGE_URL + '/w500' + item.profile_path
-                        : NO_AVATAR_IMAGE
+                        : NO_AVATAR_IMAGE,
                     }}
                     resizeMode={'contain'}
                   />
@@ -135,7 +139,7 @@ const RenderItems = ({apiType}) => {
                     source={{
                       uri: item.poster_path
                         ? apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path
-                        : NO_IMAGE
+                        : NO_IMAGE,
                     }}
                     resizeMode={'contain'}
                   />
@@ -152,8 +156,12 @@ const RenderItems = ({apiType}) => {
     );
   } else {
     return (
-      <SafeAreaView style={styles.container}>
-        <Text>Bos</Text>
+      <SafeAreaView
+        style={[
+          styles.container,
+          {alignItems: 'center', justifyContent: 'center', paddingBottom: 50},
+        ]}>
+        <IconFeather name="search" color="white" size={60} />
       </SafeAreaView>
     );
   }

@@ -24,6 +24,7 @@ const MyTabs = () => {
         tabBarActiveTintColor: '#FD8266',
         tabBarInactiveTintColor: 'lightgray',
         tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: '#15141F',
           position: 'absolute',
