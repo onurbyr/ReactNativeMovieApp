@@ -5,7 +5,6 @@ import {
   ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
-  ImageBackground,
   SafeAreaView,
   ScrollView,
   Image,
@@ -14,6 +13,9 @@ import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
+import NoImage from '../images/noimage.png';
+
+const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
 const MovieDetails = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
@@ -115,7 +117,7 @@ const MovieDetails = ({navigation, route}) => {
           <View style={styles.container}>
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => navigation.navigate('HomeScreen')}>
+              onPress={() => navigation.goBack()}>
               <MaterialIcons
                 name="arrow-back-ios"
                 color={'white'}
@@ -126,9 +128,11 @@ const MovieDetails = ({navigation, route}) => {
             <ScrollView style={{flex: 1}}>
               <Image
                 source={{
-                  uri: apiImgUrl.API_IMAGE_URL + '/w1280' + data.backdrop_path,
+                  uri: data.backdrop_path
+                    ? apiImgUrl.API_IMAGE_URL + '/w500' + data.backdrop_path
+                    : NO_IMAGE,
                 }}
-                resizeMode="stretch"
+                resizeMode={data.backdrop_path ? 'stretch' : 'center'}
                 style={{height: 250}}></Image>
               <Text style={styles.title}>{data.title}</Text>
               <View style={styles.titleMinutes}>
@@ -184,8 +188,11 @@ const MovieDetails = ({navigation, route}) => {
                       <Image
                         style={{width: 150, height: 80, borderRadius: 10}}
                         source={{
-                          uri:
-                            apiImgUrl.API_IMAGE_URL + '/w300' + n.backdrop_path,
+                          uri: n.backdrop_path
+                            ? apiImgUrl.API_IMAGE_URL +
+                              '/w300' +
+                              n.backdrop_path
+                            : NO_IMAGE,
                         }}
                         resizeMode="contain"
                       />

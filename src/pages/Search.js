@@ -15,6 +15,9 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import NoImage from '../images/noimage.png';
 import NoAvatar from '../images/noavatar.png';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import MovieDetails from './MovieDetails';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 
 const InputContext = createContext();
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
@@ -39,7 +42,7 @@ const searchItems = async (mediaType, input, setLoading) => {
   }
 };
 
-const Search = () => {
+const SearchScreen = () => {
   const [value, onChangeText] = useState('');
   return (
     <InputContext.Provider value={value}>
@@ -89,7 +92,7 @@ const Search = () => {
 
 const Tab = createMaterialTopTabNavigator();
 
-const RenderItems = ({apiType}) => {
+const RenderItems = ({apiType, navigation}) => {
   const [data, setData] = useState([]);
   const value = useContext(InputContext);
   const [isLoading, setLoading] = useState(true);
@@ -108,6 +111,18 @@ const RenderItems = ({apiType}) => {
     return () => clearTimeout(delayDebounceFn);
   }, [value]);
 
+  const onPress = item => {
+    if (apiType == 'movie') {
+      navigation.navigate('MovieDetails', {
+        itemId: item.id,
+      });
+    } else if (apiType == 'tv') {
+      //
+    } else {
+      //
+    }
+  };
+
   if (value) {
     return (
       <SafeAreaView style={styles.container}>
@@ -121,8 +136,7 @@ const RenderItems = ({apiType}) => {
             renderItem={({item}) => (
               <TouchableOpacity
                 style={styles.items}
-                //onPress={() => onPress(item.id)}
-              >
+                onPress={() => onPress(item)}>
                 {apiType == 'person' ? (
                   <Image
                     style={{width: 150, height: 220, borderRadius: 10}}
@@ -180,7 +194,9 @@ const RenderItems = ({apiType}) => {
   }
 };
 
-const Movies = () => <RenderItems apiType={'movie'} />;
+const Movies = ({navigation}) => (
+  <RenderItems apiType={'movie'} navigation={navigation} />
+);
 const TvSeries = () => <RenderItems apiType={'tv'} />;
 const People = () => <RenderItems apiType={'person'} />;
 
@@ -229,5 +245,42 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+const SearchStack = createNativeStackNavigator();
+
+const Search = ({navigation, route}) => {
+  React.useLayoutEffect(() => {
+    const tabHiddenRoutes = ['MovieDetails'];
+    if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
+      navigation.setOptions({tabBarStyle: {display: 'none'}});
+    } else {
+      navigation.setOptions({
+        tabBarStyle: {
+          display: 'flex',
+          backgroundColor: '#15141F',
+          borderTopWidth: 0,
+          position: 'absolute',
+        },
+      });
+    }
+  }, [navigation, route]);
+  return (
+    <View style={{flex: 1, backgroundColor: '#15141F'}}>
+      <SearchStack.Navigator initialRouteName="Search">
+        <SearchStack.Screen
+          name="SearchScreen"
+          component={SearchScreen}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="MovieDetails"
+          component={MovieDetails}
+          options={{headerShown: false}}
+        />
+      </SearchStack.Navigator>
+    </View>
+  );
+};
+
 
 export default Search;
