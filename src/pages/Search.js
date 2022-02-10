@@ -17,6 +17,7 @@ import NoImage from '../images/noimage.png';
 import NoAvatar from '../images/noavatar.png';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './MovieDetails';
+import TvSeriesDetails from './TvSeriesDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -135,7 +136,9 @@ const RenderItems = ({apiType, navigation}) => {
         itemId: item.id,
       });
     } else if (apiType == 'tv') {
-      //
+      navigation.navigate('TvSeriesDetails', {
+        itemId: item.id,
+      });
     } else {
       //
     }
@@ -233,8 +236,12 @@ const RenderItems = ({apiType, navigation}) => {
 const Movies = ({navigation}) => (
   <RenderItems apiType={'movie'} navigation={navigation} />
 );
-const TvSeries = () => <RenderItems apiType={'tv'} />;
-const People = () => <RenderItems apiType={'person'} />;
+const TvSeries = ({navigation}) => (
+  <RenderItems apiType={'tv'} navigation={navigation} />
+);
+const People = ({navigation}) => (
+  <RenderItems apiType={'person'} navigation={navigation} />
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -286,7 +293,7 @@ const SearchStack = createNativeStackNavigator();
 
 const Search = ({navigation, route}) => {
   React.useLayoutEffect(() => {
-    const tabHiddenRoutes = ['MovieDetails'];
+    const tabHiddenRoutes = ['MovieDetails','TvSeriesDetails'];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
     } else {
@@ -311,6 +318,11 @@ const Search = ({navigation, route}) => {
         <SearchStack.Screen
           name="MovieDetails"
           component={MovieDetails}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="TvSeriesDetails"
+          component={TvSeriesDetails}
           options={{headerShown: false}}
         />
       </SearchStack.Navigator>

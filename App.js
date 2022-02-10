@@ -3,16 +3,9 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from './src/pages/Home';
+import TvSeries from './src/pages/TvSeries';
 import Search from './src/pages/Search';
 import IconFeather from 'react-native-vector-icons/Feather';
-
-const SettingsScreen = () => {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      {/* <Text>Settings!</Text> */}
-    </View>
-  );
-};
 
 const Tab = createBottomTabNavigator();
 
@@ -37,6 +30,15 @@ const MyTabs = () => {
         options={{
           tabBarIcon: ({color, size}) => (
             <IconFeather name="home" color={color} size={20} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="TvSeries"
+        component={TvSeries}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <IconFeather name="tv" color={color} size={20} />
           ),
         }}
       />
