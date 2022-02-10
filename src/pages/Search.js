@@ -18,29 +18,11 @@ import NoAvatar from '../images/noavatar.png';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './MovieDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
 
 const InputContext = createContext();
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
-
-const searchItems = async (mediaType, input, setLoading) => {
-  try {
-    const response = await api.get('/search/' + mediaType, {
-      params: {
-        api_key: apiKey.API_KEY,
-        query: input,
-      },
-    });
-    //console.log(response.data);
-    return response.data.results;
-    //setData(response.data);
-  } catch (error) {
-    // handle error
-    console.log(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
 
 const SearchScreen = () => {
   const [value, onChangeText] = useState('');
@@ -95,21 +77,57 @@ const Tab = createMaterialTopTabNavigator();
 const RenderItems = ({apiType, navigation}) => {
   const [data, setData] = useState([]);
   const value = useContext(InputContext);
-  const [isLoading, setLoading] = useState(true);
-
-  const search = async () => {
-    const asyncdata = await searchItems(apiType, value, setLoading);
-    setData(asyncdata);
-  };
+  const [isLoading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [isConnected, setConnected] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-
-    const delayDebounceFn = setTimeout(() => {
-      value && search();
-    }, 100);
-    return () => clearTimeout(delayDebounceFn);
+    getNetInfo();
+    if (isConnected) {
+      setLoading(true);
+      setData([]);
+      setPage(1);
+      const delayDebounceFn = setTimeout(() => {
+        value && searchItems(false);
+      }, 100);
+      return () => clearTimeout(delayDebounceFn);
+    }
   }, [value]);
+
+  useEffect(() => {
+    getNetInfo();
+    if (isConnected) {
+      value && searchItems(true);
+    }
+  }, [page]);
+
+  const searchItems = async searchExtra => {
+    try {
+      const response = await api.get('/search/' + apiType, {
+        params: {
+          api_key: apiKey.API_KEY,
+          query: value,
+          page,
+        },
+      });
+      //console.log(response.data);
+      searchExtra
+        ? setData([...data, ...response.data.results])
+        : setData(response.data.results);
+    } catch (error) {
+      // handle error
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getNetInfo = () => {
+    // To get the network state once
+    NetInfo.fetch().then(state => {
+      setConnected(state.isConnected);
+    });
+  };
 
   const onPress = item => {
     if (apiType == 'movie') {
@@ -123,64 +141,80 @@ const RenderItems = ({apiType, navigation}) => {
     }
   };
 
-  if (value) {
-    return (
-      <SafeAreaView style={styles.container}>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : Object.keys(data).length !== 0 ? (
-          <FlatList
-            data={data}
-            keyExtractor={({id}) => id}
-            numColumns={2}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.items}
-                onPress={() => onPress(item)}>
-                {apiType == 'person' ? (
-                  <Image
-                    style={{width: 150, height: 220, borderRadius: 10}}
-                    source={{
-                      uri: item.profile_path
-                        ? apiImgUrl.API_IMAGE_URL + '/w500' + item.profile_path
-                        : NO_AVATAR_IMAGE,
-                    }}
-                    resizeMode={'contain'}
-                  />
-                ) : (
-                  <Image
-                    style={{width: 150, height: 220, borderRadius: 10}}
-                    source={{
-                      uri: item.poster_path
-                        ? apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path
-                        : NO_IMAGE,
-                    }}
-                    resizeMode={'contain'}
-                  />
-                )}
-                <Text style={styles.itemsText}>
-                  {item.title ? item.title : item.name}
-                </Text>
-                <Text style={styles.itemsText2}>{item.vote_average}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        ) : (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={{color: 'white', paddingBottom: 50}}>
-              There are no
-              {apiType == 'movie'
-                ? ' movies '
-                : apiType == 'tv'
-                ? ' TV series '
-                : ' people '}
-              that matched your query.
-            </Text>
-          </View>
-        )}
-      </SafeAreaView>
-    );
+  if (isConnected) {
+    if (value) {
+      return (
+        <SafeAreaView style={styles.container}>
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : Object.keys(data).length !== 0 ? (
+            <FlatList
+              style={{marginBottom: 50}}
+              data={data}
+              onEndReached={() => setPage(page + 1)}
+              keyExtractor={({id}) => id}
+              numColumns={2}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.items}
+                  onPress={() => onPress(item)}>
+                  {apiType == 'person' ? (
+                    <Image
+                      style={{width: 150, height: 220, borderRadius: 10}}
+                      source={{
+                        uri: item.profile_path
+                          ? apiImgUrl.API_IMAGE_URL +
+                            '/w500' +
+                            item.profile_path
+                          : NO_AVATAR_IMAGE,
+                      }}
+                      resizeMode={'contain'}
+                    />
+                  ) : (
+                    <Image
+                      style={{width: 150, height: 220, borderRadius: 10}}
+                      source={{
+                        uri: item.poster_path
+                          ? apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path
+                          : NO_IMAGE,
+                      }}
+                      resizeMode={'contain'}
+                    />
+                  )}
+                  <Text style={styles.itemsText}>
+                    {item.title ? item.title : item.name}
+                  </Text>
+                  <Text style={styles.itemsText2}>{item.vote_average}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          ) : (
+            <View
+              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{color: 'white', paddingBottom: 50}}>
+                There are no
+                {apiType == 'movie'
+                  ? ' movies '
+                  : apiType == 'tv'
+                  ? ' TV series '
+                  : ' people '}
+                that matched your query.
+              </Text>
+            </View>
+          )}
+        </SafeAreaView>
+      );
+    } else {
+      return (
+        <SafeAreaView
+          style={[
+            styles.container,
+            {alignItems: 'center', justifyContent: 'center', paddingBottom: 50},
+          ]}>
+          <IconFeather name="search" color="white" size={60} />
+        </SafeAreaView>
+      );
+    }
   } else {
     return (
       <SafeAreaView
@@ -188,7 +222,9 @@ const RenderItems = ({apiType, navigation}) => {
           styles.container,
           {alignItems: 'center', justifyContent: 'center', paddingBottom: 50},
         ]}>
-        <IconFeather name="search" color="white" size={60} />
+        <Text style={{color: 'white'}}>
+          Check your connection and try again.
+        </Text>
       </SafeAreaView>
     );
   }
@@ -281,6 +317,5 @@ const Search = ({navigation, route}) => {
     </View>
   );
 };
-
 
 export default Search;

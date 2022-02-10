@@ -129,7 +129,7 @@ const MovieDetails = ({navigation, route}) => {
               <Image
                 source={{
                   uri: data.backdrop_path
-                    ? apiImgUrl.API_IMAGE_URL + '/w500' + data.backdrop_path
+                    ? apiImgUrl.API_IMAGE_URL + '/w1280' + data.backdrop_path
                     : NO_IMAGE,
                 }}
                 resizeMode={data.backdrop_path ? 'stretch' : 'center'}
