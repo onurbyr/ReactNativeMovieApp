@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   items: {
     flex: 1,
     alignItems: 'center',
-    padding: 20,
+    marginBottom:20
   },
   itemsText: {
     marginTop: 10,
