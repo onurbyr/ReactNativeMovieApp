@@ -20,16 +20,12 @@ const HomeScreen = ({navigation}) => {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    getPopularMovies();
-  }, []);
+    getPopular();
+  }, [page]);
 
-  const addElement = newData => {
-    let newArray = [...data, ...newData];
-    setData(newArray);
-  };
 
   //getdata with axios
-  const getPopularMovies = async () => {
+  const getPopular = async () => {
     try {
       const response = await api.get('/movie/popular', {
         params: {
@@ -37,9 +33,7 @@ const HomeScreen = ({navigation}) => {
           page,
         },
       });
-      setPage(page + 1);
-      addElement(response.data.results);
-      //console.log(response.data.results)
+      setData([...data, ...response.data.results]);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -66,8 +60,8 @@ const HomeScreen = ({navigation}) => {
         ) : (
           <FlatList
             data={data}
-            onEndReached={({distanceFromEnd}) => {
-              getPopularMovies();
+            onEndReached={() => {
+              setPage(page + 1);
             }}
             keyExtractor={({id}, index) => id}
             numColumns={2}

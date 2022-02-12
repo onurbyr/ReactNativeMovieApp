@@ -13,23 +13,15 @@ import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import TvSeriesDetails from './TvSeriesDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
-import {Picker} from '@react-native-picker/picker';
 
 const TvSeriesScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState();
-  const [selectedGenre, setSelectedGenre] = useState();
 
   useEffect(() => {
     getPopular();
-  }, []);
-
-  const addElement = newData => {
-    let newArray = [...data, ...newData];
-    setData(newArray);
-  };
+  }, [page]);
 
   //getdata with axios
   const getPopular = async () => {
@@ -40,8 +32,7 @@ const TvSeriesScreen = ({navigation}) => {
           page,
         },
       });
-      setPage(page + 1);
-      addElement(response.data.results);
+      setData([...data, ...response.data.results]);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -62,27 +53,6 @@ const TvSeriesScreen = ({navigation}) => {
         <Text style={styles.headerText2}> TV Shows</Text>
       </View>
 
-      <View style={styles.pickerView}>
-        <Picker
-          style={styles.pickers}
-          dropdownIconColor="#FF937A"
-          selectedValue={selectedCategory}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedCategory(itemValue)
-          }>
-          <Picker.Item color="#FF937A" label="Popular" value="popular" />
-          <Picker.Item color="#FF937A" label="Upcoming" value="upcoming" />
-          <Picker.Item color="#FF937A" label="Top Rated" value="toprated" />
-        </Picker>
-        <Picker
-          style={styles.pickers}
-          dropdownIconColor="#FF937A"
-          selectedValue={selectedGenre}
-          onValueChange={(itemValue, itemIndex) => setSelectedGenre(itemValue)}>
-          <Picker.Item enabled={false} color="#737373" label="Genre" />
-          <Picker.Item color="#FF937A" label="Test" value="test" />
-        </Picker>
-      </View>
 
       <View style={styles.bodyView}>
         {isLoading ? (
@@ -91,7 +61,7 @@ const TvSeriesScreen = ({navigation}) => {
           <FlatList
             data={data}
             onEndReached={() => {
-              getPopular();
+              setPage(page + 1);
             }}
             keyExtractor={({id}) => id}
             numColumns={2}
@@ -137,14 +107,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     textAlignVertical: 'center',
     fontFamily: 'Lato-Regular',
-  },
-  pickerView: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  pickers: {
-    flex: 1,
-    marginLeft: 10,
   },
   bodyView: {
     flex: 8,
