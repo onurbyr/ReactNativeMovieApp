@@ -21,6 +21,7 @@ const TvSeriesScreen = ({navigation}) => {
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState('popular');
   const prevPage = usePrevious(page);
+  const [isExtraLoading, setIsExtraLoading] = useState(true);
 
   useEffect(() => {
     getItems();
@@ -45,6 +46,7 @@ const TvSeriesScreen = ({navigation}) => {
       });
       if (prevPage == page - 1) {
         setData([...data, ...response.data.results]);
+        setIsExtraLoading(false);
       } else {
         setData(response.data.results);
       }
@@ -67,6 +69,14 @@ const TvSeriesScreen = ({navigation}) => {
     setCategory(categoryType);
   };
 
+  const renderFooter = () => {
+    return (
+      <View style={{marginBottom: 50}}>
+        {isExtraLoading ? <ActivityIndicator /> : null}
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
@@ -83,50 +93,62 @@ const TvSeriesScreen = ({navigation}) => {
         <ScrollView horizontal={true} style={styles.categoryScrollView}>
           <TouchableOpacity
             disabled={category == 'popular' ? true : false}
-            style={[styles.categoryBox,category=='popular' && {backgroundColor:'#151517'}]}
+            style={[
+              styles.categoryBox,
+              category == 'popular' && {backgroundColor: '#151517'},
+            ]}
             onPress={() => onPressCategory('popular')}>
             <Text style={styles.categoryText}>Popular</Text>
           </TouchableOpacity>
           <TouchableOpacity
             disabled={category == 'top_rated' ? true : false}
-            style={[styles.categoryBox,category=='top_rated' && {backgroundColor:'#151517'}]}    
-            onPress={() => onPressCategory('top_rated')}>     
+            style={[
+              styles.categoryBox,
+              category == 'top_rated' && {backgroundColor: '#151517'},
+            ]}
+            onPress={() => onPressCategory('top_rated')}>
             <Text style={styles.categoryText}>Top Rated</Text>
           </TouchableOpacity>
           <TouchableOpacity
             disabled={category == 'airing_today' ? true : false}
-            style={[styles.categoryBox,category=='airing_today' && {backgroundColor:'#151517'}]}
+            style={[
+              styles.categoryBox,
+              category == 'airing_today' && {backgroundColor: '#151517'},
+            ]}
             onPress={() => onPressCategory('airing_today')}>
             <Text style={styles.categoryText}>Airing Today</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
-      <View style={styles.bodyView}>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <FlatList
-            data={data}
-            onEndReached={() => setPage(page + 1)}
-            keyExtractor={({id}) => id}
-            numColumns={2}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.items}
-                onPress={() => onPress(item.id)}>
-                <Image
-                  style={{width: 150, height: 250, borderRadius: 10}}
-                  source={{
-                    uri: apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path,
-                  }}
-                />
-                <Text style={styles.itemsText}>{item.name}</Text>
-                <Text style={styles.itemsText2}>{item.vote_average}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        )}
-      </View>
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <FlatList
+          style={{marginBottom: 50}}
+          data={data}
+          onEndReached={() => {
+            setPage(page + 1);
+            setIsExtraLoading(true);
+          }}
+          keyExtractor={({id}) => id}
+          numColumns={2}
+          ListFooterComponent={renderFooter}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.items}
+              onPress={() => onPress(item.id)}>
+              <Image
+                style={{width: 150, height: 250, borderRadius: 10}}
+                source={{
+                  uri: apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path,
+                }}
+              />
+              <Text style={styles.itemsText}>{item.name}</Text>
+              <Text style={styles.itemsText2}>{item.vote_average}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 };
