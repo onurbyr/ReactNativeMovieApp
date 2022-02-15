@@ -9,11 +9,12 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import TvSeriesDetails from './TvSeriesDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import usePrevious from '../hooks/usePrevious';
 
 const TvSeriesScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -26,14 +27,6 @@ const TvSeriesScreen = ({navigation}) => {
   useEffect(() => {
     getItems();
   }, [category, page]);
-
-  function usePrevious(value) {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-  }
 
   //getdata with axios
   const getItems = async () => {
