@@ -170,9 +170,17 @@ const TvSeriesDetails = ({navigation, route}) => {
                 <Text style={styles.releaseDate}>{dateConvert()}</Text>
                 <ScrollView horizontal={true} style={styles.genreScrollView}>
                   {data.genres.map(n => (
-                    <View key={n.id} style={styles.genreBox}>
+                    <TouchableOpacity
+                      key={n.id}
+                      style={styles.genreBox}
+                      onPress={() =>
+                        navigation.navigate('TvSeriesGenres', {
+                          itemId: n.id,
+                          itemName: n.name,
+                        })
+                      }>
                       <Text style={styles.genreText2}>{n.name}</Text>
-                    </View>
+                    </TouchableOpacity>
                   ))}
                 </ScrollView>
               </View>

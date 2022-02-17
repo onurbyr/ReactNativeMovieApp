@@ -13,6 +13,7 @@ import React, {useEffect, useState} from 'react';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import TvSeriesDetails from './TvSeriesDetails';
+import TvSeriesGenres from './TvSeriesGenres';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../hooks/usePrevious';
 
@@ -212,7 +213,7 @@ const TvSeriesStack = createNativeStackNavigator();
 
 const TvSeries = ({navigation, route}) => {
   React.useLayoutEffect(() => {
-    const tabHiddenRoutes = ['TvSeriesDetails'];
+    const tabHiddenRoutes = ['TvSeriesDetails', 'TvSeriesGenres'];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
     } else {
@@ -237,6 +238,11 @@ const TvSeries = ({navigation, route}) => {
         <TvSeriesStack.Screen
           name="TvSeriesDetails"
           component={TvSeriesDetails}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="TvSeriesGenres"
+          component={TvSeriesGenres}
           options={{headerShown: false}}
         />
       </TvSeriesStack.Navigator>
