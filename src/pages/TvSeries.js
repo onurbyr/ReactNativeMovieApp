@@ -16,6 +16,7 @@ import TvSeriesDetails from './TvSeriesDetails';
 import TvSeriesGenres from './TvSeriesGenres';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../hooks/usePrevious';
+import RenderFooter from '../components/RenderFooter'
 
 const TvSeriesScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -61,14 +62,6 @@ const TvSeriesScreen = ({navigation}) => {
     setLoading(true);
     setPage(1);
     setCategory(categoryType);
-  };
-
-  const renderFooter = () => {
-    return (
-      <View style={{marginBottom: 50}}>
-        {isExtraLoading ? <ActivityIndicator /> : null}
-      </View>
-    );
   };
 
   return (
@@ -126,7 +119,7 @@ const TvSeriesScreen = ({navigation}) => {
           }}
           keyExtractor={({id}) => id}
           numColumns={2}
-          ListFooterComponent={renderFooter}
+          ListFooterComponent={RenderFooter(isExtraLoading)}
           renderItem={({item}) => (
             <TouchableOpacity
               style={styles.items}

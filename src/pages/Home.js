@@ -15,6 +15,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './MovieDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../hooks/usePrevious';
+import RenderFooter from '../components/RenderFooter'
 
 const HomeScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -62,13 +63,6 @@ const HomeScreen = ({navigation}) => {
     setCategory(categoryType);
   };
 
-  const renderFooter = () => {
-    return (
-      <View style={{marginBottom: 50}}>
-        {isExtraLoading ? <ActivityIndicator /> : null}
-      </View>
-    );
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -125,7 +119,7 @@ const HomeScreen = ({navigation}) => {
           }}
           keyExtractor={({id}) => id}
           numColumns={2}
-          ListFooterComponent={renderFooter}
+          ListFooterComponent={RenderFooter(isExtraLoading)}
           renderItem={({item}) => (
             <TouchableOpacity
               style={styles.items}

@@ -174,7 +174,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                       key={n.id}
                       style={styles.genreBox}
                       onPress={() =>
-                        navigation.navigate('TvSeriesGenres', {
+                        navigation.push('TvSeriesGenres', {
                           itemId: n.id,
                           itemName: n.name,
                         })
