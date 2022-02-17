@@ -10,15 +10,14 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import TvSeriesDetails from './TvSeriesDetails';
-import TvSeriesGenres from './TvSeriesGenres';
+import MovieDetails from './MovieDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
-import usePrevious from '../hooks/usePrevious';
-import RenderFooter from '../components/RenderFooter'
+import usePrevious from '../../hooks/usePrevious';
+import RenderFooter from '../../components/RenderFooter'
 
-const TvSeriesScreen = ({navigation}) => {
+const MoviesScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -33,7 +32,7 @@ const TvSeriesScreen = ({navigation}) => {
   //getdata with axios
   const getItems = async () => {
     try {
-      const response = await api.get('/tv/' + category, {
+      const response = await api.get('/movie/' + category, {
         params: {
           api_key: apiKey.API_KEY,
           page,
@@ -53,7 +52,7 @@ const TvSeriesScreen = ({navigation}) => {
   };
 
   const onPress = id => {
-    navigation.navigate('TvSeriesDetails', {
+    navigation.navigate('MovieDetails', {
       itemId: id,
     });
   };
@@ -64,6 +63,7 @@ const TvSeriesScreen = ({navigation}) => {
     setCategory(categoryType);
   };
 
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
@@ -72,9 +72,9 @@ const TvSeriesScreen = ({navigation}) => {
             ? 'Popular'
             : category == 'top_rated'
             ? 'Top Rated'
-            : 'Airing Today'}
+            : 'Upcoming'}
         </Text>
-        <Text style={styles.headerText2}> TV Shows</Text>
+        <Text style={styles.headerText2}> Movies</Text>
       </View>
       <View>
         <ScrollView horizontal={true} style={styles.categoryScrollView}>
@@ -97,13 +97,13 @@ const TvSeriesScreen = ({navigation}) => {
             <Text style={styles.categoryText}>Top Rated</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            disabled={category == 'airing_today' ? true : false}
+            disabled={category == 'upcoming' ? true : false}
             style={[
               styles.categoryBox,
-              category == 'airing_today' && {backgroundColor: '#151517'},
+              category == 'upcoming' && {backgroundColor: '#151517'},
             ]}
-            onPress={() => onPressCategory('airing_today')}>
-            <Text style={styles.categoryText}>Airing Today</Text>
+            onPress={() => onPressCategory('upcoming')}>
+            <Text style={styles.categoryText}>Upcoming</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -130,7 +130,7 @@ const TvSeriesScreen = ({navigation}) => {
                   uri: apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path,
                 }}
               />
-              <Text style={styles.itemsText}>{item.name}</Text>
+              <Text style={styles.itemsText}>{item.title}</Text>
               <Text style={styles.itemsText2}>{item.vote_average}</Text>
             </TouchableOpacity>
           )}
@@ -202,11 +202,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const TvSeriesStack = createNativeStackNavigator();
+const MoviesStack = createNativeStackNavigator();
 
-const TvSeries = ({navigation, route}) => {
+const Movies = ({navigation, route}) => {
   React.useLayoutEffect(() => {
-    const tabHiddenRoutes = ['TvSeriesDetails', 'TvSeriesGenres'];
+    const tabHiddenRoutes = ['MovieDetails'];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
     } else {
@@ -222,25 +222,20 @@ const TvSeries = ({navigation, route}) => {
   }, [navigation, route]);
   return (
     <View style={{flex: 1, backgroundColor: '#15141F'}}>
-      <TvSeriesStack.Navigator initialRouteName="TvSeries">
-        <TvSeriesStack.Screen
-          name="TvSeriesScreen"
-          component={TvSeriesScreen}
+      <MoviesStack.Navigator initialRouteName="Movies">
+        <MoviesStack.Screen
+          name="MoviesScreen"
+          component={MoviesScreen}
           options={{headerShown: false}}
         />
-        <TvSeriesStack.Screen
-          name="TvSeriesDetails"
-          component={TvSeriesDetails}
+        <MoviesStack.Screen
+          name="MovieDetails"
+          component={MovieDetails}
           options={{headerShown: false}}
         />
-        <TvSeriesStack.Screen
-          name="TvSeriesGenres"
-          component={TvSeriesGenres}
-          options={{headerShown: false}}
-        />
-      </TvSeriesStack.Navigator>
+      </MoviesStack.Navigator>
     </View>
   );
 };
 
-export default TvSeries;
+export default Movies;

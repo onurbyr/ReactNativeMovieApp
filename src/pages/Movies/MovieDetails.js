@@ -9,16 +9,15 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
 import NetInfo from '@react-native-community/netinfo';
-import NoImage from '../images/noimage.png';
+import NoImage from '../../images/noimage.png';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
-const TvSeriesDetails = ({navigation, route}) => {
+const MovieDetails = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [isConnected, setConnected] = useState(false);
@@ -28,9 +27,9 @@ const TvSeriesDetails = ({navigation, route}) => {
 
   useEffect(() => {
     getNetInfo();
-    getDetails();
+    getMovieDetails();
     dateConvert();
-    getRecommends();
+    getMovieRecommend();
   }, []);
 
   const getNetInfo = () => {
@@ -41,9 +40,9 @@ const TvSeriesDetails = ({navigation, route}) => {
   };
 
   //getdata with axios3 (baseurl)
-  const getDetails = async navigation => {
+  const getMovieDetails = async navigation => {
     try {
-      const response = await api.get('/tv/' + itemId, {
+      const response = await api.get('/movie/' + itemId, {
         params: {
           api_key: apiKey.API_KEY,
         },
@@ -58,9 +57,9 @@ const TvSeriesDetails = ({navigation, route}) => {
     }
   };
 
-  const getRecommends = async navigation => {
+  const getMovieRecommend = async navigation => {
     try {
-      const response = await api.get('/tv/' + itemId + '/recommendations', {
+      const response = await api.get('/movie/' + itemId + '/recommendations', {
         params: {
           api_key: apiKey.API_KEY,
         },
@@ -90,7 +89,7 @@ const TvSeriesDetails = ({navigation, route}) => {
       'November',
       'December',
     ];
-    const d = new Date(data.first_air_date);
+    const d = new Date(data.release_date);
     const date =
       months[d.getMonth()] + ' ' + d.getDate() + ',' + ' ' + d.getFullYear();
     return date;
@@ -135,22 +134,15 @@ const TvSeriesDetails = ({navigation, route}) => {
                 }}
                 resizeMode={data.backdrop_path ? 'stretch' : 'center'}
                 style={{height: 250}}></Image>
-              <Text style={styles.title}>{data.name}</Text>
-              <View style={{flexDirection: 'row'}}>
-                <Entypo
-                  name="info"
+              <Text style={styles.title}>{data.title}</Text>
+              <View style={styles.titleMinutes}>
+                <Ionicons
+                  name="time-outline"
                   color={'white'}
                   size={12}
-                  style={styles.infoIcon}
+                  style={styles.minutesIcon}
                 />
-                <Text style={styles.info}>
-                  {data.number_of_seasons == 1
-                    ? data.number_of_seasons + ' season'
-                    : data.number_of_seasons + ' seasons'}
-                </Text>
-                <Text style={styles.info}>
-                  {data.number_of_episodes + ' episodes'}
-                </Text>
+                <Text style={styles.minutes}>{data.runtime + ' minutes'}</Text>
                 <Ionicons
                   name="star"
                   color={'white'}
@@ -163,24 +155,16 @@ const TvSeriesDetails = ({navigation, route}) => {
               </View>
               <Hr />
               <View style={{flexDirection: 'row'}}>
-                <Text style={styles.releaseDateText}>First Air Date</Text>
+                <Text style={styles.releaseDateText}>Release Date</Text>
                 <Text style={styles.genreText}>Genre</Text>
               </View>
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.releaseDate}>{dateConvert()}</Text>
                 <ScrollView horizontal={true} style={styles.genreScrollView}>
                   {data.genres.map(n => (
-                    <TouchableOpacity
-                      key={n.id}
-                      style={styles.genreBox}
-                      onPress={() =>
-                        navigation.push('TvSeriesGenres', {
-                          itemId: n.id,
-                          itemName: n.name,
-                        })
-                      }>
+                    <View key={n.id} style={styles.genreBox}>
                       <Text style={styles.genreText2}>{n.name}</Text>
-                    </TouchableOpacity>
+                    </View>
                   ))}
                 </ScrollView>
               </View>
@@ -197,7 +181,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                       key={n.id}
                       style={{marginRight: 25, width: 150}}
                       onPress={() =>
-                        navigation.push('TvSeriesDetails', {
+                        navigation.push('MovieDetails', {
                           itemId: n.id,
                         })
                       }>
@@ -218,7 +202,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                           textAlign: 'center',
                           marginVertical: 10,
                         }}>
-                        {n.name}
+                        {n.title}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -272,6 +256,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
   },
+  titleMinutes: {
+    flexDirection: 'row',
+  },
   title: {
     fontSize: 22,
     color: '#ffffff',
@@ -279,11 +266,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 25,
     marginTop: 20,
   },
-  infoIcon: {
+  minutesIcon: {
     marginLeft: 25,
     marginTop: 15,
   },
-  info: {
+  minutes: {
     fontSize: 12,
     color: '#ffffff',
     fontFamily: 'Lato-Light',
@@ -370,4 +357,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TvSeriesDetails;
+export default MovieDetails;

@@ -10,14 +10,15 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import MovieDetails from './MovieDetails';
+import TvSeriesDetails from './TvSeriesDetails';
+import TvSeriesGenres from './TvSeriesGenres';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
-import usePrevious from '../hooks/usePrevious';
-import RenderFooter from '../components/RenderFooter'
+import usePrevious from '../../hooks/usePrevious';
+import RenderFooter from '../../components/RenderFooter'
 
-const HomeScreen = ({navigation}) => {
+const TvSeriesScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -32,7 +33,7 @@ const HomeScreen = ({navigation}) => {
   //getdata with axios
   const getItems = async () => {
     try {
-      const response = await api.get('/movie/' + category, {
+      const response = await api.get('/tv/' + category, {
         params: {
           api_key: apiKey.API_KEY,
           page,
@@ -52,7 +53,7 @@ const HomeScreen = ({navigation}) => {
   };
 
   const onPress = id => {
-    navigation.navigate('MovieDetails', {
+    navigation.navigate('TvSeriesDetails', {
       itemId: id,
     });
   };
@@ -63,7 +64,6 @@ const HomeScreen = ({navigation}) => {
     setCategory(categoryType);
   };
 
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerView}>
@@ -72,9 +72,9 @@ const HomeScreen = ({navigation}) => {
             ? 'Popular'
             : category == 'top_rated'
             ? 'Top Rated'
-            : 'Upcoming'}
+            : 'Airing Today'}
         </Text>
-        <Text style={styles.headerText2}> Movies</Text>
+        <Text style={styles.headerText2}> TV Shows</Text>
       </View>
       <View>
         <ScrollView horizontal={true} style={styles.categoryScrollView}>
@@ -97,13 +97,13 @@ const HomeScreen = ({navigation}) => {
             <Text style={styles.categoryText}>Top Rated</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            disabled={category == 'upcoming' ? true : false}
+            disabled={category == 'airing_today' ? true : false}
             style={[
               styles.categoryBox,
-              category == 'upcoming' && {backgroundColor: '#151517'},
+              category == 'airing_today' && {backgroundColor: '#151517'},
             ]}
-            onPress={() => onPressCategory('upcoming')}>
-            <Text style={styles.categoryText}>Upcoming</Text>
+            onPress={() => onPressCategory('airing_today')}>
+            <Text style={styles.categoryText}>Airing Today</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -130,7 +130,7 @@ const HomeScreen = ({navigation}) => {
                   uri: apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path,
                 }}
               />
-              <Text style={styles.itemsText}>{item.title}</Text>
+              <Text style={styles.itemsText}>{item.name}</Text>
               <Text style={styles.itemsText2}>{item.vote_average}</Text>
             </TouchableOpacity>
           )}
@@ -202,11 +202,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const HomeStack = createNativeStackNavigator();
+const TvSeriesStack = createNativeStackNavigator();
 
-const Home = ({navigation, route}) => {
+const TvSeries = ({navigation, route}) => {
   React.useLayoutEffect(() => {
-    const tabHiddenRoutes = ['MovieDetails'];
+    const tabHiddenRoutes = ['TvSeriesDetails', 'TvSeriesGenres'];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
     } else {
@@ -222,20 +222,25 @@ const Home = ({navigation, route}) => {
   }, [navigation, route]);
   return (
     <View style={{flex: 1, backgroundColor: '#15141F'}}>
-      <HomeStack.Navigator initialRouteName="Home">
-        <HomeStack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
+      <TvSeriesStack.Navigator initialRouteName="TvSeries">
+        <TvSeriesStack.Screen
+          name="TvSeriesScreen"
+          component={TvSeriesScreen}
           options={{headerShown: false}}
         />
-        <HomeStack.Screen
-          name="MovieDetails"
-          component={MovieDetails}
+        <TvSeriesStack.Screen
+          name="TvSeriesDetails"
+          component={TvSeriesDetails}
           options={{headerShown: false}}
         />
-      </HomeStack.Navigator>
+        <TvSeriesStack.Screen
+          name="TvSeriesGenres"
+          component={TvSeriesGenres}
+          options={{headerShown: false}}
+        />
+      </TvSeriesStack.Navigator>
     </View>
   );
 };
 
-export default Home;
+export default TvSeries;

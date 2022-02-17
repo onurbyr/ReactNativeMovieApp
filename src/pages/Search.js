@@ -16,8 +16,8 @@ import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import NoImage from '../images/noimage.png';
 import NoAvatar from '../images/noavatar.png';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import MovieDetails from './MovieDetails';
-import TvSeriesDetails from './TvSeriesDetails';
+import MovieDetails from './Movies/MovieDetails';
+import TvSeriesDetails from './TvSeries/TvSeriesDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 

@@ -8,10 +8,10 @@ import {
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
-import usePrevious from '../hooks/usePrevious';
-import BackButton from '../components/BackButton';
-import RenderFooter from '../components/RenderFooter';
+import {api, apiKey, apiImgUrl} from '../../../services/api/api';
+import usePrevious from '../../hooks/usePrevious';
+import BackButton from '../../components/BackButton';
+import RenderFooter from '../../components/RenderFooter';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 
 const TvSeriesGenres = ({route, navigation}) => {

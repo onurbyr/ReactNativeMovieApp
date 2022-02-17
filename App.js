@@ -2,8 +2,8 @@ import {View, Text} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from './src/pages/Home';
-import TvSeries from './src/pages/TvSeries';
+import Movies from './src/pages/Movies/Movies';
+import TvSeries from './src/pages/TvSeries/TvSeries';
 import Search from './src/pages/Search';
 import IconFeather from 'react-native-vector-icons/Feather';
 
@@ -25,8 +25,8 @@ const MyTabs = () => {
         },
       }}>
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="Movies"
+        component={Movies}
         options={{
           tabBarIcon: ({color, size}) => (
             <IconFeather name="home" color={color} size={20} />
