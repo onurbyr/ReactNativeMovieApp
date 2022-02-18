@@ -15,6 +15,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
 import NoImage from '../../images/noimage.png';
 import axios from 'axios';
+import DefaultText from '../../components/DefaultText';
+import BoldText from '../../components/BoldText';
+import BackButton from '../../components/BackButton';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
@@ -70,7 +73,7 @@ const MovieDetails = ({navigation, route}) => {
       .catch(errors => {
         // handle error
         console.log(errors.message);
-      })
+      });
   };
 
   const dateConvert = () => {
@@ -100,7 +103,8 @@ const MovieDetails = ({navigation, route}) => {
         style={{
           borderBottomColor: '#515151',
           borderBottomWidth: 0.8,
-          margin: 20,
+          marginVertical: 20,
+          marginRight: 20,
           opacity: 0.3,
         }}
       />
@@ -114,16 +118,7 @@ const MovieDetails = ({navigation, route}) => {
           <ActivityIndicator style={{flex: 1}} />
         ) : (
           <View style={styles.container}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                color={'white'}
-                size={20}
-                style={{paddingLeft: 5}}
-              />
-            </TouchableOpacity>
+            <BackButton style={styles.backButton} />
             <ScrollView style={{flex: 1}}>
               <Image
                 source={{
@@ -133,88 +128,101 @@ const MovieDetails = ({navigation, route}) => {
                 }}
                 resizeMode={data.backdrop_path ? 'stretch' : 'center'}
                 style={{height: 250}}></Image>
-              <Text style={styles.title}>{data.title}</Text>
-              <View style={styles.titleMinutes}>
-                <Ionicons
-                  name="time-outline"
-                  color={'white'}
-                  size={12}
-                  style={styles.minutesIcon}
-                />
-                <Text style={styles.minutes}>{data.runtime + ' minutes'}</Text>
-                <Ionicons
-                  name="star"
-                  color={'white'}
-                  size={12}
-                  style={styles.starsIcon}
-                />
-                <Text style={styles.stars}>
-                  {data.vote_average + ' (Tmdb)'}
-                </Text>
-              </View>
-              <Hr />
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.releaseDateText}>Release Date</Text>
-                <Text style={styles.genreText}>Genre</Text>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.releaseDate}>{dateConvert()}</Text>
-                <ScrollView horizontal={true} style={styles.genreScrollView}>
-                  {data.genres &&
-                    data.genres.map(n => (
+              <View style={{paddingLeft: 25}}>
+                <BoldText style={styles.title}>{data.title}</BoldText>
+                <View style={{flexDirection: 'row'}}>
+                  <Ionicons
+                    name="time-outline"
+                    color={'white'}
+                    size={12}
+                    style={styles.minutesIcon}
+                  />
+                  <DefaultText style={styles.minutes}>
+                    {data.runtime + ' minutes'}
+                  </DefaultText>
+                  <Ionicons
+                    name="star"
+                    color={'white'}
+                    size={12}
+                    style={styles.starsIcon}
+                  />
+                  <DefaultText style={styles.stars}>
+                    {data.vote_average + ' (Tmdb)'}
+                  </DefaultText>
+                </View>
+                <Hr />
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{flex: 1}}>
+                    <BoldText>Release Date</BoldText>
+                    <DefaultText style={styles.releaseDate}>
+                      {dateConvert()}
+                    </DefaultText>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <BoldText>Genre</BoldText>
+                    <ScrollView
+                      horizontal={true}
+                      style={styles.genreScrollView}>
+                      {data.genres &&
+                        data.genres.map(n => (
+                          <TouchableOpacity
+                            key={n.id}
+                            style={styles.genreBox}
+                            onPress={() =>
+                              navigation.push('MoviesGenres', {
+                                itemId: n.id,
+                                itemName: n.name,
+                              })
+                            }>
+                            <DefaultText>{n.name}</DefaultText>
+                          </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                  </View>
+                </View>
+
+                <Hr />
+                <BoldText style={styles.overviewText}>Overview</BoldText>
+                <DefaultText style={styles.overview}>
+                  {data.overview}
+                </DefaultText>
+                <Hr />
+                <BoldText style={styles.rmText}>Recommendations</BoldText>
+                <ScrollView horizontal={true} style={styles.rmScrollView}>
+                  {recommend
+                    .filter((i, index) => index < 5)
+                    .map((n, index) => (
                       <TouchableOpacity
                         key={n.id}
-                        style={styles.genreBox}
+                        style={{marginRight: 25, width: 150}}
                         onPress={() =>
-                          navigation.push('MoviesGenres', {
+                          navigation.push('MovieDetails', {
                             itemId: n.id,
-                            itemName: n.name,
                           })
                         }>
-                        <Text style={styles.genreText2}>{n.name}</Text>
+                        <Image
+                          style={{width: 150, height: 80, borderRadius: 10}}
+                          source={{
+                            uri: n.backdrop_path
+                              ? apiImgUrl.API_IMAGE_URL +
+                                '/w300' +
+                                n.backdrop_path
+                              : NO_IMAGE,
+                          }}
+                          resizeMode="contain"
+                        />
+                        <Text
+                          style={{
+                            color: '#ffffff',
+                            textAlign: 'center',
+                            marginVertical: 10,
+                          }}>
+                          {n.title}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                 </ScrollView>
               </View>
-              <Hr />
-              <Text style={styles.overviewText}>Overview</Text>
-              <Text style={styles.overview}>{data.overview}</Text>
-              <Hr />
-              <Text style={styles.rmText}>Recommendations</Text>
-              <ScrollView horizontal={true} style={styles.rmScrollView}>
-                {recommend
-                  .filter((i, index) => index < 5)
-                  .map((n, index) => (
-                    <TouchableOpacity
-                      key={n.id}
-                      style={{marginRight: 25, width: 150}}
-                      onPress={() =>
-                        navigation.push('MovieDetails', {
-                          itemId: n.id,
-                        })
-                      }>
-                      <Image
-                        style={{width: 150, height: 80, borderRadius: 10}}
-                        source={{
-                          uri: n.backdrop_path
-                            ? apiImgUrl.API_IMAGE_URL +
-                              '/w300' +
-                              n.backdrop_path
-                            : NO_IMAGE,
-                        }}
-                        resizeMode="contain"
-                      />
-                      <Text
-                        style={{
-                          color: '#ffffff',
-                          textAlign: 'center',
-                          marginVertical: 10,
-                        }}>
-                        {n.title}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-              </ScrollView>
             </ScrollView>
           </View>
         )}
@@ -230,16 +238,7 @@ const MovieDetails = ({navigation, route}) => {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <TouchableOpacity
-        style={[styles.backButton, {left: 0, top: 0}]}
-        onPress={() => navigation.goBack()}>
-        <MaterialIcons
-          name="arrow-back-ios"
-          color={'white'}
-          size={20}
-          style={{paddingLeft: 5}}
-        />
-      </TouchableOpacity>
+      <BackButton style={[styles.backButton, {left: 0, top: 0}]} />
       <Text style={{color: '#ffffff'}}>
         Check your connection and try again.
       </Text>
@@ -253,35 +252,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#15141F',
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
     marginTop: 20,
-    marginLeft: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(52, 52, 52, 0.6)',
     position: 'absolute',
     zIndex: 1,
   },
-  titleMinutes: {
-    flexDirection: 'row',
-  },
   title: {
     fontSize: 22,
-    color: '#ffffff',
-    fontFamily: 'Lato-Regular',
-    marginHorizontal: 25,
+    marginRight: 25,
     marginTop: 20,
   },
   minutesIcon: {
-    marginLeft: 25,
     marginTop: 15,
   },
   minutes: {
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Lato-Light',
     marginLeft: 5,
     marginTop: 15,
   },
@@ -290,35 +273,13 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   stars: {
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Lato-Light',
     marginLeft: 5,
     marginTop: 15,
   },
-  releaseDateText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Lato',
-    marginLeft: 25,
-  },
   releaseDate: {
-    flex: 1,
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Lato-Light',
-    marginLeft: 25,
     marginTop: 15,
   },
-  genreText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Lato',
-  },
   genreScrollView: {
-    flex: 1,
     flexDirection: 'row',
     marginTop: 5,
   },
@@ -334,33 +295,11 @@ const styles = StyleSheet.create({
     marginRight: 5,
     paddingHorizontal: 2,
   },
-  genreText2: {
-    fontSize: 12,
-    fontFamily: 'Lato-Light',
-    color: '#ffffff',
-  },
-  overviewText: {
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Lato',
-    marginLeft: 25,
-  },
   overview: {
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Lato-Light',
-    marginLeft: 25,
     marginTop: 5,
     marginRight: 25,
   },
-  rmText: {
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Lato',
-    marginLeft: 25,
-  },
   rmScrollView: {
-    marginLeft: 25,
     marginTop: 5,
   },
 });

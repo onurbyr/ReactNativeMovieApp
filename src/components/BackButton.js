@@ -3,11 +3,11 @@ import {TouchableOpacity, StyleSheet} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 
-const BackButton = ({style}) => {
+const BackButton = props => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
-      style={[styles.backButton, {...style}]}
+      style={[styles.backButton, props.style]}
       onPress={() => navigation.goBack()}>
       <MaterialIcons name="arrow-back-ios" color={'white'} size={20} />
     </TouchableOpacity>
