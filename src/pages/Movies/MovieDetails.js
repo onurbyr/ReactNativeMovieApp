@@ -14,6 +14,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
 import NoImage from '../../images/noimage.png';
+import axios from 'axios';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
@@ -22,14 +23,14 @@ const MovieDetails = ({navigation, route}) => {
   const [data, setData] = useState([]);
   const [isConnected, setConnected] = useState(false);
   const [recommend, setRecommend] = useState([]);
+  const [cast, setCast] = useState([]);
 
   const {itemId} = route.params;
 
   useEffect(() => {
+    multipleRequests();
     getNetInfo();
-    getMovieDetails();
     dateConvert();
-    getMovieRecommend();
   }, []);
 
   const getNetInfo = () => {
@@ -39,39 +40,37 @@ const MovieDetails = ({navigation, route}) => {
     });
   };
 
-  //getdata with axios3 (baseurl)
-  const getMovieDetails = async navigation => {
-    try {
-      const response = await api.get('/movie/' + itemId, {
-        params: {
-          api_key: apiKey.API_KEY,
-        },
-      });
-      //console.log(response.data);
-      setData(response.data);
-    } catch (error) {
-      // handle error
-      console.log(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const reqDetails = api.get('/movie/' + itemId, {
+    params: {
+      api_key: apiKey.API_KEY,
+    },
+  });
+  const reqRecommend = api.get('/movie/' + itemId + '/recommendations', {
+    params: {
+      api_key: apiKey.API_KEY,
+    },
+  });
+  const reqCredits = api.get('/movie/' + itemId + '/credits', {
+    params: {
+      api_key: apiKey.API_KEY,
+    },
+  });
 
-  const getMovieRecommend = async navigation => {
-    try {
-      const response = await api.get('/movie/' + itemId + '/recommendations', {
-        params: {
-          api_key: apiKey.API_KEY,
-        },
-      });
-      //console.log(response.data.results);
-      setRecommend(response.data.results);
-    } catch (error) {
-      // handle error
-      console.log(error.message);
-    } finally {
-      //setLoading(false);
-    }
+  const multipleRequests = () => {
+    axios
+      .all([reqDetails, reqRecommend, reqCredits])
+      .then(
+        axios.spread((...responses) => {
+          setData(responses[0].data);
+          setRecommend(responses[1].data.results);
+          setCast(responses[2].data.cast);
+          setLoading(false);
+        }),
+      )
+      .catch(errors => {
+        // handle error
+        console.log(errors.message);
+      })
   };
 
   const dateConvert = () => {
@@ -112,7 +111,7 @@ const MovieDetails = ({navigation, route}) => {
     return (
       <SafeAreaView style={styles.container}>
         {isLoading ? (
-          <ActivityIndicator />
+          <ActivityIndicator style={{flex: 1}} />
         ) : (
           <View style={styles.container}>
             <TouchableOpacity
@@ -161,19 +160,20 @@ const MovieDetails = ({navigation, route}) => {
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.releaseDate}>{dateConvert()}</Text>
                 <ScrollView horizontal={true} style={styles.genreScrollView}>
-                  {data.genres.map(n => (
-                    <TouchableOpacity
-                      key={n.id}
-                      style={styles.genreBox}
-                      onPress={() =>
-                        navigation.push('MoviesGenres', {
-                          itemId: n.id,
-                          itemName: n.name,
-                        })
-                      }>
-                      <Text style={styles.genreText2}>{n.name}</Text>
-                    </TouchableOpacity>
-                  ))}
+                  {data.genres &&
+                    data.genres.map(n => (
+                      <TouchableOpacity
+                        key={n.id}
+                        style={styles.genreBox}
+                        onPress={() =>
+                          navigation.push('MoviesGenres', {
+                            itemId: n.id,
+                            itemName: n.name,
+                          })
+                        }>
+                        <Text style={styles.genreText2}>{n.name}</Text>
+                      </TouchableOpacity>
+                    ))}
                 </ScrollView>
               </View>
               <Hr />
