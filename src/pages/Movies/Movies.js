@@ -13,9 +13,10 @@ import React, {useEffect, useState} from 'react';
 import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './MovieDetails';
+import MoviesGenres from './MoviesGenres';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
-import RenderFooter from '../../components/RenderFooter'
+import RenderFooter from '../../components/RenderFooter';
 
 const MoviesScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -62,7 +63,6 @@ const MoviesScreen = ({navigation}) => {
     setPage(1);
     setCategory(categoryType);
   };
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -206,7 +206,7 @@ const MoviesStack = createNativeStackNavigator();
 
 const Movies = ({navigation, route}) => {
   React.useLayoutEffect(() => {
-    const tabHiddenRoutes = ['MovieDetails'];
+    const tabHiddenRoutes = ['MovieDetails', 'MoviesGenres'];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
     } else {
@@ -231,6 +231,11 @@ const Movies = ({navigation, route}) => {
         <MoviesStack.Screen
           name="MovieDetails"
           component={MovieDetails}
+          options={{headerShown: false}}
+        />
+        <MoviesStack.Screen
+          name="MoviesGenres"
+          component={MoviesGenres}
           options={{headerShown: false}}
         />
       </MoviesStack.Navigator>

@@ -18,6 +18,8 @@ import NoAvatar from '../images/noavatar.png';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './Movies/MovieDetails';
 import TvSeriesDetails from './TvSeries/TvSeriesDetails';
+import MoviesGenres from './Movies/MoviesGenres';
+import TvSeriesGenres from './TvSeries/TvSeriesGenres';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -293,7 +295,12 @@ const SearchStack = createNativeStackNavigator();
 
 const Search = ({navigation, route}) => {
   React.useLayoutEffect(() => {
-    const tabHiddenRoutes = ['MovieDetails','TvSeriesDetails'];
+    const tabHiddenRoutes = [
+      'MovieDetails',
+      'TvSeriesDetails',
+      'MoviesGenres',
+      'TvSeriesGenres',
+    ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
     } else {
@@ -323,6 +330,16 @@ const Search = ({navigation, route}) => {
         <SearchStack.Screen
           name="TvSeriesDetails"
           component={TvSeriesDetails}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="MoviesGenres"
+          component={MoviesGenres}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="TvSeriesGenres"
+          component={TvSeriesGenres}
           options={{headerShown: false}}
         />
       </SearchStack.Navigator>
