@@ -10,29 +10,29 @@ import {
   Image,
 } from 'react-native';
 import {api, apiKey, apiImgUrl} from '../../../services/api/api';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
 import NoImage from '../../images/noimage.png';
-import axios from 'axios';
+import NoAvatar from '../../images/noavatar.png';
 import DefaultText from '../../components/DefaultText';
 import BoldText from '../../components/BoldText';
 import BackButton from '../../components/BackButton';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
+const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
 
 const MovieDetails = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [isConnected, setConnected] = useState(false);
+  const [isConnected, setConnected] = useState(true);
   const [recommend, setRecommend] = useState([]);
   const [cast, setCast] = useState([]);
 
   const {itemId} = route.params;
 
   useEffect(() => {
-    multipleRequests();
     getNetInfo();
+    multipleRequests();
     dateConvert();
   }, []);
 
@@ -43,36 +43,35 @@ const MovieDetails = ({navigation, route}) => {
     });
   };
 
-  const reqDetails = api.get('/movie/' + itemId, {
-    params: {
-      api_key: apiKey.API_KEY,
-    },
-  });
-  const reqRecommend = api.get('/movie/' + itemId + '/recommendations', {
-    params: {
-      api_key: apiKey.API_KEY,
-    },
-  });
-  const reqCredits = api.get('/movie/' + itemId + '/credits', {
-    params: {
-      api_key: apiKey.API_KEY,
-    },
-  });
-
+  const concurrentRequests = [
+    api.get('/movie/' + itemId, {
+      params: {
+        api_key: apiKey.API_KEY,
+      },
+    }),
+    api.get('/movie/' + itemId + '/recommendations', {
+      params: {
+        api_key: apiKey.API_KEY,
+      },
+    }),
+    api.get('/movie/' + itemId + '/credits', {
+      params: {
+        api_key: apiKey.API_KEY,
+      },
+    }),
+  ];
   const multipleRequests = () => {
-    axios
-      .all([reqDetails, reqRecommend, reqCredits])
-      .then(
-        axios.spread((...responses) => {
-          setData(responses[0].data);
-          setRecommend(responses[1].data.results);
-          setCast(responses[2].data.cast);
-          setLoading(false);
-        }),
-      )
-      .catch(errors => {
-        // handle error
-        console.log(errors.message);
+    Promise.all(concurrentRequests)
+      .then(result => {
+        setData(result[0].data);
+        setRecommend(result[1].data.results);
+        setCast(result[2].data.cast);
+      })
+      .catch(err => {
+        console.log(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -180,15 +179,51 @@ const MovieDetails = ({navigation, route}) => {
                     </ScrollView>
                   </View>
                 </View>
-
                 <Hr />
-                <BoldText style={styles.overviewText}>Overview</BoldText>
+                <BoldText>Overview</BoldText>
                 <DefaultText style={styles.overview}>
                   {data.overview}
                 </DefaultText>
                 <Hr />
-                <BoldText style={styles.rmText}>Recommendations</BoldText>
-                <ScrollView horizontal={true} style={styles.rmScrollView}>
+                <BoldText>Cast</BoldText>
+                <ScrollView horizontal={true} style={{marginTop: 5}}>
+                  {cast
+                    .filter((i, index) => index < 5)
+                    .map((n, index) => (
+                      <TouchableOpacity
+                        key={n.id}
+                        style={{marginRight: 25, width: 100}}
+                        // onPress={() =>
+                        //   navigation.push('MovieDetails', {
+                        //     itemId: n.id,
+                        //   })
+                        // }
+                      >
+                        <Image
+                          style={{width: 100, height: 150, borderRadius: 10}}
+                          source={{
+                            uri: n.profile_path
+                              ? apiImgUrl.API_IMAGE_URL +
+                                '/w185' +
+                                n.profile_path
+                              : NO_AVATAR_IMAGE,
+                          }}
+                          resizeMode="contain"
+                        />
+                        <Text
+                          style={{
+                            color: '#ffffff',
+                            textAlign: 'center',
+                            marginTop: 5,
+                          }}>
+                          {n.name}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                </ScrollView>
+                <Hr />
+                <BoldText>Recommendations</BoldText>
+                <ScrollView horizontal={true} style={{marginTop: 5}}>
                   {recommend
                     .filter((i, index) => index < 5)
                     .map((n, index) => (
@@ -298,9 +333,6 @@ const styles = StyleSheet.create({
   overview: {
     marginTop: 5,
     marginRight: 25,
-  },
-  rmScrollView: {
-    marginTop: 5,
   },
 });
 
