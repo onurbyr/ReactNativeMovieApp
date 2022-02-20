@@ -15,6 +15,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import TvSeriesDetails from './TvSeriesDetails';
 import TvSeriesGenres from './TvSeriesGenres';
 import ListCast from '../ListCast';
+import ListRecommends from '../ListRecommends';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -207,7 +208,12 @@ const TvSeriesStack = createNativeStackNavigator();
 
 const TvSeries = ({navigation, route}) => {
   React.useLayoutEffect(() => {
-    const tabHiddenRoutes = ['TvSeriesDetails', 'TvSeriesGenres', 'ListCast'];
+    const tabHiddenRoutes = [
+      'TvSeriesDetails',
+      'TvSeriesGenres',
+      'ListCast',
+      'ListRecommends',
+    ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
     } else {
@@ -242,6 +248,11 @@ const TvSeries = ({navigation, route}) => {
         <TvSeriesStack.Screen
           name="ListCast"
           component={ListCast}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="ListRecommends"
+          component={ListRecommends}
           options={{headerShown: false}}
         />
       </TvSeriesStack.Navigator>

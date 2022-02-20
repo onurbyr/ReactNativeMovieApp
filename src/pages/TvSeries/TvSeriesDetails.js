@@ -248,7 +248,20 @@ const TvSeriesDetails = ({navigation, route}) => {
                     ))}
                 </ScrollView>
                 <Hr />
-                <BoldText>Recommendations</BoldText>
+                <View style={{flexDirection: 'row'}}>
+                  <BoldText>Recommendations</BoldText>
+                  <TouchableOpacity
+                    style={styles.seeAllButton}
+                    onPress={() =>
+                      navigation.push('ListRecommends', {
+                        itemId: data.id,
+                        recommendType: 'tv',
+                      })
+                    }>
+                    <DefaultText style={{fontSize: 14}}>See All</DefaultText>
+                    <Entypo name="chevron-right" color={'white'} size={14} />
+                  </TouchableOpacity>
+                </View>
                 <ScrollView horizontal={true} style={{marginTop: 10}}>
                   {recommend
                     .filter((i, index) => index < 5)

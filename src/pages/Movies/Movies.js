@@ -15,6 +15,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './MovieDetails';
 import MoviesGenres from './MoviesGenres';
 import ListCast from '../ListCast';
+import ListRecommends from '../ListRecommends';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -207,7 +208,12 @@ const MoviesStack = createNativeStackNavigator();
 
 const Movies = ({navigation, route}) => {
   React.useLayoutEffect(() => {
-    const tabHiddenRoutes = ['MovieDetails', 'MoviesGenres', 'ListCast'];
+    const tabHiddenRoutes = [
+      'MovieDetails',
+      'MoviesGenres',
+      'ListCast',
+      'ListRecommends',
+    ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
     } else {
@@ -242,6 +248,11 @@ const Movies = ({navigation, route}) => {
         <MoviesStack.Screen
           name="ListCast"
           component={ListCast}
+          options={{headerShown: false}}
+        />
+        <MoviesStack.Screen
+          name="ListRecommends"
+          component={ListRecommends}
           options={{headerShown: false}}
         />
       </MoviesStack.Navigator>
