@@ -10,27 +10,31 @@ import {
   Image,
 } from 'react-native';
 import {api, apiKey, apiImgUrl} from '../../../services/api/api';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import NetInfo from '@react-native-community/netinfo';
 import NoImage from '../../images/noimage.png';
+import NoAvatar from '../../images/noavatar.png';
+import DefaultText from '../../components/DefaultText';
+import BoldText from '../../components/BoldText';
+import BackButton from '../../components/BackButton';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
+const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
 
 const TvSeriesDetails = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [isConnected, setConnected] = useState(false);
+  const [isConnected, setConnected] = useState(true);
   const [recommend, setRecommend] = useState([]);
+  const [cast, setCast] = useState([]);
 
   const {itemId} = route.params;
 
   useEffect(() => {
     getNetInfo();
-    getDetails();
+    multipleRequests();
     dateConvert();
-    getRecommends();
   }, []);
 
   const getNetInfo = () => {
@@ -40,39 +44,36 @@ const TvSeriesDetails = ({navigation, route}) => {
     });
   };
 
-  //getdata with axios3 (baseurl)
-  const getDetails = async navigation => {
-    try {
-      const response = await api.get('/tv/' + itemId, {
-        params: {
-          api_key: apiKey.API_KEY,
-        },
+  const concurrentRequests = [
+    api.get('/tv/' + itemId, {
+      params: {
+        api_key: apiKey.API_KEY,
+      },
+    }),
+    api.get('/tv/' + itemId + '/recommendations', {
+      params: {
+        api_key: apiKey.API_KEY,
+      },
+    }),
+    api.get('/tv/' + itemId + '/credits', {
+      params: {
+        api_key: apiKey.API_KEY,
+      },
+    }),
+  ];
+  const multipleRequests = () => {
+    Promise.all(concurrentRequests)
+      .then(result => {
+        setData(result[0].data);
+        setRecommend(result[1].data.results);
+        setCast(result[2].data.cast);
+      })
+      .catch(err => {
+        console.log(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      //console.log(response.data);
-      setData(response.data);
-    } catch (error) {
-      // handle error
-      console.log(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getRecommends = async navigation => {
-    try {
-      const response = await api.get('/tv/' + itemId + '/recommendations', {
-        params: {
-          api_key: apiKey.API_KEY,
-        },
-      });
-      //console.log(response.data.results);
-      setRecommend(response.data.results);
-    } catch (error) {
-      // handle error
-      console.log(error.message);
-    } finally {
-      //setLoading(false);
-    }
   };
 
   const dateConvert = () => {
@@ -102,7 +103,8 @@ const TvSeriesDetails = ({navigation, route}) => {
         style={{
           borderBottomColor: '#515151',
           borderBottomWidth: 0.8,
-          margin: 20,
+          marginVertical: 20,
+          marginRight: 20,
           opacity: 0.3,
         }}
       />
@@ -113,19 +115,10 @@ const TvSeriesDetails = ({navigation, route}) => {
     return (
       <SafeAreaView style={styles.container}>
         {isLoading ? (
-          <ActivityIndicator />
+          <ActivityIndicator style={{flex: 1}} />
         ) : (
           <View style={styles.container}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}>
-              <MaterialIcons
-                name="arrow-back-ios"
-                color={'white'}
-                size={20}
-                style={{paddingLeft: 5}}
-              />
-            </TouchableOpacity>
+            <BackButton style={styles.backButton} />
             <ScrollView style={{flex: 1}}>
               <Image
                 source={{
@@ -135,94 +128,162 @@ const TvSeriesDetails = ({navigation, route}) => {
                 }}
                 resizeMode={data.backdrop_path ? 'stretch' : 'center'}
                 style={{height: 250}}></Image>
-              <Text style={styles.title}>{data.name}</Text>
-              <View style={{flexDirection: 'row'}}>
-                <Entypo
-                  name="info"
-                  color={'white'}
-                  size={12}
-                  style={styles.infoIcon}
-                />
-                <Text style={styles.info}>
-                  {data.number_of_seasons == 1
-                    ? data.number_of_seasons + ' season'
-                    : data.number_of_seasons + ' seasons'}
-                </Text>
-                <Text style={styles.info}>
-                  {data.number_of_episodes + ' episodes'}
-                </Text>
-                <Ionicons
-                  name="star"
-                  color={'white'}
-                  size={12}
-                  style={styles.starsIcon}
-                />
-                <Text style={styles.stars}>
-                  {data.vote_average + ' (Tmdb)'}
-                </Text>
-              </View>
-              <Hr />
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.releaseDateText}>First Air Date</Text>
-                <Text style={styles.genreText}>Genre</Text>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.releaseDate}>{dateConvert()}</Text>
-                <ScrollView horizontal={true} style={styles.genreScrollView}>
-                  {data.genres.map(n => (
-                    <TouchableOpacity
-                      key={n.id}
-                      style={styles.genreBox}
-                      onPress={() =>
-                        navigation.push('TvSeriesGenres', {
-                          itemId: n.id,
-                          itemName: n.name,
-                        })
-                      }>
-                      <Text style={styles.genreText2}>{n.name}</Text>
-                    </TouchableOpacity>
-                  ))}
+              <View style={{paddingLeft: 25}}>
+                <BoldText style={styles.title}>{data.name}</BoldText>
+                <View style={{flexDirection: 'row'}}>
+                  <Entypo
+                    name="info"
+                    color={'white'}
+                    size={12}
+                    style={styles.infoIcon}
+                  />
+                  <DefaultText style={styles.info}>
+                    {data.number_of_seasons == 1
+                      ? data.number_of_seasons + ' season'
+                      : data.number_of_seasons + ' seasons'}
+                  </DefaultText>
+                  <DefaultText style={styles.info}>
+                    {data.number_of_episodes + ' episodes'}
+                  </DefaultText>
+                  <Ionicons
+                    name="star"
+                    color={'white'}
+                    size={12}
+                    style={styles.starsIcon}
+                  />
+                  <DefaultText style={styles.stars}>
+                    {data.vote_average + ' (Tmdb)'}
+                  </DefaultText>
+                </View>
+                <Hr />
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{flex: 1}}>
+                    <BoldText>First Air Date</BoldText>
+                    <DefaultText style={styles.releaseDate}>
+                      {dateConvert()}
+                    </DefaultText>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <BoldText>Genre</BoldText>
+                    <ScrollView
+                      horizontal={true}
+                      style={styles.genreScrollView}>
+                      {data.genres &&
+                        data.genres.map(n => (
+                          <TouchableOpacity
+                            key={n.id}
+                            style={styles.genreBox}
+                            onPress={() =>
+                              navigation.push('TvSeriesGenres', {
+                                itemId: n.id,
+                                itemName: n.name,
+                              })
+                            }>
+                            <DefaultText>{n.name}</DefaultText>
+                          </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                  </View>
+                </View>
+                <Hr />
+                <BoldText>Overview</BoldText>
+                <DefaultText style={styles.overview}>
+                  {data.overview}
+                </DefaultText>
+                <Hr />
+                <View style={{flexDirection: 'row'}}>
+                  <BoldText>Cast</BoldText>
+                  <TouchableOpacity
+                    style={styles.seeAllButton}
+                    onPress={() =>
+                      navigation.navigate('ListCast', {
+                        cast: cast,
+                      })
+                    }>
+                    <DefaultText style={{fontSize: 14}}>See All</DefaultText>
+                    <Entypo name="chevron-right" color={'white'} size={14} />
+                  </TouchableOpacity>
+                </View>
+                <ScrollView horizontal={true} style={{marginTop: 10}}>
+                  {cast
+                    .filter((i, index) => index < 5)
+                    .map((n, index) => (
+                      <TouchableOpacity
+                        key={n.id}
+                        style={{marginRight: 25, width: 100}}
+                        // onPress={() =>
+                        //   navigation.push('MovieDetails', {
+                        //     itemId: n.id,
+                        //   })
+                        // }
+                      >
+                        <Image
+                          style={{width: 100, height: 150, borderRadius: 10}}
+                          source={{
+                            uri: n.profile_path
+                              ? apiImgUrl.API_IMAGE_URL +
+                                '/w185' +
+                                n.profile_path
+                              : NO_AVATAR_IMAGE,
+                          }}
+                          resizeMode="contain"
+                        />
+                        <Text
+                          style={{
+                            color: '#ffffff',
+                            textAlign: 'center',
+                            marginTop: 5,
+                          }}>
+                          {n.name}
+                        </Text>
+                        <DefaultText
+                          style={{
+                            fontSize: 10,
+                            textAlign: 'center',
+                            marginTop: 5,
+                          }}>
+                          {n.character}
+                        </DefaultText>
+                      </TouchableOpacity>
+                    ))}
+                </ScrollView>
+                <Hr />
+                <BoldText>Recommendations</BoldText>
+                <ScrollView horizontal={true} style={{marginTop: 10}}>
+                  {recommend
+                    .filter((i, index) => index < 5)
+                    .map((n, index) => (
+                      <TouchableOpacity
+                        key={n.id}
+                        style={{marginRight: 25, width: 150}}
+                        onPress={() =>
+                          navigation.push('TvSeriesDetails', {
+                            itemId: n.id,
+                          })
+                        }>
+                        <Image
+                          style={{width: 150, height: 80, borderRadius: 10}}
+                          source={{
+                            uri: n.backdrop_path
+                              ? apiImgUrl.API_IMAGE_URL +
+                                '/w300' +
+                                n.backdrop_path
+                              : NO_IMAGE,
+                          }}
+                          resizeMode="contain"
+                        />
+                        <Text
+                          style={{
+                            color: '#ffffff',
+                            textAlign: 'center',
+                            marginVertical: 10,
+                          }}>
+                          {n.name}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
                 </ScrollView>
               </View>
-              <Hr />
-              <Text style={styles.overviewText}>Overview</Text>
-              <Text style={styles.overview}>{data.overview}</Text>
-              <Hr />
-              <Text style={styles.rmText}>Recommendations</Text>
-              <ScrollView horizontal={true} style={styles.rmScrollView}>
-                {recommend
-                  .filter((i, index) => index < 5)
-                  .map((n, index) => (
-                    <TouchableOpacity
-                      key={n.id}
-                      style={{marginRight: 25, width: 150}}
-                      onPress={() =>
-                        navigation.push('TvSeriesDetails', {
-                          itemId: n.id,
-                        })
-                      }>
-                      <Image
-                        style={{width: 150, height: 80, borderRadius: 10}}
-                        source={{
-                          uri: n.backdrop_path
-                            ? apiImgUrl.API_IMAGE_URL +
-                              '/w300' +
-                              n.backdrop_path
-                            : NO_IMAGE,
-                        }}
-                        resizeMode="contain"
-                      />
-                      <Text
-                        style={{
-                          color: '#ffffff',
-                          textAlign: 'center',
-                          marginVertical: 10,
-                        }}>
-                        {n.name}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-              </ScrollView>
             </ScrollView>
           </View>
         )}
@@ -238,16 +299,7 @@ const TvSeriesDetails = ({navigation, route}) => {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-      <TouchableOpacity
-        style={[styles.backButton, {left: 0, top: 0}]}
-        onPress={() => navigation.goBack()}>
-        <MaterialIcons
-          name="arrow-back-ios"
-          color={'white'}
-          size={20}
-          style={{paddingLeft: 5}}
-        />
-      </TouchableOpacity>
+      <BackButton style={[styles.backButton, {left: 0, top: 0}]} />
       <Text style={{color: '#ffffff'}}>
         Check your connection and try again.
       </Text>
@@ -261,32 +313,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#15141F',
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
     marginTop: 20,
-    marginLeft: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(52, 52, 52, 0.6)',
     position: 'absolute',
     zIndex: 1,
   },
   title: {
     fontSize: 22,
-    color: '#ffffff',
-    fontFamily: 'Lato-Regular',
-    marginHorizontal: 25,
+    marginRight: 25,
     marginTop: 20,
   },
   infoIcon: {
-    marginLeft: 25,
     marginTop: 15,
   },
   info: {
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Lato-Light',
     marginLeft: 5,
     marginTop: 15,
   },
@@ -295,35 +334,13 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   stars: {
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Lato-Light',
     marginLeft: 5,
     marginTop: 15,
   },
-  releaseDateText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Lato',
-    marginLeft: 25,
-  },
   releaseDate: {
-    flex: 1,
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Lato-Light',
-    marginLeft: 25,
     marginTop: 15,
   },
-  genreText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Lato',
-  },
   genreScrollView: {
-    flex: 1,
     flexDirection: 'row',
     marginTop: 5,
   },
@@ -339,34 +356,15 @@ const styles = StyleSheet.create({
     marginRight: 5,
     paddingHorizontal: 2,
   },
-  genreText2: {
-    fontSize: 12,
-    fontFamily: 'Lato-Light',
-    color: '#ffffff',
-  },
-  overviewText: {
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Lato',
-    marginLeft: 25,
-  },
   overview: {
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Lato-Light',
-    marginLeft: 25,
     marginTop: 5,
     marginRight: 25,
   },
-  rmText: {
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Lato',
-    marginLeft: 25,
-  },
-  rmScrollView: {
-    marginLeft: 25,
-    marginTop: 5,
+  seeAllButton: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    marginRight: 10,
   },
 });
 

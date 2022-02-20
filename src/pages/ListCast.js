@@ -1,23 +1,17 @@
 import {
-  View,
-  Text,
   StyleSheet,
   SafeAreaView,
-  ActivityIndicator,
   FlatList,
   Image,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import React from 'react'
+import {apiImgUrl} from '../../services/api/api';
 import HeaderWithBack from '../components/HeaderWithBack';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
-import NoImage from '../images/noimage.png';
 import NoAvatar from '../images/noavatar.png';
 
-const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
 
 const ListCast = ({route}) => {
