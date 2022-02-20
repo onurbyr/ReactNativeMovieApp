@@ -10,7 +10,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import usePrevious from '../../hooks/usePrevious';
-import BackButton from '../../components/BackButton';
+import HeaderWithBack from '../../components/HeaderWithBack';
 import RenderFooter from '../../components/RenderFooter';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 
@@ -57,10 +57,7 @@ const TvSeriesGenres = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerView}>
-        <BackButton />
-        <Text style={styles.headerText}>{itemName}</Text>
-      </View>
+      <HeaderWithBack>{itemName}</HeaderWithBack>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
@@ -121,17 +118,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#15141F',
-  },
-  headerView: {
-    flexDirection: 'row',
-    marginVertical: 20,
-    alignItems: 'center',
-  },
-  headerText: {
-    flex: 1,
-    color: '#FF7652',
-    fontSize: 26,
-    fontFamily: 'Lato-Regular',
-    marginLeft: 20,
   },
 });

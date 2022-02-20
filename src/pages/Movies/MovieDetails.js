@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import NetInfo from '@react-native-community/netinfo';
 import NoImage from '../../images/noimage.png';
 import NoAvatar from '../../images/noavatar.png';
@@ -185,8 +186,20 @@ const MovieDetails = ({navigation, route}) => {
                   {data.overview}
                 </DefaultText>
                 <Hr />
-                <BoldText>Cast</BoldText>
-                <ScrollView horizontal={true} style={{marginTop: 5}}>
+                <View style={{flexDirection: 'row'}}>
+                  <BoldText>Cast</BoldText>
+                  <TouchableOpacity
+                    style={styles.seeAllButton}
+                    onPress={() =>
+                      navigation.navigate('ListCast', {
+                        cast: cast,
+                      })
+                    }>
+                    <DefaultText style={{fontSize: 14}}>See All</DefaultText>
+                    <Entypo name="chevron-right" color={'white'} size={14} />
+                  </TouchableOpacity>
+                </View>
+                <ScrollView horizontal={true} style={{marginTop: 10}}>
                   {cast
                     .filter((i, index) => index < 5)
                     .map((n, index) => (
@@ -218,12 +231,20 @@ const MovieDetails = ({navigation, route}) => {
                           }}>
                           {n.name}
                         </Text>
+                        <DefaultText
+                          style={{
+                            fontSize: 10,
+                            textAlign: 'center',
+                            marginTop: 5,
+                          }}>
+                          {n.character}
+                        </DefaultText>
                       </TouchableOpacity>
                     ))}
                 </ScrollView>
                 <Hr />
                 <BoldText>Recommendations</BoldText>
-                <ScrollView horizontal={true} style={{marginTop: 5}}>
+                <ScrollView horizontal={true} style={{marginTop: 10}}>
                   {recommend
                     .filter((i, index) => index < 5)
                     .map((n, index) => (
@@ -333,6 +354,12 @@ const styles = StyleSheet.create({
   overview: {
     marginTop: 5,
     marginRight: 25,
+  },
+  seeAllButton: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    marginRight: 10,
   },
 });
 
