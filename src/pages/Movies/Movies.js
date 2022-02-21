@@ -16,6 +16,7 @@ import MovieDetails from './MovieDetails';
 import MoviesGenres from './MoviesGenres';
 import ListCast from '../ListCast';
 import ListRecommends from '../ListRecommends';
+import Videos from '../Videos';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -213,6 +214,7 @@ const Movies = ({navigation, route}) => {
       'MoviesGenres',
       'ListCast',
       'ListRecommends',
+      'Videos'
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -253,6 +255,11 @@ const Movies = ({navigation, route}) => {
         <MoviesStack.Screen
           name="ListRecommends"
           component={ListRecommends}
+          options={{headerShown: false}}
+        />
+        <MoviesStack.Screen
+          name="Videos"
+          component={Videos}
           options={{headerShown: false}}
         />
       </MoviesStack.Navigator>

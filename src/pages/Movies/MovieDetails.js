@@ -28,6 +28,7 @@ const MovieDetails = ({navigation, route}) => {
   const [isConnected, setConnected] = useState(true);
   const [recommend, setRecommend] = useState([]);
   const [cast, setCast] = useState([]);
+  const [videos, setVideos] = useState([]);
 
   const {itemId} = route.params;
 
@@ -60,6 +61,11 @@ const MovieDetails = ({navigation, route}) => {
         api_key: apiKey.API_KEY,
       },
     }),
+    api.get('/movie/' + itemId + '/videos', {
+      params: {
+        api_key: apiKey.API_KEY,
+      },
+    }),
   ];
   const multipleRequests = () => {
     Promise.all(concurrentRequests)
@@ -67,6 +73,7 @@ const MovieDetails = ({navigation, route}) => {
         setData(result[0].data);
         setRecommend(result[1].data.results);
         setCast(result[2].data.cast);
+        setVideos(result[3].data.results);
       })
       .catch(err => {
         console.log(err.message);
@@ -239,6 +246,41 @@ const MovieDetails = ({navigation, route}) => {
                           }}>
                           {n.character}
                         </DefaultText>
+                      </TouchableOpacity>
+                    ))}
+                </ScrollView>
+                <BoldText>Videos</BoldText>
+                <ScrollView horizontal={true} style={{marginTop: 10}}>
+                  {videos
+                    .filter((i, index) => index < 5)
+                    .map((n, index) => (
+                      <TouchableOpacity
+                        key={n.id}
+                        style={{marginRight: 25, width: 200}}
+                        onPress={() =>
+                          navigation.navigate('Videos', {
+                            itemId: n.key,
+                          })
+                        }
+                      >
+                        <Image
+                          style={{width: 200, height: 150, borderRadius: 10}}
+                          source={{
+                            uri:
+                              'http://img.youtube.com/vi/' +
+                              n.key +
+                              '/hqdefault.jpg',
+                          }}
+                          resizeMode="contain"
+                        />
+                        <Text
+                          style={{
+                            color: '#ffffff',
+                            textAlign: 'center',
+                            marginTop: 5,
+                          }}>
+                          {n.name}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                 </ScrollView>
