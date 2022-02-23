@@ -1,10 +1,12 @@
-import {StyleSheet, Text, View, StatusBar} from 'react-native';
+import {StyleSheet, View, StatusBar} from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
 import BackButton from '../components/BackButton';
+import WebViewActivityIndicator from '../components/WebViewActivityIndicator';
 import {WebView} from 'react-native-webview';
 
 const Videos = ({route}) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [loading, setLoading] = useState(false);
   const {itemId} = route.params;
   const INJECTEDJAVASCRIPT = `const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); `;
 
@@ -19,8 +21,10 @@ const Videos = ({route}) => {
 
   const setBackButtonVisibility = () => {
     setIsVisible(true);
+    clearTimeout(timerRef.current);
     delaySetVisible();
   };
+
   return (
     <View
       style={styles.container}
@@ -49,7 +53,10 @@ const Videos = ({route}) => {
         source={{
           uri: `https://www.youtube.com/embed/${itemId}?controls=1&fs=0&modestbranding=1`,
         }}
+        onLoadStart={() => setLoading(true)}
+        onLoad={() => setLoading(false)}
       />
+      {loading ? <WebViewActivityIndicator /> : null}
     </View>
   );
 };

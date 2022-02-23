@@ -249,7 +249,20 @@ const MovieDetails = ({navigation, route}) => {
                       </TouchableOpacity>
                     ))}
                 </ScrollView>
-                <BoldText>Videos</BoldText>
+                <Hr />
+                <View style={{flexDirection: 'row'}}>
+                  <BoldText>Videos</BoldText>
+                  <TouchableOpacity
+                    style={styles.seeAllButton}
+                    onPress={() =>
+                      navigation.navigate('ListVideos', {
+                        videos,
+                      })
+                    }>
+                    <DefaultText style={{fontSize: 14}}>See All</DefaultText>
+                    <Entypo name="chevron-right" color={'white'} size={14} />
+                  </TouchableOpacity>
+                </View>
                 <ScrollView horizontal={true} style={{marginTop: 10}}>
                   {videos
                     .filter((i, index) => index < 5)
@@ -261,8 +274,7 @@ const MovieDetails = ({navigation, route}) => {
                           navigation.navigate('Videos', {
                             itemId: n.key,
                           })
-                        }
-                      >
+                        }>
                         <Image
                           style={{width: 200, height: 150, borderRadius: 10}}
                           source={{
