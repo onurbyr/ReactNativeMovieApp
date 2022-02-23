@@ -188,163 +188,215 @@ const MovieDetails = ({navigation, route}) => {
                   </View>
                 </View>
                 <Hr />
-                <BoldText>Overview</BoldText>
-                <DefaultText style={styles.overview}>
-                  {data.overview}
-                </DefaultText>
-                <Hr />
-                <View style={{flexDirection: 'row'}}>
-                  <BoldText>Cast</BoldText>
-                  <TouchableOpacity
-                    style={styles.seeAllButton}
-                    onPress={() =>
-                      navigation.navigate('ListCast', {
-                        cast: cast,
-                      })
-                    }>
-                    <DefaultText style={{fontSize: 14}}>See All</DefaultText>
-                    <Entypo name="chevron-right" color={'white'} size={14} />
-                  </TouchableOpacity>
-                </View>
-                <ScrollView horizontal={true} style={{marginTop: 10}}>
-                  {cast
-                    .filter((i, index) => index < 5)
-                    .map((n, index) => (
-                      <TouchableOpacity
-                        key={n.id}
-                        style={{marginRight: 25, width: 100}}
-                        // onPress={() =>
-                        //   navigation.push('MovieDetails', {
-                        //     itemId: n.id,
-                        //   })
-                        // }
-                      >
-                        <Image
-                          style={{width: 100, height: 150, borderRadius: 10}}
-                          source={{
-                            uri: n.profile_path
-                              ? apiImgUrl.API_IMAGE_URL +
-                                '/w185' +
-                                n.profile_path
-                              : NO_AVATAR_IMAGE,
-                          }}
-                          resizeMode="contain"
-                        />
-                        <Text
-                          style={{
-                            color: '#ffffff',
-                            textAlign: 'center',
-                            marginTop: 5,
-                          }}>
-                          {n.name}
-                        </Text>
-                        <DefaultText
-                          style={{
-                            fontSize: 10,
-                            textAlign: 'center',
-                            marginTop: 5,
-                          }}>
-                          {n.character}
-                        </DefaultText>
-                      </TouchableOpacity>
-                    ))}
-                </ScrollView>
-                <Hr />
-                <View style={{flexDirection: 'row'}}>
-                  <BoldText>Videos</BoldText>
-                  <TouchableOpacity
-                    style={styles.seeAllButton}
-                    onPress={() =>
-                      navigation.navigate('ListVideos', {
-                        videos,
-                      })
-                    }>
-                    <DefaultText style={{fontSize: 14}}>See All</DefaultText>
-                    <Entypo name="chevron-right" color={'white'} size={14} />
-                  </TouchableOpacity>
-                </View>
-                <ScrollView horizontal={true} style={{marginTop: 10}}>
-                  {videos
-                    .filter((i, index) => index < 5)
-                    .map((n, index) => (
-                      <TouchableOpacity
-                        key={n.id}
-                        style={{marginRight: 25, width: 200}}
-                        onPress={() =>
-                          navigation.navigate('Videos', {
-                            itemId: n.key,
-                          })
-                        }>
-                        <Image
-                          style={{width: 200, height: 150, borderRadius: 10}}
-                          source={{
-                            uri:
-                              'http://img.youtube.com/vi/' +
-                              n.key +
-                              '/hqdefault.jpg',
-                          }}
-                          resizeMode="contain"
-                        />
-                        <Text
-                          style={{
-                            color: '#ffffff',
-                            textAlign: 'center',
-                            marginTop: 5,
-                          }}>
-                          {n.name}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                </ScrollView>
-                <Hr />
-                <View style={{flexDirection: 'row'}}>
-                  <BoldText>Recommendations</BoldText>
-                  <TouchableOpacity
-                    style={styles.seeAllButton}
-                    onPress={() =>
-                      navigation.push('ListRecommends', {
-                        itemId: data.id,
-                        recommendType: 'movie',
-                      })
-                    }>
-                    <DefaultText style={{fontSize: 14}}>See All</DefaultText>
-                    <Entypo name="chevron-right" color={'white'} size={14} />
-                  </TouchableOpacity>
-                </View>
-                <ScrollView horizontal={true} style={{marginTop: 10}}>
-                  {recommend
-                    .filter((i, index) => index < 5)
-                    .map((n, index) => (
-                      <TouchableOpacity
-                        key={n.id}
-                        style={{marginRight: 25, width: 150}}
-                        onPress={() =>
-                          navigation.push('MovieDetails', {
-                            itemId: n.id,
-                          })
-                        }>
-                        <Image
-                          style={{width: 150, height: 80, borderRadius: 10}}
-                          source={{
-                            uri: n.backdrop_path
-                              ? apiImgUrl.API_IMAGE_URL +
-                                '/w300' +
-                                n.backdrop_path
-                              : NO_IMAGE,
-                          }}
-                          resizeMode="contain"
-                        />
-                        <Text
-                          style={{
-                            color: '#ffffff',
-                            textAlign: 'center',
-                            marginVertical: 10,
-                          }}>
-                          {n.title}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                </ScrollView>
+                {Object.keys(data.overview).length > 0 && (
+                  //Overview
+                  <View>
+                    <BoldText>Overview</BoldText>
+                    <DefaultText style={styles.overview}>
+                      {data.overview}
+                    </DefaultText>
+                    <Hr />
+                  </View>
+                )}
+                {Object.keys(cast).length > 0 && (
+                  //Cast
+                  <View>
+                    <View style={{flexDirection: 'row'}}>
+                      <BoldText>Cast</BoldText>
+                      {Object.keys(cast).length > 5 && (
+                        <TouchableOpacity
+                          style={styles.seeAllButton}
+                          onPress={() =>
+                            navigation.navigate('ListCast', {
+                              cast: cast,
+                            })
+                          }>
+                          <DefaultText style={{fontSize: 14}}>
+                            See All
+                          </DefaultText>
+                          <Entypo
+                            name="chevron-right"
+                            color={'white'}
+                            size={14}
+                          />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    <ScrollView horizontal={true} style={{marginTop: 10}}>
+                      {cast
+                        .filter((i, index) => index < 5)
+                        .map((n, index) => (
+                          <TouchableOpacity
+                            key={n.id}
+                            style={{marginRight: 25, width: 100}}
+                            // onPress={() =>
+                            //   navigation.push('MovieDetails', {
+                            //     itemId: n.id,
+                            //   })
+                            // }
+                          >
+                            <Image
+                              style={{
+                                width: 100,
+                                height: 150,
+                                borderRadius: 10,
+                              }}
+                              source={{
+                                uri: n.profile_path
+                                  ? apiImgUrl.API_IMAGE_URL +
+                                    '/w185' +
+                                    n.profile_path
+                                  : NO_AVATAR_IMAGE,
+                              }}
+                              resizeMode="contain"
+                            />
+                            <Text
+                              style={{
+                                color: '#ffffff',
+                                textAlign: 'center',
+                                marginTop: 5,
+                              }}>
+                              {n.name}
+                            </Text>
+                            <DefaultText
+                              style={{
+                                fontSize: 10,
+                                textAlign: 'center',
+                                marginTop: 5,
+                              }}>
+                              {n.character}
+                            </DefaultText>
+                          </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                    <Hr />
+                  </View>
+                )}
+                {Object.keys(videos).length > 0 && (
+                  //Videos
+                  <View>
+                    <View style={{flexDirection: 'row'}}>
+                      <BoldText>Videos</BoldText>
+                      {Object.keys(videos).length > 5 && (
+                        <TouchableOpacity
+                          style={styles.seeAllButton}
+                          onPress={() =>
+                            navigation.navigate('ListVideos', {
+                              videos,
+                            })
+                          }>
+                          <DefaultText style={{fontSize: 14}}>
+                            See All
+                          </DefaultText>
+                          <Entypo
+                            name="chevron-right"
+                            color={'white'}
+                            size={14}
+                          />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    <ScrollView horizontal={true} style={{marginTop: 10}}>
+                      {videos
+                        .filter((i, index) => index < 5)
+                        .map((n, index) => (
+                          <TouchableOpacity
+                            key={n.id}
+                            style={{marginRight: 25, width: 200}}
+                            onPress={() =>
+                              navigation.navigate('Videos', {
+                                itemId: n.key,
+                              })
+                            }>
+                            <Image
+                              style={{
+                                width: 200,
+                                height: 150,
+                                borderRadius: 10,
+                              }}
+                              source={{
+                                uri:
+                                  'http://img.youtube.com/vi/' +
+                                  n.key +
+                                  '/hqdefault.jpg',
+                              }}
+                              resizeMode="contain"
+                            />
+                            <Text
+                              style={{
+                                color: '#ffffff',
+                                textAlign: 'center',
+                                marginTop: 5,
+                              }}>
+                              {n.name}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                    <Hr />
+                  </View>
+                )}
+                {Object.keys(recommend).length > 0 && (
+                  //Recommendations
+                  <View>
+                    <View style={{flexDirection: 'row'}}>
+                      <BoldText>Recommendations</BoldText>
+                      {Object.keys(recommend).length > 5 && (
+                        <TouchableOpacity
+                          style={styles.seeAllButton}
+                          onPress={() =>
+                            navigation.push('ListRecommends', {
+                              itemId: data.id,
+                              recommendType: 'movie',
+                            })
+                          }>
+                          <DefaultText style={{fontSize: 14}}>
+                            See All
+                          </DefaultText>
+                          <Entypo
+                            name="chevron-right"
+                            color={'white'}
+                            size={14}
+                          />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    <ScrollView horizontal={true} style={{marginTop: 10}}>
+                      {recommend
+                        .filter((i, index) => index < 5)
+                        .map((n, index) => (
+                          <TouchableOpacity
+                            key={n.id}
+                            style={{marginRight: 25, width: 150}}
+                            onPress={() =>
+                              navigation.push('MovieDetails', {
+                                itemId: n.id,
+                              })
+                            }>
+                            <Image
+                              style={{width: 150, height: 80, borderRadius: 10}}
+                              source={{
+                                uri: n.backdrop_path
+                                  ? apiImgUrl.API_IMAGE_URL +
+                                    '/w300' +
+                                    n.backdrop_path
+                                  : NO_IMAGE,
+                              }}
+                              resizeMode="contain"
+                            />
+                            <Text
+                              style={{
+                                color: '#ffffff',
+                                textAlign: 'center',
+                                marginVertical: 10,
+                              }}>
+                              {n.title}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                  </View>
+                )}
               </View>
             </ScrollView>
           </View>
