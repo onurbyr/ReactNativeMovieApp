@@ -22,6 +22,8 @@ import MoviesGenres from './Movies/MoviesGenres';
 import TvSeriesGenres from './TvSeries/TvSeriesGenres';
 import ListCast from './ListCast';
 import ListRecommends from './ListRecommends';
+import Videos from './Videos';
+import ListVideos from './ListVideos';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -304,6 +306,8 @@ const Search = ({navigation, route}) => {
       'TvSeriesGenres',
       'ListCast',
       'ListRecommends',
+      'Videos',
+      'ListVideos',
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -354,6 +358,16 @@ const Search = ({navigation, route}) => {
         <SearchStack.Screen
           name="ListRecommends"
           component={ListRecommends}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="Videos"
+          component={Videos}
+          options={{headerShown: false, orientation: 'landscape'}}
+        />
+        <SearchStack.Screen
+          name="ListVideos"
+          component={ListVideos}
           options={{headerShown: false}}
         />
       </SearchStack.Navigator>
