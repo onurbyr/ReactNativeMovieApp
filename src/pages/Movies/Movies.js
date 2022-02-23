@@ -214,7 +214,7 @@ const Movies = ({navigation, route}) => {
       'MoviesGenres',
       'ListCast',
       'ListRecommends',
-      'Videos'
+      'Videos',
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -260,7 +260,7 @@ const Movies = ({navigation, route}) => {
         <MoviesStack.Screen
           name="Videos"
           component={Videos}
-          options={{headerShown: false}}
+          options={{headerShown: false, orientation: 'landscape'}}
         />
       </MoviesStack.Navigator>
     </View>
