@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Image} from 'react-native';
 import StarsImages from './StarsImages';
 
-const Stars = ({count}) => {
+const Stars = ({count, size}) => {
   const getIntegerPart = num => {
     const decimalStr = num.toString().split('.')[0];
     return Number(decimalStr);
@@ -22,18 +22,22 @@ const Stars = ({count}) => {
   const integer = getIntegerPart(halfstars);
   const decimal = getDecimalPart(halfstars);
 
+  if (!size) {
+    size = 12;
+  }
+
   return (
     <View style={{flexDirection: 'row'}}>
       {[...Array(integer)].map((e, i) => (
         <Image
           key={i}
-          style={{width: 15, height: 14, marginRight: 1}}
+          style={{width: size, height: size, marginRight: 2}}
           source={require('../../images/stars/10.png')}
         />
       ))}
       {decimal !== 0 && (
         <Image
-          style={{width: 15, height: 14, marginRight: 1}}
+          style={{width: size, height: size, marginRight: 1}}
           source={StarsImages[decimal]}
         />
       )}

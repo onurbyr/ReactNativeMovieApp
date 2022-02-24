@@ -95,7 +95,7 @@ const TvSeriesGenres = ({route, navigation}) => {
                 style={{flex: 1, justifyContent: 'flex-end', marginLeft: 10}}>
                 <Text style={{color: 'white', fontSize: 22}}>{item.name}</Text>
                 <View style={{flexDirection: 'row', marginTop: 5}}>
-                  <Stars count={item.vote_average} />
+                  <Stars count={item.vote_average} size={14} />
                   <Text style={{color: '#FF7652', fontSize: 12, marginLeft: 5}}>
                     {item.vote_average}/10 TMDB
                   </Text>
