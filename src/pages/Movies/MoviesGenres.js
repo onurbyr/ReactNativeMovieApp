@@ -12,7 +12,7 @@ import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import usePrevious from '../../hooks/usePrevious';
 import HeaderWithBack from '../../components/HeaderWithBack';
 import RenderFooter from '../../components/RenderFooter';
-import Fontisto from 'react-native-vector-icons/Fontisto';
+import Stars from '../../components/Stars/Stars';
 
 const MoviesGenres = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -95,7 +95,7 @@ const MoviesGenres = ({route, navigation}) => {
                 style={{flex: 1, justifyContent: 'flex-end', marginLeft: 10}}>
                 <Text style={{color: 'white', fontSize: 22}}>{item.title}</Text>
                 <View style={{flexDirection: 'row', marginTop: 5}}>
-                  <Fontisto name="star" color={'#FF7652'} size={12} />
+                  <Stars count={item.vote_average} />
                   <Text style={{color: '#FF7652', fontSize: 12, marginLeft: 5}}>
                     {item.vote_average}/10 TMDB
                   </Text>
