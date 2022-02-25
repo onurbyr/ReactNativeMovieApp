@@ -29,7 +29,7 @@ const MoviesGenres = ({route, navigation}) => {
   //getdata with axios
   const getItems = async () => {
     try {
-      const response = await api.get('/discover/movie/', {
+      const response = await api.get('/discover/movie', {
         params: {
           api_key: apiKey.API_KEY,
           page,

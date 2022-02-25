@@ -37,10 +37,7 @@ const ListVideos = ({route, navigation}) => {
                 height: 720 * ratio, //720 is actual height of image
               }}
               source={{
-                uri:
-                  'http://img.youtube.com/vi/' +
-                  item.key +
-                  '/maxresdefault.jpg',
+                uri: `https://img.youtube.com/vi/${item.key}/maxresdefault.jpg`,
               }}
             />
             <BoldText style={styles.itemsText}>{item.name}</BoldText>

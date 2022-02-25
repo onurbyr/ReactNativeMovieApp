@@ -29,7 +29,7 @@ const TvSeriesGenres = ({route, navigation}) => {
   //getdata with axios
   const getItems = async () => {
     try {
-      const response = await api.get('/discover/tv/', {
+      const response = await api.get('/discover/tv', {
         params: {
           api_key: apiKey.API_KEY,
           page,

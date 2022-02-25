@@ -315,10 +315,7 @@ const MovieDetails = ({navigation, route}) => {
                                 borderRadius: 10,
                               }}
                               source={{
-                                uri:
-                                  'http://img.youtube.com/vi/' +
-                                  n.key +
-                                  '/hqdefault.jpg',
+                                uri: `https://img.youtube.com/vi/${n.key}/hqdefault.jpg`,
                               }}
                               resizeMode="contain"
                             />
