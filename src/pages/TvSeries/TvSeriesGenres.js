@@ -112,11 +112,11 @@ const TvSeriesGenres = ({route, navigation}) => {
   );
 };
 
-export default TvSeriesGenres;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#15141F',
   },
 });
+
+export default TvSeriesGenres;

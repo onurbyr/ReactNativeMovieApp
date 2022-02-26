@@ -112,11 +112,11 @@ const MoviesGenres = ({route, navigation}) => {
   );
 };
 
-export default MoviesGenres;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#15141F',
   },
 });
+
+export default MoviesGenres;
