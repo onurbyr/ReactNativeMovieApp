@@ -21,6 +21,7 @@ import ListVideos from '../ListVideos';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
+import Stars from '../../components/Stars/Stars';
 
 const MoviesScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -135,7 +136,10 @@ const MoviesScreen = ({navigation}) => {
                 }}
               />
               <Text style={styles.itemsText}>{item.title}</Text>
-              <Text style={styles.itemsText2}>{item.vote_average}</Text>
+              <View style={{flexDirection:'row',marginTop: 5}}>
+                <Stars count={item.vote_average} size={15} />
+                <Text style={styles.itemsText2}>{item.vote_average}</Text>
+              </View>
             </TouchableOpacity>
           )}
         />
@@ -197,12 +201,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#ffffff',
     textAlign: 'center',
+    width:150
   },
   itemsText2: {
-    marginTop: 5,
     fontSize: 12,
     color: '#ffffff',
     textAlign: 'center',
+    marginLeft:3,
   },
 });
 
