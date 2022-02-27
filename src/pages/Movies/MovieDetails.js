@@ -219,11 +219,11 @@ const MovieDetails = ({navigation, route}) => {
                         <TouchableOpacity
                           key={n.id}
                           style={{marginRight: 25, width: 100}}
-                          // onPress={() =>
-                          //   navigation.push('MovieDetails', {
-                          //     itemId: n.id,
-                          //   })
-                          // }
+                          onPress={() =>
+                            navigation.push('PeopleDetails', {
+                              itemId: n.id,
+                            })
+                          }
                         >
                           <Image
                             style={{

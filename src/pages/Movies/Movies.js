@@ -18,6 +18,7 @@ import ListCast from '../ListCast';
 import ListRecommends from '../ListRecommends';
 import Videos from '../Videos';
 import ListVideos from '../ListVideos';
+import PeopleDetails from '../PeopleDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -136,7 +137,7 @@ const MoviesScreen = ({navigation}) => {
                 }}
               />
               <Text style={styles.itemsText}>{item.title}</Text>
-              <View style={{flexDirection:'row',marginTop: 5}}>
+              <View style={{flexDirection: 'row', marginTop: 5}}>
                 <Stars count={item.vote_average} size={15} />
                 <Text style={styles.itemsText2}>{item.vote_average}</Text>
               </View>
@@ -201,13 +202,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#ffffff',
     textAlign: 'center',
-    width:150
+    width: 150,
   },
   itemsText2: {
     fontSize: 12,
     color: '#ffffff',
     textAlign: 'center',
-    marginLeft:3,
+    marginLeft: 3,
   },
 });
 
@@ -222,6 +223,7 @@ const Movies = ({navigation, route}) => {
       'ListRecommends',
       'Videos',
       'ListVideos',
+      'PeopleDetails',
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -272,6 +274,11 @@ const Movies = ({navigation, route}) => {
         <MoviesStack.Screen
           name="ListVideos"
           component={ListVideos}
+          options={{headerShown: false}}
+        />
+        <MoviesStack.Screen
+          name="PeopleDetails"
+          component={PeopleDetails}
           options={{headerShown: false}}
         />
       </MoviesStack.Navigator>
