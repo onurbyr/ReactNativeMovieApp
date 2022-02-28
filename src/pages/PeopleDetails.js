@@ -5,17 +5,21 @@ import {
   SafeAreaView,
   ActivityIndicator,
   ToastAndroid,
+  Image,
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
 import BackButton from '../components/BackButton';
+import NoAvatar from '../images/noavatar.png';
 
 const PeopleDetails = ({route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const {itemId} = route.params;
+  const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
 
   useEffect(() => {
     getItems();
@@ -45,7 +49,34 @@ const PeopleDetails = ({route}) => {
       ) : (
         <View style={styles.container}>
           <BackButton style={styles.backButton} />
-          <BoldText>People</BoldText>
+          <ScrollView>
+            <Image
+              source={{
+                uri: data.profile_path
+                  ? apiImgUrl.API_IMAGE_URL + '/h632' + data.profile_path
+                  : NO_AVATAR_IMAGE,
+              }}
+              resizeMode={data.profile_path ? 'cover' : 'center'}
+              blurRadius={5}
+              style={{height: 250}}
+            />
+            <View style={styles.info}>
+              <View style={{flexDirection: 'row'}}>
+                <Image
+                  source={{
+                    uri: data.profile_path
+                      ? apiImgUrl.API_IMAGE_URL + '/w500' + data.profile_path
+                      : NO_AVATAR_IMAGE,
+                  }}
+                  resizeMode={data.profile_path ? 'cover' : 'center'}
+                  style={styles.profileImage}
+                />
+                <View style={styles.imageLeftPanel}>
+                  <BoldText>{data.name}</BoldText>
+                </View>
+              </View>
+            </View>
+          </ScrollView>
         </View>
       )}
     </SafeAreaView>
@@ -63,5 +94,22 @@ const styles = StyleSheet.create({
     marginTop: 20,
     position: 'absolute',
     zIndex: 1,
+  },
+  info: {
+    marginTop: -20,
+    borderRadius: 20,
+    backgroundColor: '#15141F',
+    paddingHorizontal: 20,
+  },
+  profileImage: {
+    width: 120,
+    height: 180,
+    borderRadius: 10,
+    marginTop: -50,
+  },
+  imageLeftPanel: {
+    flex: 1,
+    paddingLeft: 20,
+    paddingTop: 20,
   },
 });
