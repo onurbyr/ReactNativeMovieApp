@@ -16,13 +16,13 @@ export default HeaderWithBack;
 const styles = StyleSheet.create({
   headerView: {
     flexDirection: 'row',
-    marginVertical: 20,
+    marginVertical: 15,
     alignItems: 'center',
   },
   headerText: {
     flex: 1,
     color: '#dddddd',
-    fontSize: 26,
+    fontSize: 22,
     fontFamily: 'Lato-Regular',
     marginLeft: 20,
   },

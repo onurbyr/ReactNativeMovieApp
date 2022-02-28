@@ -36,7 +36,7 @@ const ListRecommends = ({navigation, route}) => {
   const getItems = async () => {
     try {
       const response = await api.get(
-        '/' + recommendType + '/' + itemId + '/recommendations',
+        `/${recommendType}/${itemId}/recommendations`,
         {
           params: {
             api_key: apiKey.API_KEY,

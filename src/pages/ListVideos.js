@@ -6,16 +6,16 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import HeaderWithBack from '../components/HeaderWithBack';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
+import useOrientation from '../hooks/useOrientation';
 
 const ListVideos = ({route, navigation}) => {
   const {videos} = route.params;
-
-  const win = Dimensions.get('window');
-  const ratio = win.width / 1280; //1280 is actual image width
+  const [imageWidth, setImageWidth] = useState(Dimensions.get('window').width);
+  const orientation = useOrientation(setImageWidth);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -32,9 +32,12 @@ const ListVideos = ({route, navigation}) => {
               })
             }>
             <Image
+              resizeMode="contain"
               style={{
-                width: win.width,
-                height: 720 * ratio, //720 is actual height of image
+                width: imageWidth,
+                height:
+                  orientation == 'PORTRAIT' ? (imageWidth / 1280) * 720 : 200,
+                borderRadius: 10,
               }}
               source={{
                 uri: `https://img.youtube.com/vi/${item.key}/maxresdefault.jpg`,
