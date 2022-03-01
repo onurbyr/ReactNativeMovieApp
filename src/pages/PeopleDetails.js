@@ -178,20 +178,21 @@ const PeopleDetails = ({route, navigation}) => {
                       {textShown ? 'Read less...' : 'Read more...'}
                     </Text>
                   ) : null}
-                  <Hr />
                 </View>
               )}
               {Object.keys(movieCredits).length > 0 && (
                 //movieCredits
                 <View>
+                  <Hr />
                   <View style={{flexDirection: 'row'}}>
                     <BoldText>Movie Credits</BoldText>
                     {Object.keys(movieCredits).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
                         onPress={() =>
-                          navigation.push('MovieDetails', {
-                            itemId: movieCredits.id,
+                          navigation.push('ListCredits', {
+                            itemId: data.id,
+                            creditType: 'movie',
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
@@ -239,7 +240,68 @@ const PeopleDetails = ({route, navigation}) => {
                         </TouchableOpacity>
                       ))}
                   </ScrollView>
+                </View>
+              )}
+              {Object.keys(tvCredits).length > 0 && (
+                //tvCredits
+                <View>
                   <Hr />
+                  <View style={{flexDirection: 'row'}}>
+                    <BoldText>Tv Credits</BoldText>
+                    {Object.keys(tvCredits).length > 5 && (
+                      <TouchableOpacity
+                        style={styles.seeAllButton}
+                        onPress={() =>
+                          navigation.push('ListCredits', {
+                            itemId: data.id,
+                            creditType: 'tv',
+                          })
+                        }>
+                        <DefaultText style={{fontSize: 14}}>
+                          See All
+                        </DefaultText>
+                        <Entypo
+                          name="chevron-right"
+                          color={'white'}
+                          size={14}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <ScrollView horizontal={true} style={{marginTop: 10}}>
+                    {tvCredits
+                      .filter((i, index) => index < 5)
+                      .map((n, index) => (
+                        <TouchableOpacity
+                          key={n.id}
+                          style={{marginRight: 25, width: 150}}
+                          onPress={() =>
+                            navigation.push('TvSeriesDetails', {
+                              itemId: n.id,
+                            })
+                          }>
+                          <Image
+                            style={{width: 150, height: 80, borderRadius: 10}}
+                            source={{
+                              uri: n.backdrop_path
+                                ? apiImgUrl.API_IMAGE_URL +
+                                  '/w300' +
+                                  n.backdrop_path
+                                : NO_IMAGE,
+                            }}
+                            resizeMode="contain"
+                          />
+                          <BoldText
+                            style={{
+                              textAlign: 'center',
+                              marginVertical: 10,
+                              fontSize: 12,
+                            }}>
+                            {n.name}
+                          </BoldText>
+                        </TouchableOpacity>
+                      ))}
+                  </ScrollView>
                 </View>
               )}
             </View>

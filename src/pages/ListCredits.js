@@ -9,39 +9,32 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
-import usePrevious from '../hooks/usePrevious';
 import HeaderWithBack from '../components/HeaderWithBack';
-import RenderFooter from '../components/RenderFooter';
 import Stars from '../components/Stars/Stars';
+import NoImage from '../images/noimage.png';
 
-const Genres = ({route, navigation}) => {
+const ListCredits = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const prevPage = usePrevious(page);
-  const [isExtraLoading, setIsExtraLoading] = useState(true);
-  const {itemId, itemName, genreType} = route.params;
+  const {itemId, itemName, creditType} = route.params;
+  const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
   useEffect(() => {
     getItems();
-  }, [page]);
+  }, []);
 
   //getdata with axios
   const getItems = async () => {
     try {
-      const response = await api.get('/discover/' + genreType, {
-        params: {
-          api_key: apiKey.API_KEY,
-          page,
-          with_genres: itemId,
+      const response = await api.get(
+        `/person/${itemId}/${creditType}_credits`,
+        {
+          params: {
+            api_key: apiKey.API_KEY,
+          },
         },
-      });
-      if (prevPage == page - 1) {
-        setData([...data, ...response.data.results]);
-        setIsExtraLoading(false);
-      } else {
-        setData(response.data.results);
-      }
+      );
+      setData(response.data.cast);
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -63,17 +56,12 @@ const Genres = ({route, navigation}) => {
       ) : (
         <FlatList
           data={data}
-          onEndReached={() => {
-            setPage(page + 1);
-            setIsExtraLoading(true);
-          }}
-          keyExtractor={({id}) => id}
-          ListFooterComponent={RenderFooter(isExtraLoading)}
+          keyExtractor={(item, index) => String(index)}
           renderItem={({item}) => (
             <TouchableOpacity
               style={styles.touchableOpacityView}
               onPress={() =>
-                genreType == 'movie'
+                creditType == 'movie'
                   ? navigation.push('MovieDetails', {
                       itemId: item.id,
                     })
@@ -92,7 +80,7 @@ const Genres = ({route, navigation}) => {
               />
               <View style={styles.imageRight}>
                 <Text style={{color: 'white', fontSize: 18}}>
-                  {genreType == 'movie' ? item.title : item.name}
+                  {creditType == 'movie' ? item.title : item.name}
                 </Text>
                 <View style={{flexDirection: 'row', marginTop: 5}}>
                   <Stars count={item.vote_average} size={14} />
@@ -102,7 +90,7 @@ const Genres = ({route, navigation}) => {
                 </View>
                 <Text style={{color: 'white', fontSize: 12, marginTop: 5}}>
                   {dateConvert(
-                    genreType == 'movie'
+                    creditType == 'movie'
                       ? item.release_date
                       : item.first_air_date,
                   )}
@@ -144,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Genres;
+export default ListCredits;
