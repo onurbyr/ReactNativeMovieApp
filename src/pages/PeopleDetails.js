@@ -39,6 +39,18 @@ const PeopleDetails = ({route}) => {
       ToastAndroid.show(error.message, ToastAndroid.SHORT);
     }
   };
+
+  const getAge = dateString => {
+    let today = new Date();
+    let birthDate = new Date(dateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    let m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {isLoading ? (
@@ -73,8 +85,40 @@ const PeopleDetails = ({route}) => {
                 />
                 <View style={styles.imageLeftPanel}>
                   <BoldText>{data.name}</BoldText>
+                  <View style={styles.imageLeftPanelItems}>
+                    <DefaultText style={{color: '#B6B6B6'}}>
+                      Known For:
+                    </DefaultText>
+                    <DefaultText style={styles.imageLeftPanelItemsText}>
+                      {data.known_for_department}
+                    </DefaultText>
+                  </View>
+                  <View style={styles.imageLeftPanelItems}>
+                    <DefaultText style={{color: '#B6B6B6'}}>
+                      Gender:
+                    </DefaultText>
+                    <DefaultText style={styles.imageLeftPanelItemsText}>
+                      {data.gender == 1 ? 'Female' : ' Male'}
+                    </DefaultText>
+                  </View>
+                  <View style={styles.imageLeftPanelItems}>
+                    <DefaultText style={{color: '#B6B6B6'}}>Age:</DefaultText>
+                    <DefaultText style={styles.imageLeftPanelItemsText}>
+                      {getAge(data.birthday)}
+                    </DefaultText>
+                  </View>
+                  <View style={styles.imageLeftPanelItems}>
+                    <DefaultText style={{color: '#B6B6B6'}}>
+                      Place of Birth:
+                    </DefaultText>
+                    <DefaultText style={styles.imageLeftPanelItemsText}>
+                      {data.place_of_birth ? data.place_of_birth : '-'}
+                    </DefaultText>
+                  </View>
                 </View>
               </View>
+              <BoldText style={{marginTop:20}}>Biography</BoldText>
+              <DefaultText style={{marginTop:5,color: '#B6B6B6'}}>{data.biography}</DefaultText>
             </View>
           </ScrollView>
         </View>
@@ -111,5 +155,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 20,
     paddingTop: 20,
+  },
+  imageLeftPanelItems: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  imageLeftPanelItemsText: {
+    flex: 1,
+    color: '#B6B6B6',
+    marginLeft: 2,
   },
 });
