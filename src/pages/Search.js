@@ -18,8 +18,7 @@ import NoAvatar from '../images/noavatar.png';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './Movies/MovieDetails';
 import TvSeriesDetails from './TvSeries/TvSeriesDetails';
-import MoviesGenres from './Movies/MoviesGenres';
-import TvSeriesGenres from './TvSeries/TvSeriesGenres';
+import Genres from './Genres';
 import ListCast from './ListCast';
 import ListRecommends from './ListRecommends';
 import Videos from './Videos';
@@ -302,8 +301,7 @@ const Search = ({navigation, route}) => {
     const tabHiddenRoutes = [
       'MovieDetails',
       'TvSeriesDetails',
-      'MoviesGenres',
-      'TvSeriesGenres',
+      'Genres',
       'ListCast',
       'ListRecommends',
       'Videos',
@@ -341,13 +339,8 @@ const Search = ({navigation, route}) => {
           options={{headerShown: false}}
         />
         <SearchStack.Screen
-          name="MoviesGenres"
-          component={MoviesGenres}
-          options={{headerShown: false}}
-        />
-        <SearchStack.Screen
-          name="TvSeriesGenres"
-          component={TvSeriesGenres}
+          name="Genres"
+          component={Genres}
           options={{headerShown: false}}
         />
         <SearchStack.Screen

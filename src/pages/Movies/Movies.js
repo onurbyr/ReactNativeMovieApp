@@ -13,7 +13,7 @@ import React, {useEffect, useState} from 'react';
 import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './MovieDetails';
-import MoviesGenres from './MoviesGenres';
+import Genres from '../Genres';
 import ListCast from '../ListCast';
 import ListRecommends from '../ListRecommends';
 import Videos from '../Videos';
@@ -218,7 +218,7 @@ const Movies = ({navigation, route}) => {
   React.useLayoutEffect(() => {
     const tabHiddenRoutes = [
       'MovieDetails',
-      'MoviesGenres',
+      'Genres',
       'ListCast',
       'ListRecommends',
       'Videos',
@@ -252,8 +252,8 @@ const Movies = ({navigation, route}) => {
           options={{headerShown: false}}
         />
         <MoviesStack.Screen
-          name="MoviesGenres"
-          component={MoviesGenres}
+          name="Genres"
+          component={Genres}
           options={{headerShown: false}}
         />
         <MoviesStack.Screen

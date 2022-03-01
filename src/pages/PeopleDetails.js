@@ -8,7 +8,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
@@ -20,6 +20,15 @@ const PeopleDetails = ({route}) => {
   const [data, setData] = useState([]);
   const {itemId} = route.params;
   const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
+  const [textShown, setTextShown] = useState(false); //To show ur remaining Text
+  const [lengthMore, setLengthMore] = useState(false); //to show the "Read more & Less Line"
+  const toggleNumberOfLines = () => {
+    setTextShown(!textShown);
+  };
+
+  const onTextLayout = useCallback(e => {
+    setLengthMore(e.nativeEvent.lines.length >= 5); //to check the text is more than 5 lines or not
+  }, []);
 
   useEffect(() => {
     getItems();
@@ -117,8 +126,19 @@ const PeopleDetails = ({route}) => {
                   </View>
                 </View>
               </View>
-              <BoldText style={{marginTop:20}}>Biography</BoldText>
-              <DefaultText style={{marginTop:5,color: '#B6B6B6'}}>{data.biography}</DefaultText>
+              <BoldText style={{marginTop: 20}}>Biography</BoldText>
+              <Text
+                onTextLayout={onTextLayout}
+                numberOfLines={textShown ? undefined : 5}
+                style={styles.seeMoreText}>
+                {data.biography}
+              </Text>
+
+              {lengthMore ? (
+                <Text onPress={toggleNumberOfLines} style={styles.seeMoreText2}>
+                  {textShown ? 'Read less...' : 'Read more...'}
+                </Text>
+              ) : null}
             </View>
           </ScrollView>
         </View>
@@ -164,5 +184,18 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#B6B6B6',
     marginLeft: 2,
+  },
+  seeMoreText: {
+    lineHeight: 21,
+    color: '#B6B6B6',
+    fontFamily: 'Lato-Light',
+    fontSize: 12,
+    marginTop: 5,
+  },
+  seeMoreText2: {
+    lineHeight: 21,
+    marginTop: 5,
+    color: '#B6B6B6',
+    fontFamily: 'Lato-Regular',
   },
 });

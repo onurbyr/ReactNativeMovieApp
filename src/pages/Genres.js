@@ -8,19 +8,19 @@ import {
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../../services/api/api';
-import usePrevious from '../../hooks/usePrevious';
-import HeaderWithBack from '../../components/HeaderWithBack';
-import RenderFooter from '../../components/RenderFooter';
-import Stars from '../../components/Stars/Stars';
+import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import usePrevious from '../hooks/usePrevious';
+import HeaderWithBack from '../components/HeaderWithBack';
+import RenderFooter from '../components/RenderFooter';
+import Stars from '../components/Stars/Stars';
 
-const MoviesGenres = ({route, navigation}) => {
+const Genres = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const prevPage = usePrevious(page);
   const [isExtraLoading, setIsExtraLoading] = useState(true);
-  const {itemId, itemName} = route.params;
+  const {itemId, itemName, genreType} = route.params;
 
   useEffect(() => {
     getItems();
@@ -29,7 +29,7 @@ const MoviesGenres = ({route, navigation}) => {
   //getdata with axios
   const getItems = async () => {
     try {
-      const response = await api.get('/discover/movie', {
+      const response = await api.get('/discover/' + genreType, {
         params: {
           api_key: apiKey.API_KEY,
           page,
@@ -71,37 +71,38 @@ const MoviesGenres = ({route, navigation}) => {
           ListFooterComponent={RenderFooter(isExtraLoading)}
           renderItem={({item}) => (
             <TouchableOpacity
-              style={{
-                flexDirection: 'row',
-                paddingBottom: 20,
-                marginHorizontal: 20,
-                marginBottom: 20,
-                borderWidth: 1,
-                borderColor: '#1f1f2b',
-                borderRadius: 16,
-              }}
+              style={styles.touchableOpacityView}
               onPress={() =>
-                navigation.push('MovieDetails', {
-                  itemId: item.id,
-                })
+                genreType == 'movie'
+                  ? navigation.push('MovieDetails', {
+                      itemId: item.id,
+                    })
+                  : navigation.push('TvSeriesDetails', {
+                      itemId: item.id,
+                    })
               }>
               <Image
-                style={{width: 125, height: 175, borderRadius: 16}}
+                style={styles.image}
                 source={{
                   uri: apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path,
                 }}
               />
-              <View
-                style={{flex: 1, justifyContent: 'flex-end', marginLeft: 10}}>
-                <Text style={{color: 'white', fontSize: 22}}>{item.title}</Text>
+              <View style={styles.imageRight}>
+                <Text style={{color: 'white', fontSize: 18}}>
+                  {genreType == 'movie' ? item.title : item.name}
+                </Text>
                 <View style={{flexDirection: 'row', marginTop: 5}}>
                   <Stars count={item.vote_average} size={14} />
-                  <Text style={{color: '#FF7652', fontSize: 12, marginLeft: 5}}>
-                    {item.vote_average}/10 TMDB
+                  <Text style={{color: '#FF7652', fontSize: 12, marginLeft: 3}}>
+                    {item.vote_average}
                   </Text>
                 </View>
                 <Text style={{color: 'white', fontSize: 12, marginTop: 5}}>
-                  {dateConvert(item.release_date)}
+                  {dateConvert(
+                    genreType == 'movie'
+                      ? item.release_date
+                      : item.first_air_date,
+                  )}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -117,6 +118,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#15141F',
   },
+  touchableOpacityView: {
+    flexDirection: 'row',
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    marginTop: 30,
+    borderRadius: 16,
+    backgroundColor: '#1D1C3B',
+  },
+  image: {
+    width: 125,
+    height: 175,
+    marginTop: -30,
+    borderRadius: 10,
+  },
+  imageRight: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginLeft: 10,
+  },
 });
 
-export default MoviesGenres;
+export default Genres;

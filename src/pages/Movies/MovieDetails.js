@@ -166,9 +166,10 @@ const MovieDetails = ({navigation, route}) => {
                           key={n.id}
                           style={styles.genreBox}
                           onPress={() =>
-                            navigation.push('MoviesGenres', {
+                            navigation.push('Genres', {
                               itemId: n.id,
                               itemName: n.name,
+                              genreType: 'movie',
                             })
                           }>
                           <DefaultText>{n.name}</DefaultText>
@@ -223,8 +224,7 @@ const MovieDetails = ({navigation, route}) => {
                             navigation.push('PeopleDetails', {
                               itemId: n.id,
                             })
-                          }
-                        >
+                          }>
                           <Image
                             style={{
                               width: 100,

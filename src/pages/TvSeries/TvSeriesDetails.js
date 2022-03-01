@@ -171,9 +171,10 @@ const TvSeriesDetails = ({navigation, route}) => {
                           key={n.id}
                           style={styles.genreBox}
                           onPress={() =>
-                            navigation.push('TvSeriesGenres', {
+                            navigation.push('Genres', {
                               itemId: n.id,
                               itemName: n.name,
+                              genreType: 'tv',
                             })
                           }>
                           <DefaultText>{n.name}</DefaultText>
