@@ -5,7 +5,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react'
+import React from 'react';
 import {apiImgUrl} from '../../services/api/api';
 import HeaderWithBack from '../components/HeaderWithBack';
 import DefaultText from '../components/DefaultText';
@@ -14,14 +14,8 @@ import NoAvatar from '../images/noavatar.png';
 
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
 
-const ListCast = ({route}) => {
+const ListCast = ({route, navigation}) => {
   const {cast} = route.params;
-
-  const onPress = id => {
-    // navigation.navigate('MovieDetails', {
-    //   itemId: id,
-    // });
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -33,7 +27,11 @@ const ListCast = ({route}) => {
         renderItem={({item}) => (
           <TouchableOpacity
             style={styles.items}
-            onPress={() => onPress(item.id)}>
+            onPress={() =>
+              navigation.navigate('PeopleDetails', {
+                itemId: item.id,
+              })
+            }>
             <Image
               style={{width: 150, height: 250, borderRadius: 10}}
               source={{

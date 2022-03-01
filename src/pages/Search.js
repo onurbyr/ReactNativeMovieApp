@@ -23,6 +23,8 @@ import ListCast from './ListCast';
 import ListRecommends from './ListRecommends';
 import Videos from './Videos';
 import ListVideos from './ListVideos';
+import PeopleDetails from './PeopleDetails';
+import ListCredits from './ListCredits';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -145,7 +147,9 @@ const RenderItems = ({apiType, navigation}) => {
         itemId: item.id,
       });
     } else {
-      //
+      navigation.navigate('PeopleDetails', {
+        itemId: item.id,
+      });
     }
   };
 
@@ -306,6 +310,8 @@ const Search = ({navigation, route}) => {
       'ListRecommends',
       'Videos',
       'ListVideos',
+      'PeopleDetails',
+      'ListCredits',
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -361,6 +367,16 @@ const Search = ({navigation, route}) => {
         <SearchStack.Screen
           name="ListVideos"
           component={ListVideos}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="PeopleDetails"
+          component={PeopleDetails}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="ListCredits"
+          component={ListCredits}
           options={{headerShown: false}}
         />
       </SearchStack.Navigator>

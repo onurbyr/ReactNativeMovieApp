@@ -18,6 +18,9 @@ import ListCast from '../ListCast';
 import ListRecommends from '../ListRecommends';
 import Videos from '../Videos';
 import ListVideos from '../ListVideos';
+import PeopleDetails from '../PeopleDetails';
+import ListCredits from '../ListCredits';
+import MovieDetails from '../Movies/MovieDetails';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -136,7 +139,7 @@ const TvSeriesScreen = ({navigation}) => {
                 }}
               />
               <Text style={styles.itemsText}>{item.name}</Text>
-              <View style={{flexDirection:'row',marginTop: 5}}>
+              <View style={{flexDirection: 'row', marginTop: 5}}>
                 <Stars count={item.vote_average} size={15} />
                 <Text style={styles.itemsText2}>{item.vote_average}</Text>
               </View>
@@ -201,13 +204,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#ffffff',
     textAlign: 'center',
-    width:150
+    width: 150,
   },
   itemsText2: {
     fontSize: 12,
     color: '#ffffff',
     textAlign: 'center',
-    marginLeft:3,
+    marginLeft: 3,
   },
 });
 
@@ -222,6 +225,9 @@ const TvSeries = ({navigation, route}) => {
       'ListRecommends',
       'Videos',
       'ListVideos',
+      'PeopleDetails',
+      'ListCredits',
+      'MovieDetails',
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -272,6 +278,21 @@ const TvSeries = ({navigation, route}) => {
         <TvSeriesStack.Screen
           name="ListVideos"
           component={ListVideos}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="PeopleDetails"
+          component={PeopleDetails}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="ListCredits"
+          component={ListCredits}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="MovieDetails"
+          component={MovieDetails}
           options={{headerShown: false}}
         />
       </TvSeriesStack.Navigator>
