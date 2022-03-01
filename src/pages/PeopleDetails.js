@@ -7,6 +7,7 @@ import {
   ToastAndroid,
   Image,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState, useCallback} from 'react';
 import {api, apiKey, apiImgUrl} from '../../services/api/api';
@@ -14,12 +15,18 @@ import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
 import BackButton from '../components/BackButton';
 import NoAvatar from '../images/noavatar.png';
+import NoImage from '../images/noimage.png';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Hr from '../components/Hr';
 
-const PeopleDetails = ({route}) => {
+const PeopleDetails = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [movieCredits, setMovieCredits] = useState([]);
+  const [tvCredits, setTvCredits] = useState([]);
   const {itemId} = route.params;
   const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
+  const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
   const [textShown, setTextShown] = useState(false); //To show ur remaining Text
   const [lengthMore, setLengthMore] = useState(false); //to show the "Read more & Less Line"
   const toggleNumberOfLines = () => {
@@ -31,22 +38,50 @@ const PeopleDetails = ({route}) => {
   }, []);
 
   useEffect(() => {
-    getItems();
+    multipleRequests();
   }, []);
 
-  //getdata with axios
-  const getItems = async () => {
-    try {
-      const response = await api.get('/person/' + itemId, {
+  const concurrentRequests = [
+    api
+      .get('/person/' + itemId, {
         params: {
           api_key: apiKey.API_KEY,
         },
+      })
+      .catch(err => {
+        ToastAndroid.show(err.message, ToastAndroid.SHORT);
+      }),
+    api
+      .get('/person/' + itemId + '/movie_credits', {
+        params: {
+          api_key: apiKey.API_KEY,
+        },
+      })
+      .catch(err => {
+        //console.log(err.message);
+      }),
+    api
+      .get('/person/' + itemId + '/tv_credits', {
+        params: {
+          api_key: apiKey.API_KEY,
+        },
+      })
+      .catch(err => {
+        //console.log(err.message);
+      }),
+  ];
+
+  const multipleRequests = () => {
+    Promise.all(concurrentRequests)
+      .then(result => {
+        setData(result[0].data);
+        setMovieCredits(result[1].data.cast);
+        setTvCredits(result[2].data.cast);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err.message);
       });
-      setData(response.data);
-      setLoading(false);
-    } catch (error) {
-      ToastAndroid.show(error.message, ToastAndroid.SHORT);
-    }
   };
 
   const getAge = dateString => {
@@ -126,19 +161,87 @@ const PeopleDetails = ({route}) => {
                   </View>
                 </View>
               </View>
-              <BoldText style={{marginTop: 20}}>Biography</BoldText>
-              <Text
-                onTextLayout={onTextLayout}
-                numberOfLines={textShown ? undefined : 5}
-                style={styles.seeMoreText}>
-                {data.biography}
-              </Text>
+              {Object.keys(data.biography).length > 0 && (
+                <View>
+                  <BoldText style={{marginTop: 20}}>Biography</BoldText>
+                  <Text
+                    onTextLayout={onTextLayout}
+                    numberOfLines={textShown ? undefined : 5}
+                    style={styles.seeMoreText}>
+                    {data.biography}
+                  </Text>
 
-              {lengthMore ? (
-                <Text onPress={toggleNumberOfLines} style={styles.seeMoreText2}>
-                  {textShown ? 'Read less...' : 'Read more...'}
-                </Text>
-              ) : null}
+                  {lengthMore ? (
+                    <Text
+                      onPress={toggleNumberOfLines}
+                      style={styles.seeMoreText2}>
+                      {textShown ? 'Read less...' : 'Read more...'}
+                    </Text>
+                  ) : null}
+                  <Hr />
+                </View>
+              )}
+              {Object.keys(movieCredits).length > 0 && (
+                //movieCredits
+                <View>
+                  <View style={{flexDirection: 'row'}}>
+                    <BoldText>Movie Credits</BoldText>
+                    {Object.keys(movieCredits).length > 5 && (
+                      <TouchableOpacity
+                        style={styles.seeAllButton}
+                        onPress={() =>
+                          navigation.push('MovieDetails', {
+                            itemId: movieCredits.id,
+                          })
+                        }>
+                        <DefaultText style={{fontSize: 14}}>
+                          See All
+                        </DefaultText>
+                        <Entypo
+                          name="chevron-right"
+                          color={'white'}
+                          size={14}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <ScrollView horizontal={true} style={{marginTop: 10}}>
+                    {movieCredits
+                      .filter((i, index) => index < 5)
+                      .map((n, index) => (
+                        <TouchableOpacity
+                          key={n.id}
+                          style={{marginRight: 25, width: 150}}
+                          onPress={() =>
+                            navigation.push('MovieDetails', {
+                              itemId: n.id,
+                            })
+                          }>
+                          <Image
+                            style={{width: 150, height: 80, borderRadius: 10}}
+                            source={{
+                              uri: n.backdrop_path
+                                ? apiImgUrl.API_IMAGE_URL +
+                                  '/w300' +
+                                  n.backdrop_path
+                                : NO_IMAGE,
+                            }}
+                            resizeMode="contain"
+                          />
+                          <BoldText
+                            style={{
+                              textAlign: 'center',
+                              marginVertical: 10,
+                              fontSize: 12,
+                            }}>
+                            {n.title}
+                          </BoldText>
+                        </TouchableOpacity>
+                      ))}
+                  </ScrollView>
+                  <Hr />
+                </View>
+              )}
             </View>
           </ScrollView>
         </View>
@@ -197,5 +300,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: '#B6B6B6',
     fontFamily: 'Lato-Regular',
+  },
+  seeAllButton: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    marginRight: 10,
   },
 });

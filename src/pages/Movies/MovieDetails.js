@@ -17,6 +17,7 @@ import NoAvatar from '../../images/noavatar.png';
 import DefaultText from '../../components/DefaultText';
 import BoldText from '../../components/BoldText';
 import BackButton from '../../components/BackButton';
+import Hr from '../../components/Hr';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -95,20 +96,6 @@ const MovieDetails = ({navigation, route}) => {
     const date =
       months[d.getMonth()] + ' ' + d.getDate() + ',' + ' ' + d.getFullYear();
     return date;
-  };
-
-  const Hr = () => {
-    return (
-      <View
-        style={{
-          borderBottomColor: '#515151',
-          borderBottomWidth: 0.8,
-          marginVertical: 20,
-          marginRight: 20,
-          opacity: 0.3,
-        }}
-      />
-    );
   };
 
   return (
