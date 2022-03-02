@@ -5,17 +5,20 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Image,
 } from 'react-native';
 import React, {useState} from 'react';
-import HeaderWithBack from '../components/HeaderWithBack';
+import BackButton from '../components/BackButton';
 
 const Login = () => {
   const [userName, onChangeUserName] = useState('');
   const [password, onChangePassword] = useState('');
   return (
-    <View style={styles.container}>
-      <HeaderWithBack>Login</HeaderWithBack>
-      <View style={{padding: 30}}>
+    // <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
+      <BackButton style={{position: 'absolute', top: 20}} />
+      <Image style={styles.image} source={require('../images/tmdb.png')} />
+      <View style={{paddingHorizontal: 30}}>
         <Text style={styles.topText}>Welcome Back!</Text>
         <Text style={styles.topText2}>Sign in to your TMDB account</Text>
         <TextInput
@@ -31,6 +34,7 @@ const Login = () => {
           placeholder="Password"
           onChangeText={text => onChangePassword(text)}
           value={password}
+          secureTextEntry={true}
         />
         <TouchableOpacity>
           <Text style={styles.forgetPassword}>Forget Password?</Text>
@@ -42,7 +46,7 @@ const Login = () => {
           <Text style={styles.signUp}>Don't have an account? Sign Up</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -52,6 +56,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#15141F',
+    justifyContent: 'center',
+  },
+  image: {
+    height: 50,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+    marginBottom: 20,
   },
   topText: {
     color: '#ffffff',
