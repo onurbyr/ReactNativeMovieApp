@@ -16,7 +16,7 @@ import NoImage from '../images/noimage.png';
 const ListCredits = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const {itemId, itemName, creditType} = route.params;
+  const {itemId, creditType} = route.params;
   const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
   useEffect(() => {
@@ -50,7 +50,9 @@ const ListCredits = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
-      <HeaderWithBack>{itemName}</HeaderWithBack>
+      <HeaderWithBack>
+        {creditType == 'movie' ? 'Movie Credits' : 'Tv Credits'}
+      </HeaderWithBack>
       {isLoading ? (
         <ActivityIndicator />
       ) : (

@@ -94,6 +94,16 @@ const PeopleDetails = ({route, navigation}) => {
     }
     return age;
   };
+  const yearsDiff = (d1, d2) => {
+    let bornDate = new Date(d1);
+    let deathDate = new Date(d2);
+    let yearsDiff = deathDate.getFullYear() - bornDate.getFullYear();
+    let m = deathDate.getMonth() - bornDate.getMonth();
+    if (m < 0 || (m === 0 && deathDate.getDate() < bornDate.getDate())) {
+      yearsDiff--;
+    }
+    return yearsDiff;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -106,17 +116,19 @@ const PeopleDetails = ({route, navigation}) => {
         <View style={styles.container}>
           <BackButton style={styles.backButton} />
           <ScrollView>
-            <Image
-              source={{
-                uri: data.profile_path
-                  ? apiImgUrl.API_IMAGE_URL + '/h632' + data.profile_path
-                  : NO_AVATAR_IMAGE,
-              }}
-              resizeMode={data.profile_path ? 'cover' : 'center'}
-              blurRadius={5}
-              style={{height: 250}}
-            />
-            <View style={styles.info}>
+            {data.profile_path && (
+              <Image
+                source={{
+                  uri: apiImgUrl.API_IMAGE_URL + '/h632' + data.profile_path,
+                }}
+                blurRadius={5}
+                style={{height: 250}}
+              />
+            )}
+            <View
+              style={
+                data.profile_path ? styles.info : styles.noProfileImageInfo
+              }>
               <View style={{flexDirection: 'row'}}>
                 <Image
                   source={{
@@ -125,7 +137,11 @@ const PeopleDetails = ({route, navigation}) => {
                       : NO_AVATAR_IMAGE,
                   }}
                   resizeMode={data.profile_path ? 'cover' : 'center'}
-                  style={styles.profileImage}
+                  style={
+                    data.profile_path
+                      ? styles.profileImage
+                      : styles.noProfileImage
+                  }
                 />
                 <View style={styles.imageLeftPanel}>
                   <BoldText>{data.name}</BoldText>
@@ -148,7 +164,10 @@ const PeopleDetails = ({route, navigation}) => {
                   <View style={styles.imageLeftPanelItems}>
                     <DefaultText style={{color: '#B6B6B6'}}>Age:</DefaultText>
                     <DefaultText style={styles.imageLeftPanelItemsText}>
-                      {getAge(data.birthday)}
+                      {data.deathday
+                        ? data.birthday &&
+                          yearsDiff(data.birthday, data.deathday) + '(Dead)'
+                        : data.birthday && getAge(data.birthday)}
                     </DefaultText>
                   </View>
                   <View style={styles.imageLeftPanelItems}>
@@ -211,7 +230,7 @@ const PeopleDetails = ({route, navigation}) => {
                       .filter((i, index) => index < 5)
                       .map((n, index) => (
                         <TouchableOpacity
-                          key={n.id}
+                          key={index}
                           style={{marginRight: 25, width: 150}}
                           onPress={() =>
                             navigation.push('MovieDetails', {
@@ -273,7 +292,7 @@ const PeopleDetails = ({route, navigation}) => {
                       .filter((i, index) => index < 5)
                       .map((n, index) => (
                         <TouchableOpacity
-                          key={n.id}
+                          key={index}
                           style={{marginRight: 25, width: 150}}
                           onPress={() =>
                             navigation.push('TvSeriesDetails', {
@@ -330,11 +349,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#15141F',
     paddingHorizontal: 20,
   },
+  noProfileImageInfo: {
+    backgroundColor: '#15141F',
+    paddingHorizontal: 20,
+    marginTop: 40,
+  },
   profileImage: {
     width: 120,
     height: 180,
     borderRadius: 10,
     marginTop: -50,
+  },
+  noProfileImage: {
+    width: 120,
+    height: 180,
+    marginTop: -20,
   },
   imageLeftPanel: {
     flex: 1,

@@ -28,7 +28,7 @@ const ListCast = ({route, navigation}) => {
           <TouchableOpacity
             style={styles.items}
             onPress={() =>
-              navigation.navigate('PeopleDetails', {
+              navigation.push('PeopleDetails', {
                 itemId: item.id,
               })
             }>
