@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  ToastAndroid,
 } from 'react-native';
 import {api, apiKey, apiImgUrl} from '../../../services/api/api';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -17,6 +18,7 @@ import NoAvatar from '../../images/noavatar.png';
 import DefaultText from '../../components/DefaultText';
 import BoldText from '../../components/BoldText';
 import BackButton from '../../components/BackButton';
+import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
@@ -60,7 +62,7 @@ const MovieDetails = ({navigation, route}) => {
   const multipleRequests = requests => {
     const concurrentRequests = requests.map(n =>
       api.get(n.req, {params: n.params}).catch(err => {
-        //console.log(err.message);
+        ToastAndroid.show(err.message, ToastAndroid.SHORT);
       }),
     );
 
@@ -101,7 +103,10 @@ const MovieDetails = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
       {isLoading ? (
-        <ActivityIndicator style={{flex: 1}} />
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <BackButton style={[styles.backButton, {top: 0}]} />
+          <ActivityIndicator />
+        </View>
       ) : (
         <View style={styles.container}>
           <BackButton style={styles.backButton} />
@@ -114,6 +119,18 @@ const MovieDetails = ({navigation, route}) => {
               }}
               resizeMode={data.backdrop_path ? 'stretch' : 'center'}
               style={{height: 250}}></Image>
+            <CustomButton
+              style={styles.favoriteButton}
+              type="MaterialIcons"
+              name="favorite"
+              color="red"
+              size={20}
+              onPress={() =>
+                navigation.navigate('Login', {
+                  cast: cast,
+                })
+              }
+            />
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.title}</BoldText>
               <View style={{flexDirection: 'row'}}>
@@ -437,6 +454,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     flexDirection: 'row',
     marginRight: 10,
+  },
+  favoriteButton: {
+    marginTop: 20,
+    right: 20,
+    position: 'absolute',
+    alignSelf: 'flex-end',
   },
 });
 
