@@ -21,7 +21,7 @@ import ListVideos from '../ListVideos';
 import PeopleDetails from '../PeopleDetails';
 import ListCredits from '../ListCredits';
 import TvSeriesDetails from '../TvSeries/TvSeriesDetails';
-import Login from '../Login';
+import Login from '../Login/Login';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
