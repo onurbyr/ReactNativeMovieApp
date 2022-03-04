@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {api, apiKey} from '../../../services/api/api';
+import {api} from '../../../services/api/api';
 
 const Profile = () => {
   const Logout = async () => {
@@ -17,7 +17,7 @@ const Profile = () => {
         try {
           console.log(value);
           const result = await api.delete(
-            '/authentication/session?api_key=' + apiKey.API_KEY,
+            '/authentication/session',
             {
               data: {
                 session_id: value,

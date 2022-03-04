@@ -89,12 +89,20 @@ const MovieDetails = ({navigation, route}) => {
       });
   };
 
-  const getItem = async fav => {
+  const getItem = async fn => {
     try {
       const value = await AsyncStorage.getItem('@session_id');
       if (value !== null) {
-        // do something
-        fav(value);
+        try {
+          const result = await api.get(`/movie/${itemId}/account_states`, {
+            params: {
+              session_id: value,
+            },
+          });
+          fn(value, result);
+        } catch (err) {
+          console.log(err);
+        }
       } else {
         navigation.navigate('Login');
       }
@@ -103,56 +111,51 @@ const MovieDetails = ({navigation, route}) => {
     }
   };
 
-  const fav = async value => {
-    try {
-      const result = await api.get(`/movie/${itemId}/account_states`, {
-        params: {
-          session_id: value,
-        },
-      });
-      if (result.data.favorite) {
-        try {
-          const result = await api.post(
-            '/account/{account_id}/favorite',
-            {
-              media_type: 'movie',
-              media_id: itemId,
-              favorite: false,
+  const fav = async (value, result) => {
+    if (result.data.favorite) {
+      try {
+        const result = await api.post(
+          '/account/{account_id}/favorite',
+          {
+            media_type: 'movie',
+            media_id: itemId,
+            favorite: false,
+          },
+          {
+            params: {
+              session_id: value,
             },
-            {
-              params: {
-                session_id: value,
-              },
-            },
-          );
-          setIsFavorited(false)
+          },
+        );
+        if (result.data.success) {
+          setIsFavorited(false);
           ToastAndroid.show('Removed from favorites', ToastAndroid.SHORT);
-        } catch (err) {
-          console.log(err);
         }
-      } else {
-        try {
-          const result = await api.post(
-            '/account/{account_id}/favorite',
-            {
-              media_type: 'movie',
-              media_id: itemId,
-              favorite: true,
-            },
-            {
-              params: {
-                session_id: value,
-              },
-            },
-          );
-          setIsFavorited(true)
-          ToastAndroid.show('Added to Favorites', ToastAndroid.SHORT);
-        } catch (err) {
-          console.log(err);
-        }
+      } catch (err) {
+        console.log(err);
       }
-    } catch (err) {
-      console.log(err);
+    } else {
+      try {
+        const result = await api.post(
+          '/account/{account_id}/favorite',
+          {
+            media_type: 'movie',
+            media_id: itemId,
+            favorite: true,
+          },
+          {
+            params: {
+              session_id: value,
+            },
+          },
+        );
+        if (result.data.success) {
+          setIsFavorited(true);
+          ToastAndroid.show('Added to Favorites', ToastAndroid.SHORT);
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
