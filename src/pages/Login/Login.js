@@ -37,15 +37,25 @@ const Login = ({navigation}) => {
           value={password}
           secureTextEntry={true}
         />
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('SignUp', {
+              url: 'https://www.themoviedb.org/reset-password',
+            })
+          }>
           <Text style={styles.forgetPassword}>Forget Password?</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.signInButton}
-          onPress={() => setSession(userName, password,navigation)}>
+          onPress={() => setSession(userName, password, navigation)}>
           <Text style={styles.signInButtonText}>Sign In</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('SignUp', {
+              url: 'https://www.themoviedb.org/signup',
+            })
+          }>
           <Text style={styles.signUp}>Don't have an account? Sign Up</Text>
         </TouchableOpacity>
       </View>
