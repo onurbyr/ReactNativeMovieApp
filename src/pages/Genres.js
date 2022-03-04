@@ -8,7 +8,7 @@ import {
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import {api, apiImgUrl} from '../../services/api/api';
 import usePrevious from '../hooks/usePrevious';
 import HeaderWithBack from '../components/HeaderWithBack';
 import RenderFooter from '../components/RenderFooter';
@@ -31,7 +31,6 @@ const Genres = ({route, navigation}) => {
     try {
       const response = await api.get('/discover/' + genreType, {
         params: {
-          api_key: apiKey.API_KEY,
           page,
           with_genres: itemId,
         },

@@ -26,14 +26,7 @@ const ListCredits = ({route, navigation}) => {
   //getdata with axios
   const getItems = async () => {
     try {
-      const response = await api.get(
-        `/person/${itemId}/${creditType}_credits`,
-        {
-          params: {
-            api_key: apiKey.API_KEY,
-          },
-        },
-      );
+      const response = await api.get(`/person/${itemId}/${creditType}_credits`);
       setData(response.data.cast);
     } catch (error) {
       console.log(error.message);

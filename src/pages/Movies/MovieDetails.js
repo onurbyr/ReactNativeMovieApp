@@ -10,7 +10,7 @@ import {
   Image,
   ToastAndroid,
 } from 'react-native';
-import {api, apiKey, apiImgUrl} from '../../../services/api/api';
+import {api, apiImgUrl} from '../../../services/api/api';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import NoImage from '../../images/noimage.png';
@@ -32,33 +32,41 @@ const MovieDetails = ({navigation, route}) => {
   const [cast, setCast] = useState([]);
   const [videos, setVideos] = useState([]);
   const {itemId} = route.params;
+  const [isFavorited, setIsFavorited] = useState(false);
 
   const req1 = `/movie/${itemId}`;
   const req2 = `/movie/${itemId}/recommendations`;
   const req3 = `/movie/${itemId}/credits`;
   const req4 = `/movie/${itemId}/videos`;
+  const req5 = `/movie/${itemId}/account_states`;
 
   useEffect(() => {
-    multipleRequests([
-      {
-        req: req1,
-        params: {api_key: apiKey.API_KEY},
-      },
-      {
-        req: req2,
-        params: {api_key: apiKey.API_KEY},
-      },
-      {
-        req: req3,
-        params: {api_key: apiKey.API_KEY},
-      },
-      {
-        req: req4,
-        params: {api_key: apiKey.API_KEY},
-      },
-    ]);
-    dateConvert();
+    getData();
   }, []);
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@session_id');
+      if (value !== null) {
+        multipleRequests([
+          {req: req1},
+          {req: req2},
+          {req: req3},
+          {req: req4},
+          {
+            req: req5,
+            params: {
+              session_id: value,
+            },
+          },
+        ]);
+      } else {
+        multipleRequests([{req: req1}, {req: req2}, {req: req3}, {req: req4}]);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
 
   const multipleRequests = requests => {
     const concurrentRequests = requests.map(n =>
@@ -74,16 +82,55 @@ const MovieDetails = ({navigation, route}) => {
         setCast(result[2].data.cast);
         setVideos(result[3].data.results);
         setLoading(false);
+        result[4].data && setIsFavorited(result[4].data.favorite);
       })
       .catch(err => {
         //console.log(err.message);
       });
   };
 
-  const favorite = async () => {
+  const getItem = async fav => {
     try {
       const value = await AsyncStorage.getItem('@session_id');
       if (value !== null) {
+        // do something
+        fav(value);
+      } else {
+        navigation.navigate('Login');
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+  const fav = async value => {
+    try {
+      const result = await api.get(`/movie/${itemId}/account_states`, {
+        params: {
+          session_id: value,
+        },
+      });
+      if (result.data.favorite) {
+        try {
+          const result = await api.post(
+            '/account/{account_id}/favorite',
+            {
+              media_type: 'movie',
+              media_id: itemId,
+              favorite: false,
+            },
+            {
+              params: {
+                session_id: value,
+              },
+            },
+          );
+          setIsFavorited(false)
+          ToastAndroid.show('Removed from favorites', ToastAndroid.SHORT);
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
         try {
           const result = await api.post(
             '/account/{account_id}/favorite',
@@ -94,24 +141,22 @@ const MovieDetails = ({navigation, route}) => {
             },
             {
               params: {
-                api_key: apiKey.API_KEY,
                 session_id: value,
               },
             },
           );
-          console.log(result);
+          setIsFavorited(true)
+          ToastAndroid.show('Added to Favorites', ToastAndroid.SHORT);
         } catch (err) {
           console.log(err);
         }
-      } else {
-        navigation.navigate('Login');
       }
-    } catch (e) {
-      // error reading value
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  const dateConvert = () => {
+  const dateConvert = n => {
     const months = [
       'January',
       'February',
@@ -126,7 +171,7 @@ const MovieDetails = ({navigation, route}) => {
       'November',
       'December',
     ];
-    const d = new Date(data.release_date);
+    const d = new Date(n);
     const date =
       months[d.getMonth()] + ' ' + d.getDate() + ',' + ' ' + d.getFullYear();
     return date;
@@ -151,14 +196,25 @@ const MovieDetails = ({navigation, route}) => {
               }}
               resizeMode={data.backdrop_path ? 'stretch' : 'center'}
               style={{height: 250}}></Image>
-            <CustomButton
-              style={styles.favoriteButton}
-              type="MaterialIcons"
-              name="favorite"
-              color="red"
-              size={20}
-              onPress={favorite}
-            />
+            {isFavorited ? (
+              <CustomButton
+                style={styles.favoriteButton}
+                type="MaterialIcons"
+                name="favorite"
+                color="red"
+                size={22}
+                onPress={() => getItem(fav)}
+              />
+            ) : (
+              <CustomButton
+                style={styles.favoriteButton}
+                type="MaterialIcons"
+                name="favorite-border"
+                color="white"
+                size={22}
+                onPress={() => getItem(fav)}
+              />
+            )}
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.title}</BoldText>
               <View style={{flexDirection: 'row'}}>
@@ -186,7 +242,7 @@ const MovieDetails = ({navigation, route}) => {
                 <View style={{flex: 1}}>
                   <BoldText>Release Date</BoldText>
                   <DefaultText style={styles.releaseDate}>
-                    {dateConvert()}
+                    {dateConvert(data.release_date)}
                   </DefaultText>
                 </View>
                 <View style={{flex: 1}}>

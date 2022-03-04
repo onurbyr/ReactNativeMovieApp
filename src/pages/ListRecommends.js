@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import {api, apiImgUrl} from '../../services/api/api';
 import usePrevious from '../hooks/usePrevious';
 import RenderFooter from '../components/RenderFooter';
 import HeaderWithBack from '../components/HeaderWithBack';
@@ -39,7 +39,6 @@ const ListRecommends = ({navigation, route}) => {
         `/${recommendType}/${itemId}/recommendations`,
         {
           params: {
-            api_key: apiKey.API_KEY,
             page,
           },
         },

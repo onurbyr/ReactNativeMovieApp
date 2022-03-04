@@ -12,7 +12,7 @@ import {
 import React, {useEffect, useState, createContext, useContext} from 'react';
 import IconFeather from 'react-native-vector-icons/Feather';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import {api, apiImgUrl} from '../../services/api/api';
 import NoImage from '../images/noimage.png';
 import NoAvatar from '../images/noavatar.png';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -113,7 +113,6 @@ const RenderItems = ({apiType, navigation}) => {
     try {
       const response = await api.get('/search/' + apiType, {
         params: {
-          api_key: apiKey.API_KEY,
           query: value,
           page,
         },

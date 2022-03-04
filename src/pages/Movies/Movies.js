@@ -45,7 +45,6 @@ const MoviesScreen = ({navigation}) => {
     try {
       const response = await api.get('/movie/' + category, {
         params: {
-          api_key: apiKey.API_KEY,
           page,
         },
       });

@@ -41,37 +41,19 @@ const PeopleDetails = ({route, navigation}) => {
     multipleRequests();
   }, []);
 
-  const concurrentRequests = [
-    api
-      .get('/person/' + itemId, {
-        params: {
-          api_key: apiKey.API_KEY,
-        },
-      })
-      .catch(err => {
+  const multipleRequests = () => {
+    const concurrentRequests = [
+      api.get('/person/' + itemId).catch(err => {
         ToastAndroid.show(err.message, ToastAndroid.SHORT);
       }),
-    api
-      .get('/person/' + itemId + '/movie_credits', {
-        params: {
-          api_key: apiKey.API_KEY,
-        },
-      })
-      .catch(err => {
+      api.get('/person/' + itemId + '/movie_credits').catch(err => {
         //console.log(err.message);
       }),
-    api
-      .get('/person/' + itemId + '/tv_credits', {
-        params: {
-          api_key: apiKey.API_KEY,
-        },
-      })
-      .catch(err => {
+      api.get('/person/' + itemId + '/tv_credits').catch(err => {
         //console.log(err.message);
       }),
-  ];
+    ];
 
-  const multipleRequests = () => {
     Promise.all(concurrentRequests)
       .then(result => {
         setData(result[0].data);
