@@ -5,7 +5,9 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Movies from './src/pages/Movies/Movies';
 import TvSeries from './src/pages/TvSeries/TvSeries';
 import Search from './src/pages/Search';
+import Profile from './src/pages/Profile/Profile';
 import IconFeather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,6 +50,15 @@ const MyTabs = () => {
         options={{
           tabBarIcon: ({color, size}) => (
             <IconFeather name="search" color={color} size={20} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarIcon: ({color, size}) => (
+            <Ionicons name="person-outline" color={color} size={20} />
           ),
         }}
       />

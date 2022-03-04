@@ -20,6 +20,7 @@ import BoldText from '../../components/BoldText';
 import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -79,6 +80,37 @@ const MovieDetails = ({navigation, route}) => {
       });
   };
 
+  const favorite = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@session_id');
+      if (value !== null) {
+        try {
+          const result = await api.post(
+            '/account/{account_id}/favorite',
+            {
+              media_type: 'movie',
+              media_id: itemId,
+              favorite: true,
+            },
+            {
+              params: {
+                api_key: apiKey.API_KEY,
+                session_id: value,
+              },
+            },
+          );
+          console.log(result);
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        navigation.navigate('Login');
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
   const dateConvert = () => {
     const months = [
       'January',
@@ -125,11 +157,7 @@ const MovieDetails = ({navigation, route}) => {
               name="favorite"
               color="red"
               size={20}
-              onPress={() =>
-                navigation.navigate('Login', {
-                  cast: cast,
-                })
-              }
+              onPress={favorite}
             />
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.title}</BoldText>
