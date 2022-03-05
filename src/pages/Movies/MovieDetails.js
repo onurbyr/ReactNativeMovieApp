@@ -21,6 +21,7 @@ import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import postItem from './postItem'
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -33,6 +34,7 @@ const MovieDetails = ({navigation, route}) => {
   const [videos, setVideos] = useState([]);
   const {itemId} = route.params;
   const [isFavorited, setIsFavorited] = useState(false);
+  const [isWatchList, setIsWatchList] = useState(false);
 
   const req1 = `/movie/${itemId}`;
   const req2 = `/movie/${itemId}/recommendations`;
@@ -93,47 +95,12 @@ const MovieDetails = ({navigation, route}) => {
       });
   };
 
-  const getItem = async fn => {
-    try {
-      const sessionId = await AsyncStorage.getItem('@session_id');
-      if (sessionId !== null) {
-        try {
-          const result = await api.get(`/movie/${itemId}/account_states`, {
-            params: {
-              session_id: sessionId,
-            },
-          });
-          fn(sessionId, result);
-        } catch (err) {
-          ToastAndroid.show(err.message, ToastAndroid.SHORT);
-        }
-      } else {
-        navigation.navigate('Login');
-      }
-    } catch (e) {
-      // error reading value
-    }
-  };
 
-  const post = async (postType, media_type, sessionId, bool) =>
-    api.post(
-      '/account/{account_id}/' + postType,
-      {
-        media_type,
-        media_id: itemId,
-        favorite: bool,
-      },
-      {
-        params: {
-          session_id: sessionId,
-        },
-      },
-    );
-
-  const fav = async (sessionId, result) => {
+  const fav = async (sessionId, result, post) => {
     if (result.data.favorite) {
       try {
         const result = await post('favorite', 'movie', sessionId, false);
+        console.log(result)
         if (result.data.success) {
           setIsFavorited(false);
           ToastAndroid.show('Removed from favorites', ToastAndroid.SHORT);
@@ -147,6 +114,30 @@ const MovieDetails = ({navigation, route}) => {
         if (result.data.success) {
           setIsFavorited(true);
           ToastAndroid.show('Added to Favorites', ToastAndroid.SHORT);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
+  const watchlist = async (sessionId, result, post) => {
+    if (result.data.watchlist) {
+      try {
+        const result = await post('watchlist', 'movie', sessionId, false);
+        if (result.data.success) {
+          setIsWatchList(false);
+          ToastAndroid.show('Removed from watchlist', ToastAndroid.SHORT);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      try {
+        const result = await post('watchlist', 'movie', sessionId, true);
+        if (result.data.success) {
+          setIsWatchList(true);
+          ToastAndroid.show('Added to watchlist', ToastAndroid.SHORT);
         }
       } catch (err) {
         console.log(err);
@@ -199,9 +190,9 @@ const MovieDetails = ({navigation, route}) => {
                 style={styles.favoriteButton}
                 type="MaterialIcons"
                 name="favorite"
-                color="red"
+                color="#CF3131"
                 size={22}
-                onPress={() => getItem(fav)}
+                onPress={() => postItem(fav,itemId,navigation)}
               />
             ) : (
               <CustomButton
@@ -210,7 +201,26 @@ const MovieDetails = ({navigation, route}) => {
                 name="favorite-border"
                 color="white"
                 size={22}
-                onPress={() => getItem(fav)}
+                onPress={() => postItem(fav,itemId,navigation)}
+              />
+            )}
+            {isWatchList ? (
+              <CustomButton
+                style={styles.watchListButton}
+                type="MaterialIcons"
+                name="bookmark"
+                color="#CF3131"
+                size={22}
+                onPress={() => postItem(watchlist,itemId,navigation)}
+              />
+            ) : (
+              <CustomButton
+                style={styles.watchListButton}
+                type="MaterialIcons"
+                name="bookmark-border"
+                color="white"
+                size={22}
+                onPress={() => postItem(watchlist,itemId,navigation)}
               />
             )}
             <View style={{paddingLeft: 25}}>
@@ -539,6 +549,12 @@ const styles = StyleSheet.create({
   },
   favoriteButton: {
     marginTop: 20,
+    right: 20,
+    position: 'absolute',
+    alignSelf: 'flex-end',
+  },
+  watchListButton: {
+    marginTop: 70,
     right: 20,
     position: 'absolute',
     alignSelf: 'flex-end',
