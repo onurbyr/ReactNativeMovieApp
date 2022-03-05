@@ -15,7 +15,6 @@ const Profile = () => {
       const value = await AsyncStorage.getItem('@session_id');
       if (value !== null) {
         try {
-          console.log(value);
           const result = await api.delete(
             '/authentication/session',
             {

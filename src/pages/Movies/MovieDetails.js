@@ -41,8 +41,12 @@ const MovieDetails = ({navigation, route}) => {
   const req5 = `/movie/${itemId}/account_states`;
 
   useEffect(() => {
-    getData();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const getData = async () => {
     try {
@@ -91,17 +95,17 @@ const MovieDetails = ({navigation, route}) => {
 
   const getItem = async fn => {
     try {
-      const value = await AsyncStorage.getItem('@session_id');
-      if (value !== null) {
+      const sessionId = await AsyncStorage.getItem('@session_id');
+      if (sessionId !== null) {
         try {
           const result = await api.get(`/movie/${itemId}/account_states`, {
             params: {
-              session_id: value,
+              session_id: sessionId,
             },
           });
-          fn(value, result);
+          fn(sessionId, result);
         } catch (err) {
-          console.log(err);
+          ToastAndroid.show(err.message, ToastAndroid.SHORT);
         }
       } else {
         navigation.navigate('Login');
@@ -111,22 +115,25 @@ const MovieDetails = ({navigation, route}) => {
     }
   };
 
-  const fav = async (value, result) => {
+  const post = async (postType, media_type, sessionId, bool) =>
+    api.post(
+      '/account/{account_id}/' + postType,
+      {
+        media_type,
+        media_id: itemId,
+        favorite: bool,
+      },
+      {
+        params: {
+          session_id: sessionId,
+        },
+      },
+    );
+
+  const fav = async (sessionId, result) => {
     if (result.data.favorite) {
       try {
-        const result = await api.post(
-          '/account/{account_id}/favorite',
-          {
-            media_type: 'movie',
-            media_id: itemId,
-            favorite: false,
-          },
-          {
-            params: {
-              session_id: value,
-            },
-          },
-        );
+        const result = await post('favorite', 'movie', sessionId, false);
         if (result.data.success) {
           setIsFavorited(false);
           ToastAndroid.show('Removed from favorites', ToastAndroid.SHORT);
@@ -136,19 +143,7 @@ const MovieDetails = ({navigation, route}) => {
       }
     } else {
       try {
-        const result = await api.post(
-          '/account/{account_id}/favorite',
-          {
-            media_type: 'movie',
-            media_id: itemId,
-            favorite: true,
-          },
-          {
-            params: {
-              session_id: value,
-            },
-          },
-        );
+        const result = await post('favorite', 'movie', sessionId, true);
         if (result.data.success) {
           setIsFavorited(true);
           ToastAndroid.show('Added to Favorites', ToastAndroid.SHORT);
