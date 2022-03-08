@@ -14,34 +14,19 @@ const postItem = async (fn, itemId, navigation) => {
         });
 
         const post = async (postType, media_type, sessionId, bool) => {
-          if (postType == 'favorite')
-            return api.post(
-              '/account/{account_id}/' + postType,
-              {
-                media_type,
-                media_id: itemId,
-                favorite: bool,
+          return api.post(
+            '/account/{account_id}/' + postType,
+            {
+              media_type,
+              media_id: itemId,
+              [postType]: bool,
+            },
+            {
+              params: {
+                session_id: sessionId,
               },
-              {
-                params: {
-                  session_id: sessionId,
-                },
-              },
-            );
-          if (postType == 'watchlist')
-            return api.post(
-              '/account/{account_id}/' + postType,
-              {
-                media_type,
-                media_id: itemId,
-                watchlist: bool,
-              },
-              {
-                params: {
-                  session_id: sessionId,
-                },
-              },
-            );
+            },
+          );
         };
         fn(sessionId, result, post);
       } catch (err) {

@@ -89,6 +89,7 @@ const MovieDetails = ({navigation, route}) => {
         setVideos(result[3].data.results);
         setLoading(false);
         result[4].data && setIsFavorited(result[4].data.favorite);
+        result[4].data && setIsWatchList(result[4].data.watchlist);
       })
       .catch(err => {
         //console.log(err.message);
@@ -100,7 +101,6 @@ const MovieDetails = ({navigation, route}) => {
     if (result.data.favorite) {
       try {
         const result = await post('favorite', 'movie', sessionId, false);
-        console.log(result)
         if (result.data.success) {
           setIsFavorited(false);
           ToastAndroid.show('Removed from favorites', ToastAndroid.SHORT);
