@@ -21,7 +21,7 @@ import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import postItem from './postItem'
+import {fav,watchlist} from './postItem'
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -97,54 +97,6 @@ const MovieDetails = ({navigation, route}) => {
   };
 
 
-  const fav = async (sessionId, result, post) => {
-    if (result.data.favorite) {
-      try {
-        const result = await post('favorite', 'movie', sessionId, false);
-        if (result.data.success) {
-          setIsFavorited(false);
-          ToastAndroid.show('Removed from favorites', ToastAndroid.SHORT);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      try {
-        const result = await post('favorite', 'movie', sessionId, true);
-        if (result.data.success) {
-          setIsFavorited(true);
-          ToastAndroid.show('Added to Favorites', ToastAndroid.SHORT);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
-
-  const watchlist = async (sessionId, result, post) => {
-    if (result.data.watchlist) {
-      try {
-        const result = await post('watchlist', 'movie', sessionId, false);
-        if (result.data.success) {
-          setIsWatchList(false);
-          ToastAndroid.show('Removed from watchlist', ToastAndroid.SHORT);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      try {
-        const result = await post('watchlist', 'movie', sessionId, true);
-        if (result.data.success) {
-          setIsWatchList(true);
-          ToastAndroid.show('Added to watchlist', ToastAndroid.SHORT);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
-
   const dateConvert = n => {
     const months = [
       'January',
@@ -192,7 +144,7 @@ const MovieDetails = ({navigation, route}) => {
                 name="favorite"
                 color="#CF3131"
                 size={22}
-                onPress={() => postItem(fav,itemId,navigation)}
+                onPress={() => fav(itemId,navigation,setIsFavorited)}
               />
             ) : (
               <CustomButton
@@ -201,7 +153,7 @@ const MovieDetails = ({navigation, route}) => {
                 name="favorite-border"
                 color="white"
                 size={22}
-                onPress={() => postItem(fav,itemId,navigation)}
+                onPress={() => fav(itemId,navigation,setIsFavorited)}
               />
             )}
             {isWatchList ? (
@@ -211,7 +163,7 @@ const MovieDetails = ({navigation, route}) => {
                 name="bookmark"
                 color="#CF3131"
                 size={22}
-                onPress={() => postItem(watchlist,itemId,navigation)}
+                onPress={() => watchlist(itemId,navigation,setIsWatchList)}
               />
             ) : (
               <CustomButton
@@ -220,7 +172,7 @@ const MovieDetails = ({navigation, route}) => {
                 name="bookmark-border"
                 color="white"
                 size={22}
-                onPress={() => postItem(watchlist,itemId,navigation)}
+                onPress={() => watchlist(itemId,navigation,setIsWatchList)}
               />
             )}
             <View style={{paddingLeft: 25}}>
