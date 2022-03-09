@@ -24,10 +24,7 @@ const getAccountState = async (itemId, navigation) => {
           session_id: sessionId,
         },
       });
-
       return {result, sessionId};
-
-      //fn(sessionId, result, post);
     } catch (err) {
       ToastAndroid.show(err.message, ToastAndroid.SHORT);
     }

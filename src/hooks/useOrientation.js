@@ -1,7 +1,7 @@
 import {Dimensions} from 'react-native';
 import {useEffect, useState} from 'react';
 
-const useOrientation = setImageWidth => {
+const useOrientation = (setImageWidth,setImageHeight) => {
   const [orientation, setOrientation] = useState(
     Dimensions.get('window').width < Dimensions.get('window').height
       ? 'PORTRAIT'
@@ -17,7 +17,8 @@ const useOrientation = setImageWidth => {
         } else {
           setOrientation('LANDSCAPE');
         }
-        setImageWidth(width);
+        setImageWidth && setImageWidth(width);
+        setImageHeight && setImageHeight(height)
       },
     );
 

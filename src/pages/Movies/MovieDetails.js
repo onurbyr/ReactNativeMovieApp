@@ -21,7 +21,7 @@ import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {fav,watchlist} from './postItem'
+import {fav, watchlist} from './postItem';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -35,6 +35,7 @@ const MovieDetails = ({navigation, route}) => {
   const {itemId} = route.params;
   const [isFavorited, setIsFavorited] = useState(false);
   const [isWatchList, setIsWatchList] = useState(false);
+  const [isStarred, setIsStarred] = useState(false);
 
   const req1 = `/movie/${itemId}`;
   const req2 = `/movie/${itemId}/recommendations`;
@@ -96,7 +97,6 @@ const MovieDetails = ({navigation, route}) => {
       });
   };
 
-
   const dateConvert = n => {
     const months = [
       'January',
@@ -144,7 +144,7 @@ const MovieDetails = ({navigation, route}) => {
                 name="favorite"
                 color="#CF3131"
                 size={22}
-                onPress={() => fav(itemId,navigation,setIsFavorited)}
+                onPress={() => fav(itemId, navigation, setIsFavorited)}
               />
             ) : (
               <CustomButton
@@ -153,7 +153,7 @@ const MovieDetails = ({navigation, route}) => {
                 name="favorite-border"
                 color="white"
                 size={22}
-                onPress={() => fav(itemId,navigation,setIsFavorited)}
+                onPress={() => fav(itemId, navigation, setIsFavorited)}
               />
             )}
             {isWatchList ? (
@@ -163,7 +163,7 @@ const MovieDetails = ({navigation, route}) => {
                 name="bookmark"
                 color="#CF3131"
                 size={22}
-                onPress={() => watchlist(itemId,navigation,setIsWatchList)}
+                onPress={() => watchlist(itemId, navigation, setIsWatchList)}
               />
             ) : (
               <CustomButton
@@ -172,7 +172,38 @@ const MovieDetails = ({navigation, route}) => {
                 name="bookmark-border"
                 color="white"
                 size={22}
-                onPress={() => watchlist(itemId,navigation,setIsWatchList)}
+                onPress={() => watchlist(itemId, navigation, setIsWatchList)}
+              />
+            )}
+            {isStarred ? (
+              <CustomButton
+                style={styles.starButton}
+                type="MaterialIcons"
+                name="star"
+                color="#CF3131"
+                size={22}
+                onPress={() =>
+                  navigation.navigate('StarItem', {
+                    name: data.title,
+                    posterPath: data.poster_path,
+                    backdropPath: data.backdrop_path,
+                  })
+                }
+              />
+            ) : (
+              <CustomButton
+                style={styles.starButton}
+                type="MaterialIcons"
+                name="star-border"
+                color="white"
+                size={22}
+                onPress={() =>
+                  navigation.navigate('StarItem', {
+                    name: data.title,
+                    posterPath: data.poster_path,
+                    backdropPath: data.backdrop_path,
+                  })
+                }
               />
             )}
             <View style={{paddingLeft: 25}}>
@@ -507,6 +538,12 @@ const styles = StyleSheet.create({
   },
   watchListButton: {
     marginTop: 70,
+    right: 20,
+    position: 'absolute',
+    alignSelf: 'flex-end',
+  },
+  starButton: {
+    marginTop: 120,
     right: 20,
     position: 'absolute',
     alignSelf: 'flex-end',
