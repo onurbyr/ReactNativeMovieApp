@@ -6,16 +6,18 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  ToastAndroid,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {apiImgUrl} from '../../services/api/api';
 import NoImage from '../images/noimage.png';
 import useOrientation from '../hooks/useOrientation';
 import BackButton from '../components/BackButton';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {api} from '../../services/api/api';
 
-const StarItem = ({route}) => {
-  const {name, posterPath, backdropPath} = route.params;
+const StarItem = ({route,navigation}) => {
+  const {itemId, name, posterPath, backdropPath, sessionId, ratedValue} = route.params;
   const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
   const [imageWidth, setImageWidth] = useState(Dimensions.get('window').width);
   const [imageHeight, setImageHeight] = useState(
@@ -23,6 +25,38 @@ const StarItem = ({route}) => {
   );
   const orientation = useOrientation(setImageWidth, setImageHeight);
   const [starIndex, setStarIndex] = useState(-1);
+
+  useEffect(() => {
+    ratedValue && setStarIndex(ratedValue-1)
+  }, []);
+
+
+  const rateItem = async () => {
+    console.log(starIndex + 1);
+    if (starIndex < 0 || starIndex > 9) {
+      ToastAndroid.show('Please select your rating value', ToastAndroid.SHORT);
+    } else {
+      try {
+        const result = await api.post(
+          `/movie/${itemId}/rating`,
+          {
+            value: starIndex + 1,
+          },
+          {
+            params: {
+              session_id: sessionId,
+            },
+          },
+        );
+        if (result.data.success == true) {
+          ToastAndroid.show('Successfuly Rated', ToastAndroid.SHORT);
+          navigation.goBack()
+        }
+      } catch (err) {
+        ToastAndroid.show(err.message, ToastAndroid.SHORT);
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -82,7 +116,7 @@ const StarItem = ({route}) => {
             </TouchableOpacity>
           ))}
         </View>
-        <TouchableOpacity style={styles.rateButton}>
+        <TouchableOpacity onPress={rateItem} style={styles.rateButton}>
           <Text style={styles.buttonText}>Rate</Text>
         </TouchableOpacity>
       </ScrollView>

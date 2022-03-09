@@ -46,9 +46,10 @@ const post = async (postType, media_type, sessionId, itemId, bool) => {
   );
 };
 
-const fav = async (itemId, navigation, setIsFavorited) => {
+const fav = async (itemId, navigation, setIsFavorited, setIsFavLoading) => {
+  setIsFavLoading(true);
   const accountState = await getAccountState(itemId, navigation);
-  if (accountState)
+  if (accountState) {
     if (accountState.result.data.favorite) {
       try {
         const result = await post(
@@ -82,11 +83,19 @@ const fav = async (itemId, navigation, setIsFavorited) => {
         console.log(err);
       }
     }
+  }
+  setIsFavLoading(false);
 };
 
-const watchlist = async (itemId, navigation, setIsWatchList) => {
+const watchlist = async (
+  itemId,
+  navigation,
+  setIsWatchList,
+  setIsWatchListLoading,
+) => {
+  setIsWatchListLoading(true);
   const accountState = await getAccountState(itemId, navigation);
-  if (accountState)
+  if (accountState) {
     if (accountState.result.data.watchlist) {
       try {
         const result = await post(
@@ -120,7 +129,23 @@ const watchlist = async (itemId, navigation, setIsWatchList) => {
         console.log(err);
       }
     }
+  }
+  setIsWatchListLoading(false);
 };
 
+const star = async (data, navigation, setIsStarLoading) => {
+  setIsStarLoading(true);
+  const accountState = await getAccountState(data.id, navigation);
+  if (accountState)
+    navigation.navigate('StarItem', {
+      itemId: data.id,
+      name: data.title,
+      posterPath: data.poster_path,
+      backdropPath: data.backdrop_path,
+      sessionId: accountState.sessionId,
+      ratedValue: accountState.result.data.rated.value,
+    });
+  setIsStarLoading(false);
+};
 
-export {fav, watchlist};
+export {fav, watchlist, star};

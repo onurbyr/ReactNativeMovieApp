@@ -21,7 +21,8 @@ import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {fav, watchlist} from './postItem';
+import {fav, watchlist, star} from './postItem';
+import CustomActivityIndicator from '../../components/CustomActivityIndicator';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -36,6 +37,9 @@ const MovieDetails = ({navigation, route}) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isWatchList, setIsWatchList] = useState(false);
   const [isStarred, setIsStarred] = useState(false);
+  const [isFavLoading, setIsFavLoading] = useState(false);
+  const [isWatchListLoading, setIsWatchListLoading] = useState(false);
+  const [isStarLoading, setIsStarLoading] = useState(false);
 
   const req1 = `/movie/${itemId}`;
   const req2 = `/movie/${itemId}/recommendations`;
@@ -91,6 +95,9 @@ const MovieDetails = ({navigation, route}) => {
         setLoading(false);
         result[4].data && setIsFavorited(result[4].data.favorite);
         result[4].data && setIsWatchList(result[4].data.watchlist);
+        result[4].data && result[4].data.rated.value
+          ? setIsStarred(true)
+          : setIsStarred(false);
       })
       .catch(err => {
         //console.log(err.message);
@@ -137,14 +144,18 @@ const MovieDetails = ({navigation, route}) => {
               }}
               resizeMode={data.backdrop_path ? 'stretch' : 'center'}
               style={{height: 250}}></Image>
-            {isFavorited ? (
+            {isFavLoading ? (
+              <CustomActivityIndicator style={styles.favoriteButton} />
+            ) : isFavorited ? (
               <CustomButton
                 style={styles.favoriteButton}
                 type="MaterialIcons"
                 name="favorite"
                 color="#CF3131"
                 size={22}
-                onPress={() => fav(itemId, navigation, setIsFavorited)}
+                onPress={() =>
+                  fav(itemId, navigation, setIsFavorited, setIsFavLoading)
+                }
               />
             ) : (
               <CustomButton
@@ -153,17 +164,28 @@ const MovieDetails = ({navigation, route}) => {
                 name="favorite-border"
                 color="white"
                 size={22}
-                onPress={() => fav(itemId, navigation, setIsFavorited)}
+                onPress={() =>
+                  fav(itemId, navigation, setIsFavorited, setIsFavLoading)
+                }
               />
             )}
-            {isWatchList ? (
+            {isWatchListLoading ? (
+              <CustomActivityIndicator style={styles.watchListButton} />
+            ) : isWatchList ? (
               <CustomButton
                 style={styles.watchListButton}
                 type="MaterialIcons"
                 name="bookmark"
                 color="#CF3131"
                 size={22}
-                onPress={() => watchlist(itemId, navigation, setIsWatchList)}
+                onPress={() =>
+                  watchlist(
+                    itemId,
+                    navigation,
+                    setIsWatchList,
+                    setIsWatchListLoading,
+                  )
+                }
               />
             ) : (
               <CustomButton
@@ -172,23 +194,26 @@ const MovieDetails = ({navigation, route}) => {
                 name="bookmark-border"
                 color="white"
                 size={22}
-                onPress={() => watchlist(itemId, navigation, setIsWatchList)}
+                onPress={() =>
+                  watchlist(
+                    itemId,
+                    navigation,
+                    setIsWatchList,
+                    setIsWatchListLoading,
+                  )
+                }
               />
             )}
-            {isStarred ? (
+            {isStarLoading ? (
+              <CustomActivityIndicator style={styles.starButton} />
+            ) : isStarred ? (
               <CustomButton
                 style={styles.starButton}
                 type="MaterialIcons"
                 name="star"
-                color="#CF3131"
+                color="#F57800"
                 size={22}
-                onPress={() =>
-                  navigation.navigate('StarItem', {
-                    name: data.title,
-                    posterPath: data.poster_path,
-                    backdropPath: data.backdrop_path,
-                  })
-                }
+                onPress={() => star(data, navigation, setIsStarLoading)}
               />
             ) : (
               <CustomButton
@@ -197,13 +222,7 @@ const MovieDetails = ({navigation, route}) => {
                 name="star-border"
                 color="white"
                 size={22}
-                onPress={() =>
-                  navigation.navigate('StarItem', {
-                    name: data.title,
-                    posterPath: data.poster_path,
-                    backdropPath: data.backdrop_path,
-                  })
-                }
+                onPress={() => star(data, navigation, setIsStarLoading)}
               />
             )}
             <View style={{paddingLeft: 25}}>
