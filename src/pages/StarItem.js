@@ -1,9 +1,18 @@
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import React, {useState} from 'react';
 import {apiImgUrl} from '../../services/api/api';
 import NoImage from '../images/noimage.png';
 import useOrientation from '../hooks/useOrientation';
 import BackButton from '../components/BackButton';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const StarItem = ({route}) => {
   const {name, posterPath, backdropPath} = route.params;
@@ -13,6 +22,7 @@ const StarItem = ({route}) => {
     Dimensions.get('window').height,
   );
   const orientation = useOrientation(setImageWidth, setImageHeight);
+  const [starIndex, setStarIndex] = useState(-1);
 
   return (
     <View style={styles.container}>
@@ -40,16 +50,42 @@ const StarItem = ({route}) => {
         blurRadius={10}
       />
       <BackButton style={styles.backButton} />
-      <Image
-        style={styles.posterImage}
-        source={{
-          uri: posterPath
-            ? apiImgUrl.API_IMAGE_URL + '/w500' + posterPath
-            : NO_IMAGE,
-        }}
-        resizeMode={posterPath ? 'stretch' : 'center'}
-      />
-      <Text style={styles.rateText}>Rate the {name}</Text>
+      <ScrollView>
+        <Image
+          style={styles.posterImage}
+          source={{
+            uri: posterPath
+              ? apiImgUrl.API_IMAGE_URL + '/w500' + posterPath
+              : NO_IMAGE,
+          }}
+          resizeMode={posterPath ? 'stretch' : 'center'}
+        />
+        <Text style={styles.name}>Rate the {name}</Text>
+        <View style={styles.starsView}>
+          {[...Array(10)].map((x, i) => (
+            <TouchableOpacity key={i} onPress={() => setStarIndex(i)}>
+              {starIndex >= i ? (
+                <MaterialIcons
+                  name="star"
+                  color={'#F57800'}
+                  size={32}
+                  style={styles.starIcon}
+                />
+              ) : (
+                <MaterialIcons
+                  name="star-outline"
+                  color={'#424242'}
+                  size={32}
+                  style={styles.starIcon}
+                />
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+        <TouchableOpacity style={styles.rateButton}>
+          <Text style={styles.buttonText}>Rate</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
@@ -61,24 +97,48 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#15141F',
   },
-  backButton:{
-    marginTop:20
+  backButton: {
+    marginTop: 20,
+    position: 'absolute',
+    zIndex: 1,
   },
-  posterImage:{
+  posterImage: {
     width: 125,
     height: 180,
-    alignSelf:'center',
-    marginVertical:20
+    alignSelf: 'center',
+    marginTop: 70,
+    marginBottom: 20,
   },
-  rateText:{
-    alignSelf:'center',
-    textAlign:'center',
-    fontSize:22,
-    color:'#dddddd',
+  name: {
+    alignSelf: 'center',
+    textAlign: 'center',
+    fontSize: 22,
+    color: '#dddddd',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 10,
-    width:300
-  }
-
+    width: 300,
+  },
+  starsView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  starIcon: {
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 1,
+  },
+  rateButton: {
+    backgroundColor: '#1C1C3A',
+    height: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#dddddd',
+    fontSize: 18,
+  },
 });
