@@ -21,6 +21,9 @@ import ListVideos from '../ListVideos';
 import PeopleDetails from '../PeopleDetails';
 import ListCredits from '../ListCredits';
 import MovieDetails from '../Movies/MovieDetails';
+import Login from '../Login/Login';
+import SignUp from '../Login/SignUp';
+import StarItem from '../StarItem';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -227,6 +230,8 @@ const TvSeries = ({navigation, route}) => {
       'PeopleDetails',
       'ListCredits',
       'MovieDetails',
+      'Login',
+      'StarItem',
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -292,6 +297,21 @@ const TvSeries = ({navigation, route}) => {
         <TvSeriesStack.Screen
           name="MovieDetails"
           component={MovieDetails}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="Login"
+          component={Login}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="StarItem"
+          component={StarItem}
           options={{headerShown: false}}
         />
       </TvSeriesStack.Navigator>

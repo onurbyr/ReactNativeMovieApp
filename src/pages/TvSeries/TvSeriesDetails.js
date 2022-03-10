@@ -8,8 +8,9 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  ToastAndroid,
 } from 'react-native';
-import {api, apiKey, apiImgUrl} from '../../../services/api/api';
+import {api, apiImgUrl} from '../../../services/api/api';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import NoImage from '../../images/noimage.png';
@@ -17,7 +18,11 @@ import NoAvatar from '../../images/noavatar.png';
 import DefaultText from '../../components/DefaultText';
 import BoldText from '../../components/BoldText';
 import BackButton from '../../components/BackButton';
+import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {fav, watchlist, star} from './postItem';
+import CustomActivityIndicator from '../../components/CustomActivityIndicator';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -29,38 +34,55 @@ const TvSeriesDetails = ({navigation, route}) => {
   const [cast, setCast] = useState([]);
   const [videos, setVideos] = useState([]);
   const {itemId} = route.params;
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isWatchList, setIsWatchList] = useState(false);
+  const [isStarred, setIsStarred] = useState(false);
+  const [isFavLoading, setIsFavLoading] = useState(false);
+  const [isWatchListLoading, setIsWatchListLoading] = useState(false);
+  const [isStarLoading, setIsStarLoading] = useState(false);
 
   const req1 = `/tv/${itemId}`;
   const req2 = `/tv/${itemId}/recommendations`;
   const req3 = `/tv/${itemId}/credits`;
   const req4 = `/tv/${itemId}/videos`;
+  const req5 = `/tv/${itemId}/account_states`;
 
   useEffect(() => {
-    multipleRequests([
-      {
-        req: req1,
-        params: {api_key: apiKey.API_KEY},
-      },
-      {
-        req: req2,
-        params: {api_key: apiKey.API_KEY},
-      },
-      {
-        req: req3,
-        params: {api_key: apiKey.API_KEY},
-      },
-      {
-        req: req4,
-        params: {api_key: apiKey.API_KEY},
-      },
-    ]);
-    dateConvert();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@session_id');
+      if (value !== null) {
+        multipleRequests([
+          {req: req1},
+          {req: req2},
+          {req: req3},
+          {req: req4},
+          {
+            req: req5,
+            params: {
+              session_id: value,
+            },
+          },
+        ]);
+      } else {
+        multipleRequests([{req: req1}, {req: req2}, {req: req3}, {req: req4}]);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
 
   const multipleRequests = requests => {
     const concurrentRequests = requests.map(n =>
       api.get(n.req, {params: n.params}).catch(err => {
-        //console.log(err.message);
+        ToastAndroid.show(err.message, ToastAndroid.SHORT);
       }),
     );
 
@@ -71,13 +93,18 @@ const TvSeriesDetails = ({navigation, route}) => {
         setCast(result[2].data.cast);
         setVideos(result[3].data.results);
         setLoading(false);
+        result[4].data && setIsFavorited(result[4].data.favorite);
+        result[4].data && setIsWatchList(result[4].data.watchlist);
+        result[4].data && result[4].data.rated.value
+          ? setIsStarred(true)
+          : setIsStarred(false);
       })
       .catch(err => {
         //console.log(err.message);
       });
   };
 
-  const dateConvert = () => {
+  const dateConvert = n => {
     const months = [
       'January',
       'February',
@@ -92,7 +119,7 @@ const TvSeriesDetails = ({navigation, route}) => {
       'November',
       'December',
     ];
-    const d = new Date(data.first_air_date);
+    const d = new Date(n);
     const date =
       months[d.getMonth()] + ' ' + d.getDate() + ',' + ' ' + d.getFullYear();
     return date;
@@ -101,7 +128,10 @@ const TvSeriesDetails = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
       {isLoading ? (
-        <ActivityIndicator style={{flex: 1}} />
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <BackButton style={[styles.backButton, {top: 0}]} />
+          <ActivityIndicator />
+        </View>
       ) : (
         <View style={styles.container}>
           <BackButton style={styles.backButton} />
@@ -114,10 +144,91 @@ const TvSeriesDetails = ({navigation, route}) => {
               }}
               resizeMode={data.backdrop_path ? 'stretch' : 'center'}
               style={{height: 250}}></Image>
+            {isFavLoading ? (
+              <CustomActivityIndicator style={styles.favoriteButton} />
+            ) : isFavorited ? (
+              <CustomButton
+                style={styles.favoriteButton}
+                type="MaterialIcons"
+                name="favorite"
+                color="#CF3131"
+                size={22}
+                onPress={() =>
+                  fav(itemId, navigation, setIsFavorited, setIsFavLoading)
+                }
+              />
+            ) : (
+              <CustomButton
+                style={styles.favoriteButton}
+                type="MaterialIcons"
+                name="favorite-border"
+                color="white"
+                size={22}
+                onPress={() =>
+                  fav(itemId, navigation, setIsFavorited, setIsFavLoading)
+                }
+              />
+            )}
+            {isWatchListLoading ? (
+              <CustomActivityIndicator style={styles.watchListButton} />
+            ) : isWatchList ? (
+              <CustomButton
+                style={styles.watchListButton}
+                type="MaterialIcons"
+                name="bookmark"
+                color="#CF3131"
+                size={22}
+                onPress={() =>
+                  watchlist(
+                    itemId,
+                    navigation,
+                    setIsWatchList,
+                    setIsWatchListLoading,
+                  )
+                }
+              />
+            ) : (
+              <CustomButton
+                style={styles.watchListButton}
+                type="MaterialIcons"
+                name="bookmark-border"
+                color="white"
+                size={22}
+                onPress={() =>
+                  watchlist(
+                    itemId,
+                    navigation,
+                    setIsWatchList,
+                    setIsWatchListLoading,
+                  )
+                }
+              />
+            )}
+            {isStarLoading ? (
+              <CustomActivityIndicator style={styles.starButton} />
+            ) : isStarred ? (
+              <CustomButton
+                style={styles.starButton}
+                type="MaterialIcons"
+                name="star"
+                color="#F57800"
+                size={22}
+                onPress={() => star(data, navigation, setIsStarLoading)}
+              />
+            ) : (
+              <CustomButton
+                style={styles.starButton}
+                type="MaterialIcons"
+                name="star-border"
+                color="white"
+                size={22}
+                onPress={() => star(data, navigation, setIsStarLoading)}
+              />
+            )}
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.name}</BoldText>
               <View style={{flexDirection: 'row'}}>
-                <Entypo
+              <Entypo
                   name="info"
                   color={'white'}
                   size={12}
@@ -146,7 +257,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                 <View style={{flex: 1}}>
                   <BoldText>First Air Date</BoldText>
                   <DefaultText style={styles.releaseDate}>
-                    {dateConvert()}
+                    {dateConvert(data.first_air_date)}
                   </DefaultText>
                 </View>
                 <View style={{flex: 1}}>
@@ -216,8 +327,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                             navigation.push('PeopleDetails', {
                               itemId: n.id,
                             })
-                          }
-                        >
+                          }>
                           <Image
                             style={{
                               width: 100,
@@ -443,6 +553,24 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     flexDirection: 'row',
     marginRight: 10,
+  },
+  favoriteButton: {
+    marginTop: 20,
+    right: 20,
+    position: 'absolute',
+    alignSelf: 'flex-end',
+  },
+  watchListButton: {
+    marginTop: 70,
+    right: 20,
+    position: 'absolute',
+    alignSelf: 'flex-end',
+  },
+  starButton: {
+    marginTop: 120,
+    right: 20,
+    position: 'absolute',
+    alignSelf: 'flex-end',
   },
 });
 

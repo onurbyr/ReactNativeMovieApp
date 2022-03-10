@@ -17,8 +17,15 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {api} from '../../services/api/api';
 
 const StarItem = ({route, navigation}) => {
-  const {itemId, name, posterPath, backdropPath, sessionId, ratedValue} =
-    route.params;
+  const {
+    itemId,
+    name,
+    posterPath,
+    backdropPath,
+    sessionId,
+    ratedValue,
+    mediaType,
+  } = route.params;
   const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
   const [imageWidth, setImageWidth] = useState(Dimensions.get('window').width);
   const [imageHeight, setImageHeight] = useState(
@@ -41,7 +48,7 @@ const StarItem = ({route, navigation}) => {
     } else {
       try {
         const result = await api.post(
-          `/movie/${itemId}/rating`,
+          `/${mediaType}/${itemId}/rating`,
           {
             value: starIndex + 1,
           },
@@ -63,7 +70,7 @@ const StarItem = ({route, navigation}) => {
 
   const deleteItem = async () => {
     try {
-      const result = await api.delete(`/movie/${itemId}/rating`, {
+      const result = await api.delete(`/${mediaType}/${itemId}/rating`, {
         params: {
           session_id: sessionId,
         },

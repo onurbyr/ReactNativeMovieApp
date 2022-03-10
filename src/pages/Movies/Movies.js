@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../../services/api/api';
+import {api, apiImgUrl} from '../../../services/api/api';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MovieDetails from './MovieDetails';
 import Genres from '../Genres';

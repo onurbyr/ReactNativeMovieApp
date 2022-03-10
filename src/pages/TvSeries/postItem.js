@@ -19,7 +19,7 @@ const getAccountState = async (itemId, navigation) => {
   const sessionId = await getSessionId(navigation);
   if (sessionId)
     try {
-      const result = await api.get(`/movie/${itemId}/account_states`, {
+      const result = await api.get(`/tv/${itemId}/account_states`, {
         params: {
           session_id: sessionId,
         },
@@ -54,7 +54,7 @@ const fav = async (itemId, navigation, setIsFavorited, setIsFavLoading) => {
       try {
         const result = await post(
           'favorite',
-          'movie',
+          'tv',
           accountState.sessionId,
           itemId,
           false,
@@ -70,7 +70,7 @@ const fav = async (itemId, navigation, setIsFavorited, setIsFavLoading) => {
       try {
         const result = await post(
           'favorite',
-          'movie',
+          'tv',
           accountState.sessionId,
           itemId,
           true,
@@ -100,7 +100,7 @@ const watchlist = async (
       try {
         const result = await post(
           'watchlist',
-          'movie',
+          'tv',
           accountState.sessionId,
           itemId,
           false,
@@ -116,7 +116,7 @@ const watchlist = async (
       try {
         const result = await post(
           'watchlist',
-          'movie',
+          'tv',
           accountState.sessionId,
           itemId,
           true,
@@ -144,7 +144,7 @@ const star = async (data, navigation, setIsStarLoading) => {
       backdropPath: data.backdrop_path,
       sessionId: accountState.sessionId,
       ratedValue: accountState.result.data.rated.value,
-      mediaType: 'movie',
+      mediaType: 'tv',
     });
   setIsStarLoading(false);
 };
