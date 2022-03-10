@@ -8,7 +8,7 @@ import {
   ScrollView,
   ToastAndroid,
 } from 'react-native';
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {apiImgUrl} from '../../services/api/api';
 import NoImage from '../images/noimage.png';
 import useOrientation from '../hooks/useOrientation';
@@ -16,8 +16,9 @@ import BackButton from '../components/BackButton';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {api} from '../../services/api/api';
 
-const StarItem = ({route,navigation}) => {
-  const {itemId, name, posterPath, backdropPath, sessionId, ratedValue} = route.params;
+const StarItem = ({route, navigation}) => {
+  const {itemId, name, posterPath, backdropPath, sessionId, ratedValue} =
+    route.params;
   const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
   const [imageWidth, setImageWidth] = useState(Dimensions.get('window').width);
   const [imageHeight, setImageHeight] = useState(
@@ -25,14 +26,16 @@ const StarItem = ({route,navigation}) => {
   );
   const orientation = useOrientation(setImageWidth, setImageHeight);
   const [starIndex, setStarIndex] = useState(-1);
+  const [isStarred, setIsStarred] = useState(false);
 
   useEffect(() => {
-    ratedValue && setStarIndex(ratedValue-1)
+    if (ratedValue) {
+      setStarIndex(ratedValue - 1);
+      setIsStarred(true);
+    }
   }, []);
 
-
   const rateItem = async () => {
-    console.log(starIndex + 1);
     if (starIndex < 0 || starIndex > 9) {
       ToastAndroid.show('Please select your rating value', ToastAndroid.SHORT);
     } else {
@@ -50,11 +53,27 @@ const StarItem = ({route,navigation}) => {
         );
         if (result.data.success == true) {
           ToastAndroid.show('Successfuly Rated', ToastAndroid.SHORT);
-          navigation.goBack()
+          navigation.goBack();
         }
       } catch (err) {
         ToastAndroid.show(err.message, ToastAndroid.SHORT);
       }
+    }
+  };
+
+  const deleteItem = async () => {
+    try {
+      const result = await api.delete(`/movie/${itemId}/rating`, {
+        params: {
+          session_id: sessionId,
+        },
+      });
+      if (result.data.success == true) {
+        ToastAndroid.show('Rating Successfully Deleted', ToastAndroid.SHORT);
+        navigation.goBack();
+      }
+    } catch (err) {
+      ToastAndroid.show(err.message, ToastAndroid.SHORT);
     }
   };
 
@@ -117,8 +136,13 @@ const StarItem = ({route,navigation}) => {
           ))}
         </View>
         <TouchableOpacity onPress={rateItem} style={styles.rateButton}>
-          <Text style={styles.buttonText}>Rate</Text>
+          <Text style={styles.rateButtonText}>Rate</Text>
         </TouchableOpacity>
+        {isStarred && (
+          <TouchableOpacity onPress={deleteItem} style={styles.deleteButton}>
+            <Text style={styles.deleteButtonText}>Delete Rating</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );
@@ -171,7 +195,20 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 5,
   },
-  buttonText: {
+  rateButtonText: {
+    color: '#dddddd',
+    fontSize: 18,
+  },
+  deleteButton: {
+    backgroundColor: '#CF3131',
+    height: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginHorizontal: 20,
+    marginBottom: 20,
+  },
+  deleteButtonText: {
     color: '#dddddd',
     fontSize: 18,
   },

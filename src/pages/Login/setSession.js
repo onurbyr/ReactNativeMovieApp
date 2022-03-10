@@ -1,5 +1,5 @@
 import {ToastAndroid} from 'react-native';
-import {api, apiKey} from '../../../services/api/api';
+import {api} from '../../../services/api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const setSession = async (userName, password, navigation) => {
@@ -7,11 +7,7 @@ const setSession = async (userName, password, navigation) => {
     let requestToken = '';
     let sessionId = '';
     try {
-      const result = await api.get('/authentication/token/new', {
-        params: {
-          api_key: apiKey.API_KEY,
-        },
-      });
+      const result = await api.get('/authentication/token/new');
       requestToken = result.data.request_token;
     } catch (err) {
       console.log(err);
@@ -24,11 +20,6 @@ const setSession = async (userName, password, navigation) => {
           password: password,
           request_token: requestToken,
         },
-        {
-          params: {
-            api_key: apiKey.API_KEY,
-          },
-        },
       );
       requestToken = result.data.request_token;
     } catch (err) {
@@ -37,17 +28,9 @@ const setSession = async (userName, password, navigation) => {
         ToastAndroid.show('Invalid Username or Password', ToastAndroid.SHORT);
     }
     try {
-      const result = await api.post(
-        '/authentication/session/new',
-        {
-          request_token: requestToken,
-        },
-        {
-          params: {
-            api_key: apiKey.API_KEY,
-          },
-        },
-      );
+      const result = await api.post('/authentication/session/new', {
+        request_token: requestToken,
+      });
       if (result.data.success == true) {
         ToastAndroid.show('Successful Login', ToastAndroid.SHORT);
         sessionId = result.data.session_id;
