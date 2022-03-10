@@ -1,19 +1,19 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {WebView} from 'react-native-webview';
 import BackButton from '../../components/BackButton';
-import {createRequestToken, afterApproved} from './setSession';
+import {useNavigation} from '@react-navigation/native';
 
-const Login = ({navigation}) => {
-  const [url, setUrl] = useState('');
-
-  useEffect(() => {
-    createRequestToken(setUrl);
-  }, []);
+const SignUp = ({route}) => {
+  const {url} = route.params;
+  const navigation = useNavigation();
 
   const goBack = e => {
-    if (e.url == 'https://www.themoviedb.org/auth/access/approve') {
-      afterApproved(navigation);
+    if (
+      e.url == 'https://www.themoviedb.org/login' ||
+      e.url.indexOf('www.themoviedb.org/u/') > -1
+    ) {
+      navigation.goBack();
     }
   };
   return (
@@ -43,4 +43,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default SignUp;
+
+

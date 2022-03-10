@@ -1,58 +1,65 @@
 import {ToastAndroid} from 'react-native';
-import {api} from '../../../services/api/api';
+import {apiv4, api} from '../../../services/api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const setSession = async (userName, password, navigation) => {
-  if (userName && password) {
-    let requestToken = '';
-    let sessionId = '';
-    try {
-      const result = await api.get('/authentication/token/new');
+let requestToken = '';
+
+const createRequestToken = async setUrl => {
+  try {
+    const result = await apiv4.post('/auth/request_token');
+    if (result.data.success) {
+      const url = `https://www.themoviedb.org/auth/access?request_token=${result.data.request_token}`;
+      setUrl(url);
       requestToken = result.data.request_token;
-    } catch (err) {
-      console.log(err);
     }
+  } catch (err) {
+    //console.log(err);
+    ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+  }
+};
+
+const afterApproved = async (navigation) => {
+  let accessToken = '';
+  let sessionId = '';
+  let accountId = '';
+  //Create access token
+  if (requestToken) {
     try {
-      const result = await api.post(
-        '/authentication/token/validate_with_login',
-        {
-          username: userName,
-          password: password,
-          request_token: requestToken,
-        },
-      );
-      requestToken = result.data.request_token;
-    } catch (err) {
-      //console.log(err);
-      err.response.status == 401 &&
-        ToastAndroid.show('Invalid Username or Password', ToastAndroid.SHORT);
-    }
-    try {
-      const result = await api.post('/authentication/session/new', {
+      const result = await apiv4.post('/auth/access_token', {
         request_token: requestToken,
       });
-      if (result.data.success == true) {
-        ToastAndroid.show('Successful Login', ToastAndroid.SHORT);
-        sessionId = result.data.session_id;
+      if (result.data.success) {
+        accessToken = result.data.access_token;
+        accountId = result.data.account_id;
       }
     } catch (err) {
       //console.log(err);
+      ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+    }
+    //Convert v4 session
+    if (accessToken) {
+      try {
+        const result = await api.post('/authentication/session/convert/4', {
+          access_token: accessToken,
+        });
+        if (result.data.success) {
+          sessionId = result.data.session_id;
+        }
+      } catch (err) {
+        //console.log(err);
+        ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+      }
     }
     try {
       if (sessionId) {
         await AsyncStorage.setItem('@session_id', sessionId);
-        navigation.goBack();
+        //navigation.goBack();
       }
     } catch (e) {
       // saving error
       console.log(e);
     }
-  } else {
-    ToastAndroid.show(
-      'Please enter your username and password',
-      ToastAndroid.SHORT,
-    );
   }
 };
 
-export default setSession;
+export {createRequestToken, afterApproved};
