@@ -13,7 +13,9 @@ const Login = ({navigation}) => {
 
   const goBack = e => {
     if (e.url == 'https://www.themoviedb.org/auth/access/approve') {
-      afterApproved(navigation);
+      if (!e.loading) {
+        afterApproved(navigation);
+      }
     }
   };
   return (
@@ -29,6 +31,7 @@ const Login = ({navigation}) => {
       </BackButton>
       <WebView
         javaScriptEnabled={true}
+        incognito={true}
         onNavigationStateChange={e => goBack(e)}
         source={{uri: url}}
       />

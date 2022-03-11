@@ -53,7 +53,9 @@ const afterApproved = async (navigation) => {
     try {
       if (sessionId) {
         await AsyncStorage.setItem('@session_id', sessionId);
-        //navigation.goBack();
+        await AsyncStorage.setItem('@access_token', accessToken);
+        await AsyncStorage.setItem('@account_id', accountId);
+        navigation.goBack();
       }
     } catch (e) {
       // saving error

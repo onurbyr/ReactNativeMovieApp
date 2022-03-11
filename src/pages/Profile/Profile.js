@@ -7,25 +7,29 @@ import {
 } from 'react-native';
 import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {api} from '../../../services/api/api';
+import {apiv4} from '../../../services/api/api';
 
 const Profile = () => {
   const Logout = async () => {
     try {
-      const value = await AsyncStorage.getItem('@session_id');
-      if (value !== null) {
+      //const value = await AsyncStorage.getItem('@session_id');
+      const sessionId = await AsyncStorage.getItem('@session_id');
+      const accessToken = await AsyncStorage.getItem('@access_token');
+      if (sessionId !== null) {
         try {
-          const result = await api.delete(
-            '/authentication/session',
+          const result = await apiv4.delete(
+            '/auth/access_token',
             {
               data: {
-                session_id: value,
+                access_token: accessToken,
               },
             },
           );
           if (result.data.success == true) {
             try {
               await AsyncStorage.removeItem('@session_id');
+              await AsyncStorage.removeItem('@access_token');
+              await AsyncStorage.removeItem('@account_id');
               ToastAndroid.show('Successful Logout', ToastAndroid.SHORT);
             } catch (e) {
               // remove error
