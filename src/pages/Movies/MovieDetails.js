@@ -225,6 +225,14 @@ const MovieDetails = ({navigation, route}) => {
                 onPress={() => star(data, navigation, setIsStarLoading)}
               />
             )}
+            <CustomButton
+              style={styles.listButton}
+              type="MaterialIcons"
+              name="add"
+              color="white"
+              size={22}
+              onPress={() => navigation.navigate('CreateList')}
+            />
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.title}</BoldText>
               <View style={{flexDirection: 'row'}}>
@@ -563,6 +571,12 @@ const styles = StyleSheet.create({
   },
   starButton: {
     marginTop: 120,
+    right: 20,
+    position: 'absolute',
+    alignSelf: 'flex-end',
+  },
+  listButton: {
+    marginTop: 170,
     right: 20,
     position: 'absolute',
     alignSelf: 'flex-end',
