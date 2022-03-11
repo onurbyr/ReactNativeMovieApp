@@ -26,7 +26,6 @@ import ListVideos from './ListVideos';
 import PeopleDetails from './PeopleDetails';
 import ListCredits from './ListCredits';
 import Login from './Login/Login';
-import SignUp from './Login/SignUp';
 import StarItem from './StarItem';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
@@ -386,11 +385,6 @@ const Search = ({navigation, route}) => {
         <SearchStack.Screen
           name="Login"
           component={Login}
-          options={{headerShown: false}}
-        />
-        <SearchStack.Screen
-          name="SignUp"
-          component={SignUp}
           options={{headerShown: false}}
         />
         <SearchStack.Screen

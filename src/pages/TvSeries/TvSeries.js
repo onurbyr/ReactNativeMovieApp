@@ -22,7 +22,6 @@ import PeopleDetails from '../PeopleDetails';
 import ListCredits from '../ListCredits';
 import MovieDetails from '../Movies/MovieDetails';
 import Login from '../Login/Login';
-import SignUp from '../Login/SignUp';
 import StarItem from '../StarItem';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
@@ -302,11 +301,6 @@ const TvSeries = ({navigation, route}) => {
         <TvSeriesStack.Screen
           name="Login"
           component={Login}
-          options={{headerShown: false}}
-        />
-        <TvSeriesStack.Screen
-          name="SignUp"
-          component={SignUp}
           options={{headerShown: false}}
         />
         <TvSeriesStack.Screen

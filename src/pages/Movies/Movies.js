@@ -22,7 +22,6 @@ import PeopleDetails from '../PeopleDetails';
 import ListCredits from '../ListCredits';
 import TvSeriesDetails from '../TvSeries/TvSeriesDetails';
 import Login from '../Login/Login';
-import SignUp from '../Login/SignUp';
 import StarItem from '../StarItem';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
@@ -302,11 +301,6 @@ const Movies = ({navigation, route}) => {
         <MoviesStack.Screen
           name="Login"
           component={Login}
-          options={{headerShown: false}}
-        />
-        <MoviesStack.Screen
-          name="SignUp"
-          component={SignUp}
           options={{headerShown: false}}
         />
         <MoviesStack.Screen
