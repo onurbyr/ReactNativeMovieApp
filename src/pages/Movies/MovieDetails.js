@@ -21,7 +21,7 @@ import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {fav, watchlist, star} from './postItem';
+import {fav, watchlist, star, list} from './postItem';
 import CustomActivityIndicator from '../../components/CustomActivityIndicator';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
@@ -231,7 +231,7 @@ const MovieDetails = ({navigation, route}) => {
               name="add"
               color="white"
               size={22}
-              onPress={() => navigation.navigate('CreateList')}
+              onPress={() => list(navigation)}
             />
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.title}</BoldText>

@@ -5,13 +5,15 @@ import {
   TextInput,
   Switch,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import React, {useState} from 'react';
 import HeaderWithBack from '../components/HeaderWithBack';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {apiv4Authorized} from '../../services/api/api';
 
-const CreateList = () => {
+const CreateList = ({navigation}) => {
   const [name, onChangeName] = useState('');
   const [description, onChangeDescription] = useState('');
   const [isNameFocused, setIsNameFocused] = useState(false);
@@ -21,6 +23,33 @@ const CreateList = () => {
   const toggleSwitch = () =>
     setIsToggleEnabled(previousState => !previousState);
 
+  const save = async () => {
+    if (name) {
+      const apiv4 = await apiv4Authorized();
+      if (apiv4) {
+        try {
+          const result = await apiv4.post('/list', {
+            name,
+            description,
+            iso_639_1: 'en',
+            public: isToggleEnabled,
+          });
+          if (result.data.success == true) {
+            ToastAndroid.show('List successfully created', ToastAndroid.SHORT);
+            navigation.goBack();
+          }
+        } catch (err) {
+          ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+        }
+      }
+      else {
+        navigation.navigate('Login')
+      }
+    } else {
+      ToastAndroid.show('List name cannot be empty', ToastAndroid.SHORT);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <HeaderWithBack>Create List</HeaderWithBack>
@@ -28,7 +57,7 @@ const CreateList = () => {
         <View
           style={
             isNameFocused
-              ? [styles.nameInputView, {borderColor: '#FF780D'}]
+              ? [styles.nameInputView, {borderColor: '#5E5CE6'}]
               : styles.nameInputView
           }>
           <FontAwesome5
@@ -51,7 +80,7 @@ const CreateList = () => {
         <View
           style={
             isDescriptionFocused
-              ? [styles.descriptionInputView, {borderColor: '#FF780D'}]
+              ? [styles.descriptionInputView, {borderColor: '#5E5CE6'}]
               : styles.descriptionInputView
           }>
           <MaterialIcons
@@ -72,7 +101,7 @@ const CreateList = () => {
           />
         </View>
         <View style={styles.toggleView}>
-          <Text style={styles.toggleText}>Private</Text>
+          <Text style={styles.toggleText}>Public</Text>
           <Switch
             trackColor={{false: '#767577', true: '#81b0ff'}}
             thumbColor={isToggleEnabled ? '#f5dd4b' : '#f4f3f4'}
@@ -80,7 +109,7 @@ const CreateList = () => {
             value={isToggleEnabled}
           />
         </View>
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity style={styles.saveButton} onPress={save}>
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
       </View>
