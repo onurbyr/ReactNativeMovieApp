@@ -152,7 +152,7 @@ const star = async (data, navigation, setIsStarLoading) => {
 const list = async navigation => {
   const sessionId = await getSessionId(navigation);
   if (sessionId) {
-    navigation.navigate('GetLists');
+    navigation.navigate('CreatedLists');
   }
 };
 

@@ -24,7 +24,7 @@ import TvSeriesDetails from '../TvSeries/TvSeriesDetails';
 import Login from '../Login/Login';
 import StarItem from '../StarItem';
 import CreateList from '../CreateList';
-import GetLists from '../GetLists';
+import CreatedLists from '../CreatedLists';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -316,8 +316,8 @@ const Movies = ({navigation, route}) => {
           options={{headerShown: false}}
         />
         <MoviesStack.Screen
-          name="GetLists"
-          component={GetLists}
+          name="CreatedLists"
+          component={CreatedLists}
           options={{headerShown: false}}
         />
       </MoviesStack.Navigator>
