@@ -10,7 +10,8 @@ import {
   Image,
 } from 'react-native';
 import React, {useEffect, useState, createContext, useContext} from 'react';
-import IconFeather from 'react-native-vector-icons/Feather';
+import Feather from 'react-native-vector-icons/Feather';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {api, apiImgUrl} from '../../services/api/api';
 import NoImage from '../images/noimage.png';
@@ -36,14 +37,15 @@ const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
 
 const SearchScreen = () => {
   const [value, onChangeText] = useState('');
+  const [closeButtonVisible, setCloseButtonVisible] = useState(false);
   return (
-    <InputContext.Provider value={value}>
+    <InputContext.Provider value={{value: value, setCloseButtonVisible}}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.textHeader}>
           Find Movies, Tv series,{'\n'}and more...
         </Text>
         <View style={styles.searchSection}>
-          <IconFeather
+          <Feather
             style={styles.searchIcon}
             name="search"
             color="white"
@@ -57,6 +59,18 @@ const SearchScreen = () => {
             onChangeText={text => onChangeText(text)}
             value={value}
           />
+          {closeButtonVisible && (
+            <TouchableOpacity
+              style={styles.closeIconTouchable}
+              onPress={() => onChangeText('')}>
+              <AntDesign
+                style={styles.closeIcon}
+                name="close"
+                color="white"
+                size={18}
+              />
+            </TouchableOpacity>
+          )}
         </View>
         <Tab.Navigator
           screenOptions={{
@@ -86,12 +100,14 @@ const Tab = createMaterialTopTabNavigator();
 
 const RenderItems = ({apiType, navigation}) => {
   const [data, setData] = useState([]);
-  const value = useContext(InputContext);
+  const value = useContext(InputContext).value;
+  const setCloseButtonVisible = useContext(InputContext).setCloseButtonVisible;
   const [isLoading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [isConnected, setConnected] = useState(false);
 
   useEffect(() => {
+    value !== '' ? setCloseButtonVisible(true) : setCloseButtonVisible(false);
     getNetInfo();
     if (isConnected) {
       setLoading(true);
@@ -224,7 +240,7 @@ const RenderItems = ({apiType, navigation}) => {
             styles.container,
             {alignItems: 'center', justifyContent: 'center', paddingBottom: 50},
           ]}>
-          <IconFeather name="search" color="white" size={60} />
+          <Feather name="search" color="white" size={60} />
         </SafeAreaView>
       );
     }
@@ -272,6 +288,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 20,
     alignItems: 'center',
+    height: 50,
   },
   searchIcon: {
     marginHorizontal: 10,
@@ -279,6 +296,13 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: '#BBBBBB',
+  },
+  closeIconTouchable: {
+    height: '100%',
+    justifyContent: 'center',
+  },
+  closeIcon: {
+    marginRight: 18,
   },
   items: {
     flex: 1,

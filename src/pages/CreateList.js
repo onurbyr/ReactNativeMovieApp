@@ -20,11 +20,11 @@ const CreateList = () => {
 
   const toggleSwitch = () =>
     setIsToggleEnabled(previousState => !previousState);
-    
+
   return (
     <View style={styles.container}>
       <HeaderWithBack>Create List</HeaderWithBack>
-      <View style={{paddingHorizontal:20}}>
+      <View style={{paddingHorizontal: 20}}>
         <View
           style={
             isNameFocused
