@@ -6,6 +6,7 @@ import usePrevious from '../hooks/usePrevious';
 import {apiv4Authorized} from '../../services/api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RenderFooter from '../components/RenderFooter';
+import CheckBox from '@react-native-community/checkbox';
 
 const CreatedLists = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -34,7 +35,9 @@ const CreatedLists = ({navigation}) => {
             page,
           },
         });
-        //console.log(response)
+        // response.data.results.map((x,index) => {
+        //   response.data.results[index].isChecked=true
+        // });
         if (prevPage == page - 1) {
           setData([...data, ...response.data.results]);
           setIsExtraLoading(false);
@@ -50,15 +53,28 @@ const CreatedLists = ({navigation}) => {
     }
   };
 
+  const onCheckBoxValueChange = (itemId, newValue) => {
+    let temp = data.map(data => {
+      if (itemId === data.id) {
+        return {...data, isChecked: !data.isChecked};
+      }
+      return data;
+    });
+    setData(temp);
+  };
 
-  const renderItem = (item) => 
-  {
+  const renderItem = item => {
     return (
-      <View style={{borderWidth:1}}>
+      <View style={{borderWidth: 1, flexDirection: 'row'}}>
+        <CheckBox
+          disabled={false}
+          value={item.isChecked}
+          onValueChange={() => onCheckBoxValueChange(item.id)}
+        />
         <Text>{item.name}</Text>
       </View>
-    )
-  }
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -72,7 +88,7 @@ const CreatedLists = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <FlatList
-      style={{paddingHorizontal:20}}
+        style={{paddingHorizontal: 20}}
         data={data}
         onEndReached={() => {
           if (page < totalPages) {
