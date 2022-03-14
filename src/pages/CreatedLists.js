@@ -27,13 +27,12 @@ const CreatedLists = ({navigation}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      setPage(1)
+      setPage(1);
       getItems();
     });
 
     return unsubscribe;
   }, [navigation]);
-
 
   useEffect(() => {
     getItems();
@@ -65,39 +64,47 @@ const CreatedLists = ({navigation}) => {
     }
   };
 
+  const Hr = () => {
+    return (
+      <View
+        style={{
+          borderBottomColor: '#515151',
+          borderBottomWidth: 0.8,
+          opacity: 0.3,
+        }}
+      />
+    );
+  };
+
   const renderItem = item => {
     return (
-      <TouchableOpacity style={styles.listView}>
-        <DefaultText style={styles.itemText}>
-          {item.number_of_items}{' '}
-          {item.number_of_items === 0 || item.number_of_items === 1
-            ? 'item'
-            : 'items'}
-        </DefaultText>
-        <View>
+      <View>
+        <Hr />
+        <TouchableOpacity style={styles.listView}>
           <BoldText>{item.name}</BoldText>
           {item.public ? (
             <MaterialIcons
               style={styles.public}
               name="public"
-              color={'white'}
-              size={14}
+              color={'#726C8D'}
+              size={12}
             />
           ) : (
             <MaterialIcons
               style={styles.public}
               name="lock"
-              color={'white'}
-              size={14}
+              color={'#726C8D'}
+              size={12}
             />
           )}
-        </View>
-        <View style={{flex: 1}}>
-          <TouchableOpacity style={styles.rightIconView}>
-            <MaterialIcons name="chevron-right" color={'white'} size={24} />
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+          <View style={{flex: 1}}>
+            <TouchableOpacity style={styles.rightView}>
+              <DefaultText>{item.number_of_items}</DefaultText>
+              <MaterialIcons name="chevron-right" color={'white'} size={24} />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -159,23 +166,19 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingRight: 20,
   },
-  itemText: {
-    textAlignVertical: 'center',
-    marginHorizontal: 25,
-  },
   listView: {
-    paddingVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
     flexDirection: 'row',
-    backgroundColor: '#1C1C3A',
-    borderRadius: 10,
-    marginBottom: 20,
+    alignItems: 'center',
   },
   public: {
-    marginTop: 40,
+    marginLeft: 5,
+    marginTop: 2,
   },
-  rightIconView: {
-    justifyContent: 'center',
-    paddingRight: 10,
+  rightView: {
+    flexDirection: 'row',
+    alignItems: 'center',
     alignSelf: 'flex-end',
     flex: 1,
   },
