@@ -1,4 +1,11 @@
-import {StyleSheet, Text, View, TouchableOpacity, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import BackButton from '../components/BackButton';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -6,7 +13,9 @@ import usePrevious from '../hooks/usePrevious';
 import {apiv4Authorized} from '../../services/api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RenderFooter from '../components/RenderFooter';
-import CheckBox from '@react-native-community/checkbox';
+import DefaultText from '../components/DefaultText';
+import BoldText from '../components/BoldText';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const CreatedLists = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -18,11 +27,17 @@ const CreatedLists = ({navigation}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      setPage(1)
       getItems();
     });
 
     return unsubscribe;
-  }, [page, navigation]);
+  }, [navigation]);
+
+
+  useEffect(() => {
+    getItems();
+  }, [page]);
 
   //getdata with axios
   const getItems = async () => {
@@ -35,9 +50,6 @@ const CreatedLists = ({navigation}) => {
             page,
           },
         });
-        // response.data.results.map((x,index) => {
-        //   response.data.results[index].isChecked=true
-        // });
         if (prevPage == page - 1) {
           setData([...data, ...response.data.results]);
           setIsExtraLoading(false);
@@ -53,30 +65,48 @@ const CreatedLists = ({navigation}) => {
     }
   };
 
-  const onCheckBoxValueChange = (itemId, newValue) => {
-    let temp = data.map(data => {
-      if (itemId === data.id) {
-        return {...data, isChecked: !data.isChecked};
-      }
-      return data;
-    });
-    setData(temp);
-  };
-
   const renderItem = item => {
     return (
-      <View style={{borderWidth: 1, flexDirection: 'row'}}>
-        <CheckBox
-          disabled={false}
-          value={item.isChecked}
-          onValueChange={() => onCheckBoxValueChange(item.id)}
-        />
-        <Text>{item.name}</Text>
-      </View>
+      <TouchableOpacity style={styles.listView}>
+        <DefaultText style={styles.itemText}>
+          {item.number_of_items}{' '}
+          {item.number_of_items === 0 || item.number_of_items === 1
+            ? 'item'
+            : 'items'}
+        </DefaultText>
+        <View>
+          <BoldText>{item.name}</BoldText>
+          {item.public ? (
+            <MaterialIcons
+              style={styles.public}
+              name="public"
+              color={'white'}
+              size={14}
+            />
+          ) : (
+            <MaterialIcons
+              style={styles.public}
+              name="lock"
+              color={'white'}
+              size={14}
+            />
+          )}
+        </View>
+        <View style={{flex: 1}}>
+          <TouchableOpacity style={styles.rightIconView}>
+            <MaterialIcons name="chevron-right" color={'white'} size={24} />
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
     );
   };
 
-  return (
+  return isLoading ? (
+    <View style={[styles.container, {justifyContent: 'center'}]}>
+      <BackButton style={{position: 'absolute', top: 20}} />
+      <ActivityIndicator />
+    </View>
+  ) : (
     <View style={styles.container}>
       <View style={styles.header}>
         <BackButton />
@@ -128,5 +158,25 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
     paddingRight: 20,
+  },
+  itemText: {
+    textAlignVertical: 'center',
+    marginHorizontal: 25,
+  },
+  listView: {
+    paddingVertical: 10,
+    flexDirection: 'row',
+    backgroundColor: '#1C1C3A',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  public: {
+    marginTop: 40,
+  },
+  rightIconView: {
+    justifyContent: 'center',
+    paddingRight: 10,
+    alignSelf: 'flex-end',
+    flex: 1,
   },
 });
