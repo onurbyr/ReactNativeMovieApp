@@ -25,7 +25,7 @@ const CreatedLists = ({navigation, route}) => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const prevPage = usePrevious(page);
-  const [isExtraLoading, setIsExtraLoading] = useState(true);
+  const [isExtraLoading, setIsExtraLoading] = useState(false);
   const {itemId, mediaType} = route.params;
 
   const flatListRef = useRef();
@@ -33,7 +33,6 @@ const CreatedLists = ({navigation, route}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getItems();
-      setPage(1);
       setData([]);
     });
 
@@ -58,10 +57,10 @@ const CreatedLists = ({navigation, route}) => {
         });
         if (prevPage === page - 1) {
           setData([...data, ...response.data.results]);
-          setIsExtraLoading(false);
         } else {
           setData(response.data.results);
           setTotalPages(response.data.total_pages);
+          setPage(1);
         }
       } catch (error) {
         console.log(error.message);
@@ -84,7 +83,7 @@ const CreatedLists = ({navigation, route}) => {
         });
         if (result.data.success == true) {
           toTop();
-          setPage(1);
+          getItems();
           ToastAndroid.show('Successfully added', ToastAndroid.SHORT);
         }
       } catch (err) {
