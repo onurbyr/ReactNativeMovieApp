@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import BackButton from '../components/BackButton';
 import Entypo from 'react-native-vector-icons/Entypo';
 import usePrevious from '../hooks/usePrevious';
@@ -16,25 +17,31 @@ import RenderFooter from '../components/RenderFooter';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import useDidMountEffect from '../hooks/useDidMountEffect';
 
-const CreatedLists = ({navigation}) => {
+const CreatedLists = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const prevPage = usePrevious(page);
   const [isExtraLoading, setIsExtraLoading] = useState(true);
+  const {itemId, mediaType} = route.params;
+
+  const flatListRef = useRef();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      setPage(1);
       getItems();
+      setPage(1);
+      setData([]);
     });
 
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
+  // runs if 'key' changes, but not on initial render
+  useDidMountEffect(() => {
     getItems();
   }, [page]);
 
@@ -49,7 +56,7 @@ const CreatedLists = ({navigation}) => {
             page,
           },
         });
-        if (prevPage == page - 1) {
+        if (prevPage === page - 1) {
           setData([...data, ...response.data.results]);
           setIsExtraLoading(false);
         } else {
@@ -61,6 +68,30 @@ const CreatedLists = ({navigation}) => {
       } finally {
         setLoading(false);
       }
+    }
+  };
+
+  const toTop = () => {
+    flatListRef.current.scrollToOffset({animated: true, offset: 0});
+  };
+
+  const addItem = async item => {
+    const apiv4 = await apiv4Authorized();
+    if (apiv4) {
+      try {
+        const result = await apiv4.post(`/list/${item.id}/items`, {
+          items: [{media_type: mediaType, media_id: itemId}],
+        });
+        if (result.data.success == true) {
+          toTop();
+          setPage(1);
+          ToastAndroid.show('Successfully added', ToastAndroid.SHORT);
+        }
+      } catch (err) {
+        ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+      }
+    } else {
+      navigation.navigate('Login');
     }
   };
 
@@ -80,7 +111,7 @@ const CreatedLists = ({navigation}) => {
     return (
       <View>
         <Hr />
-        <TouchableOpacity style={styles.listView}>
+        <TouchableOpacity style={styles.listView} onPress={() => addItem(item)}>
           <BoldText>{item.name}</BoldText>
           {item.public ? (
             <MaterialIcons
@@ -126,6 +157,7 @@ const CreatedLists = ({navigation}) => {
       </View>
       <FlatList
         style={{paddingHorizontal: 20}}
+        ref={flatListRef}
         data={data}
         onEndReached={() => {
           if (page < totalPages) {

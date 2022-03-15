@@ -149,10 +149,10 @@ const star = async (data, navigation, setIsStarLoading) => {
   setIsStarLoading(false);
 };
 
-const list = async navigation => {
+const list = async (id, navigation) => {
   const sessionId = await getSessionId(navigation);
   if (sessionId) {
-    navigation.navigate('CreatedLists');
+    navigation.navigate('CreatedLists', {itemId: id, mediaType: 'movie'});
   }
 };
 

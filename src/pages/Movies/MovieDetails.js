@@ -154,7 +154,7 @@ const MovieDetails = ({navigation, route}) => {
                 color="#CF3131"
                 size={22}
                 onPress={() =>
-                  fav(itemId, navigation, setIsFavorited, setIsFavLoading)
+                  fav(data.id, navigation, setIsFavorited, setIsFavLoading)
                 }
               />
             ) : (
@@ -165,7 +165,7 @@ const MovieDetails = ({navigation, route}) => {
                 color="white"
                 size={22}
                 onPress={() =>
-                  fav(itemId, navigation, setIsFavorited, setIsFavLoading)
+                  fav(data.id, navigation, setIsFavorited, setIsFavLoading)
                 }
               />
             )}
@@ -180,7 +180,7 @@ const MovieDetails = ({navigation, route}) => {
                 size={22}
                 onPress={() =>
                   watchlist(
-                    itemId,
+                    data.id,
                     navigation,
                     setIsWatchList,
                     setIsWatchListLoading,
@@ -196,7 +196,7 @@ const MovieDetails = ({navigation, route}) => {
                 size={22}
                 onPress={() =>
                   watchlist(
-                    itemId,
+                    data.id,
                     navigation,
                     setIsWatchList,
                     setIsWatchListLoading,
@@ -231,7 +231,7 @@ const MovieDetails = ({navigation, route}) => {
               name="add"
               color="white"
               size={22}
-              onPress={() => list(navigation)}
+              onPress={() => list(data.id,navigation)}
             />
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.title}</BoldText>
