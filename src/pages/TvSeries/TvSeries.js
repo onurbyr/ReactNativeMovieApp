@@ -23,6 +23,8 @@ import ListCredits from '../ListCredits';
 import MovieDetails from '../Movies/MovieDetails';
 import Login from '../Login/Login';
 import StarItem from '../StarItem';
+import CreateList from '../CreateList';
+import CreatedLists from '../CreatedLists';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -306,6 +308,16 @@ const TvSeries = ({navigation, route}) => {
         <TvSeriesStack.Screen
           name="StarItem"
           component={StarItem}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="CreateList"
+          component={CreateList}
+          options={{headerShown: false}}
+        />
+        <TvSeriesStack.Screen
+          name="CreatedLists"
+          component={CreatedLists}
           options={{headerShown: false}}
         />
       </TvSeriesStack.Navigator>

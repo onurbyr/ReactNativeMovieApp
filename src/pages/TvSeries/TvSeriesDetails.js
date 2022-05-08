@@ -21,7 +21,7 @@ import BackButton from '../../components/BackButton';
 import CustomButton from '../../components/CustomButton/CustomButton';
 import Hr from '../../components/Hr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {fav, watchlist, star} from './postItem';
+import {fav, watchlist, star, list} from './postItem';
 import CustomActivityIndicator from '../../components/CustomActivityIndicator';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
@@ -225,10 +225,18 @@ const TvSeriesDetails = ({navigation, route}) => {
                 onPress={() => star(data, navigation, setIsStarLoading)}
               />
             )}
+            <CustomButton
+              style={styles.listButton}
+              type="MaterialIcons"
+              name="add"
+              color="white"
+              size={22}
+              onPress={() => list(data.id, navigation)}
+            />
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.name}</BoldText>
               <View style={{flexDirection: 'row'}}>
-              <Entypo
+                <Entypo
                   name="info"
                   color={'white'}
                   size={12}
@@ -568,6 +576,12 @@ const styles = StyleSheet.create({
   },
   starButton: {
     marginTop: 120,
+    right: 20,
+    position: 'absolute',
+    alignSelf: 'flex-end',
+  },
+  listButton: {
+    marginTop: 170,
     right: 20,
     position: 'absolute',
     alignSelf: 'flex-end',

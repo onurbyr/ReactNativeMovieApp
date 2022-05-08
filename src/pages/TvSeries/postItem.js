@@ -149,4 +149,11 @@ const star = async (data, navigation, setIsStarLoading) => {
   setIsStarLoading(false);
 };
 
-export {fav, watchlist, star};
+const list = async (id, navigation) => {
+  const sessionId = await getSessionId(navigation);
+  if (sessionId) {
+    navigation.navigate('CreatedLists', {itemId: id, mediaType: 'tv'});
+  }
+};
+
+export {fav, watchlist, star, list};

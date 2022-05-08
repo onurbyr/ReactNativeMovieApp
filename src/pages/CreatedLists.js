@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    marginVertical: 15,
+    marginVertical: 20,
     alignItems: 'center',
   },
   headerText: {
