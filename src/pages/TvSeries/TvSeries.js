@@ -29,6 +29,9 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
 import Stars from '../../components/Stars/Stars';
+import NoImage from '../../images/noimage.png';
+
+const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
 const TvSeriesScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -119,7 +122,9 @@ const TvSeriesScreen = ({navigation}) => {
         </ScrollView>
       </View>
       {isLoading ? (
-        <ActivityIndicator />
+        <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>
+          <ActivityIndicator />
+        </View>
       ) : (
         <FlatList
           style={{marginBottom: 50}}
@@ -138,8 +143,11 @@ const TvSeriesScreen = ({navigation}) => {
               <Image
                 style={{width: 150, height: 250, borderRadius: 10}}
                 source={{
-                  uri: apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path,
+                  uri: item.poster_path
+                    ? apiImgUrl.API_IMAGE_URL + '/w500' + item.poster_path
+                    : NO_IMAGE,
                 }}
+                resizeMode={item.poster_path ? 'cover' : 'contain'}
               />
               <Text style={styles.itemsText}>{item.name}</Text>
               <View style={{flexDirection: 'row', marginTop: 5}}>

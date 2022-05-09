@@ -58,7 +58,9 @@ const Genres = ({route, navigation}) => {
     <View style={styles.container}>
       <HeaderWithBack>{itemName}</HeaderWithBack>
       {isLoading ? (
-        <ActivityIndicator />
+        <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>
+          <ActivityIndicator />
+        </View>
       ) : (
         <FlatList
           data={data}
