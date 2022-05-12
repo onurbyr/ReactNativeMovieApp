@@ -8,7 +8,7 @@ import {
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {api, apiKey, apiImgUrl} from '../../services/api/api';
+import {api, apiImgUrl} from '../../services/api/api';
 import HeaderWithBack from '../components/HeaderWithBack';
 import Stars from '../components/Stars/Stars';
 import NoImage from '../images/noimage.png';
