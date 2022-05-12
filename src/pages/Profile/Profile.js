@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +16,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Login from '../Login/Login';
 import LinearGradient from 'react-native-linear-gradient';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import {Dimensions} from 'react-native';
 const windowWidth = Dimensions.get('window').width;
@@ -68,7 +70,7 @@ const ProfileScreen = ({navigation}) => {
               await AsyncStorage.removeItem('@session_id');
               await AsyncStorage.removeItem('@access_token');
               await AsyncStorage.removeItem('@account_id');
-              navigation.navigate('Movies', { screen: 'MoviesScreen' });
+              navigation.navigate('Movies', {screen: 'MoviesScreen'});
               ToastAndroid.show('Successful Logout', ToastAndroid.SHORT);
             } catch (e) {
               // remove error
@@ -81,6 +83,18 @@ const ProfileScreen = ({navigation}) => {
     } catch (e) {
       // error reading value
     }
+  };
+
+  const Hr = () => {
+    return (
+      <View
+        style={{
+          borderBottomColor: '#959595',
+          borderBottomWidth: 0.5,
+          opacity: 0.3,
+        }}
+      />
+    );
   };
 
   return isLoading ? (
@@ -101,20 +115,69 @@ const ProfileScreen = ({navigation}) => {
           {data.username}
         </LetterProfileImage>
       </LinearGradient>
-
-      <TouchableOpacity
-        style={{
-          width: 100,
-          height: 30,
-          backgroundColor: 'gray',
-          justifyContent: 'center',
-          alignItems: 'center',
-          alignSelf: 'center',
-          marginTop: 50,
-        }}
-        onPress={Logout}>
-        <Text style={{color: 'white'}}>Logout</Text>
-      </TouchableOpacity>
+      <ScrollView style={{marginBottom: 50}}>
+        <TouchableOpacity style={styles.profileItem}>
+          <MaterialIcons name="favorite-border" color={'#593FEE'} size={36} />
+          <Text style={styles.profileItemText}>Favorited</Text>
+          <View style={styles.rightArrow}>
+            <MaterialIcons
+              name="keyboard-arrow-right"
+              color={'#593FEE'}
+              size={36}
+            />
+          </View>
+        </TouchableOpacity>
+        <Hr />
+        <TouchableOpacity style={styles.profileItem}>
+          <MaterialIcons name="bookmark-border" color={'#593FEE'} size={36} />
+          <Text style={styles.profileItemText}>Watchlist</Text>
+          <View style={styles.rightArrow}>
+            <MaterialIcons
+              name="keyboard-arrow-right"
+              color={'#593FEE'}
+              size={36}
+            />
+          </View>
+        </TouchableOpacity>
+        <Hr />
+        <TouchableOpacity style={styles.profileItem}>
+          <MaterialIcons name="star-border" color={'#593FEE'} size={36} />
+          <Text style={styles.profileItemText}>Ratings</Text>
+          <View style={styles.rightArrow}>
+            <MaterialIcons
+              name="keyboard-arrow-right"
+              color={'#593FEE'}
+              size={36}
+            />
+          </View>
+        </TouchableOpacity>
+        <Hr />
+        <TouchableOpacity style={styles.profileItem}>
+          <MaterialIcons
+            name="format-list-bulleted"
+            color={'#593FEE'}
+            size={36}
+          />
+          <Text style={styles.profileItemText}>Lists</Text>
+          <View style={styles.rightArrow}>
+            <MaterialIcons
+              name="keyboard-arrow-right"
+              color={'#593FEE'}
+              size={36}
+            />
+          </View>
+        </TouchableOpacity>
+        <Hr />
+        <LinearGradient
+          colors={['#4736AE', '#9761C6']}
+          start={{x: 0.3, y: 0.5}}
+          end={{x: 1.0, y: 1.0}}
+          style={styles.logoutGradient}>
+          <TouchableOpacity style={styles.logoutButton} onPress={Logout}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </ScrollView>
     </View>
   );
 };
@@ -133,6 +196,7 @@ const styles = StyleSheet.create({
     marginLeft: -50,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    marginBottom: 50,
   },
   userName: {
     fontSize: 28,
@@ -143,6 +207,38 @@ const styles = StyleSheet.create({
   },
   letterProfileImage: {
     top: 35,
+  },
+  profileItem: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    paddingVertical: 15,
+  },
+  profileItemText: {
+    marginLeft: 30,
+    fontSize: 18,
+    color: '#959595',
+  },
+  rightArrow: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  logoutGradient: {
+    width: 200,
+    height: 40,
+    borderRadius: 20,
+    alignSelf: 'center',
+    marginTop: 30,
+  },
+  logoutButton: {
+    width: 200,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 
