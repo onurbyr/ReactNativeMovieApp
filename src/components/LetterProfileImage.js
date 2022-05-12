@@ -13,13 +13,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#0177D2',
+    backgroundColor: '#dddddd',
   },
   name: {
     textAlign: 'center',
     fontSize: 30,
     lineHeight: 80,
-    color: '#dddddd',
+    color:'#4736AE'
   },
 });
 

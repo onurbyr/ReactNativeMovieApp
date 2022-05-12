@@ -14,6 +14,7 @@ import BoldText from '../../components/BoldText';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Login from '../Login/Login';
+import LinearGradient from 'react-native-linear-gradient';
 
 import {Dimensions} from 'react-native';
 const windowWidth = Dimensions.get('window').width;
@@ -67,6 +68,7 @@ const ProfileScreen = ({navigation}) => {
               await AsyncStorage.removeItem('@session_id');
               await AsyncStorage.removeItem('@access_token');
               await AsyncStorage.removeItem('@account_id');
+              navigation.navigate('Movies', { screen: 'MoviesScreen' });
               ToastAndroid.show('Successful Logout', ToastAndroid.SHORT);
             } catch (e) {
               // remove error
@@ -90,11 +92,15 @@ const ProfileScreen = ({navigation}) => {
       <BoldText style={styles.userName}>
         {data.username.charAt(0).toUpperCase() + data.username.slice(1)}
       </BoldText>
-      <View style={styles.profileContainer}>
+      <LinearGradient
+        colors={['#4736AE', '#9761C6']}
+        start={{x: 0.3, y: 0.5}}
+        end={{x: 1.0, y: 1.0}}
+        style={styles.profileContainer}>
         <LetterProfileImage style={styles.letterProfileImage}>
           {data.username}
         </LetterProfileImage>
-      </View>
+      </LinearGradient>
 
       <TouchableOpacity
         style={{
