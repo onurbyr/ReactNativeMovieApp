@@ -15,6 +15,7 @@ import BoldText from '../../components/BoldText';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Login from '../Login/Login';
+import Favorites from '../Profile/Favorites';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -116,9 +117,11 @@ const ProfileScreen = ({navigation}) => {
         </LetterProfileImage>
       </LinearGradient>
       <ScrollView style={{marginBottom: 50}}>
-        <TouchableOpacity style={styles.profileItem}>
+        <TouchableOpacity
+          style={styles.profileItem}
+          onPress={() => navigation.navigate('Favorites')}>
           <MaterialIcons name="favorite-border" color={'#593FEE'} size={36} />
-          <Text style={styles.profileItemText}>Favorited</Text>
+          <Text style={styles.profileItemText}>Favorites</Text>
           <View style={styles.rightArrow}>
             <MaterialIcons
               name="keyboard-arrow-right"
@@ -273,6 +276,11 @@ const Profile = ({navigation, route}) => {
         <ProfileStack.Screen
           name="Login"
           component={Login}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="Favorites"
+          component={Favorites}
           options={{headerShown: false}}
         />
       </ProfileStack.Navigator>
