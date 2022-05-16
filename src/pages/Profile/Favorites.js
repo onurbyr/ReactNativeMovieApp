@@ -137,11 +137,20 @@ const Favorites = () => {
                 )}
                 <BoldText style={{marginLeft: 10}}>Created At</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
-                  <MaterialIcons
-                    name="arrow-downward"
-                    color={'#e0b422'}
-                    size={24}
-                  />
+                  {sort === 'created_at.asc' && (
+                    <MaterialIcons
+                      name="arrow-downward"
+                      color={'#e0b422'}
+                      size={24}
+                    />
+                  )}
+                  {sort === 'created_at.desc' && (
+                    <MaterialIcons
+                      name="arrow-upward"
+                      color={'#e0b422'}
+                      size={24}
+                    />
+                  )}
                 </View>
               </TouchableOpacity>
               <Hr />
@@ -158,11 +167,20 @@ const Favorites = () => {
                 )}
                 <BoldText style={{marginLeft: 10}}>Date</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
-                  <MaterialIcons
-                    name="arrow-downward"
-                    color={'#e0b422'}
-                    size={24}
-                  />
+                  {sort === 'release_date.asc' && (
+                    <MaterialIcons
+                      name="arrow-downward"
+                      color={'#e0b422'}
+                      size={24}
+                    />
+                  )}
+                  {sort === 'release_date.desc' && (
+                    <MaterialIcons
+                      name="arrow-upward"
+                      color={'#e0b422'}
+                      size={24}
+                    />
+                  )}
                 </View>
               </TouchableOpacity>
               <Hr />
@@ -178,11 +196,20 @@ const Favorites = () => {
                 )}
                 <BoldText style={{marginLeft: 10}}>Title</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
-                  <MaterialIcons
-                    name="arrow-downward"
-                    color={'#e0b422'}
-                    size={24}
-                  />
+                  {sort === 'title.asc' && (
+                    <MaterialIcons
+                      name="arrow-downward"
+                      color={'#e0b422'}
+                      size={24}
+                    />
+                  )}
+                  {sort === 'title.desc' && (
+                    <MaterialIcons
+                      name="arrow-upward"
+                      color={'#e0b422'}
+                      size={24}
+                    />
+                  )}
                 </View>
               </TouchableOpacity>
               <Hr />
@@ -199,11 +226,20 @@ const Favorites = () => {
                 )}
                 <BoldText style={{marginLeft: 10}}>Vote</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
-                  <MaterialIcons
-                    name="arrow-downward"
-                    color={'#e0b422'}
-                    size={24}
-                  />
+                  {sort === 'vote_average.asc' && (
+                    <MaterialIcons
+                      name="arrow-downward"
+                      color={'#e0b422'}
+                      size={24}
+                    />
+                  )}
+                  {sort === 'vote_average.desc' && (
+                    <MaterialIcons
+                      name="arrow-upward"
+                      color={'#e0b422'}
+                      size={24}
+                    />
+                  )}
                 </View>
               </TouchableOpacity>
               <Hr />
@@ -211,7 +247,7 @@ const Favorites = () => {
           </Collapse>
           <FlatList
             data={data}
-            style={{marginBottom: 50}}
+            style={{marginBottom: 180}}
             // onEndReached={() => {
             //   setPage(page + 1);
             //   setIsExtraLoading(true);
