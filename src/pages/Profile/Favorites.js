@@ -25,8 +25,9 @@ const Favorites = () => {
   const [page, setPage] = useState(1);
   const prevPage = usePrevious(page);
   const [isExtraLoading, setIsExtraLoading] = useState(true);
-  const [sort, setSort] = useState('created_at.asc');
+  const [sort, setSort] = useState('created_at.desc');
   const prevSortRef = useRef();
+  const childCompRef = useRef();
 
   useEffect(() => {
     getItems();
@@ -123,7 +124,7 @@ const Favorites = () => {
         </View>
       ) : (
         <View>
-          <Collapse>
+          <Collapse ref={childCompRef}>
             <View style={styles.collapseContainer}>
               <TouchableOpacity
                 style={styles.collapseButtons}
@@ -255,6 +256,7 @@ const Favorites = () => {
             keyExtractor={({id}) => id}
             // ListFooterComponent={RenderFooter(isExtraLoading)}
             renderItem={({item}) => renderItem(item)}
+            onScroll={() => childCompRef.current.setExpand()}
           />
         </View>
       )}
