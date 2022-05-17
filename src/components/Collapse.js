@@ -44,14 +44,12 @@ const Collapse = forwardRef((props, ref) => {
 
   return (
     <Animated.View style={[styles.container, {height: animatedHeight}]}>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+      <TouchableOpacity
+        onPress={() => toggleDropdown()}
+        style={styles.toggleBtn}>
         <BoldText>Sort By</BoldText>
-        <TouchableOpacity
-          onPress={() => toggleDropdown()}
-          style={styles.toggleBtn}>
-          <MaterialIcons name="sort" color={'white'} size={24} />
-        </TouchableOpacity>
-      </View>
+        <MaterialIcons name="sort" color={'white'} size={24} />
+      </TouchableOpacity>
       {expanded == true ? props.children : null}
     </Animated.View>
   );
@@ -60,6 +58,10 @@ const Collapse = forwardRef((props, ref) => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+  },
+  toggleBtn: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 

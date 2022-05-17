@@ -15,7 +15,7 @@ import BoldText from '../../components/BoldText';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Login from '../Login/Login';
-import Favorites from '../Profile/Favorites';
+import Favorites from './Favorites/Favorites';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
