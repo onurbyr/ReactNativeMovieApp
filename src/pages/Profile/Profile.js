@@ -16,6 +16,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Login from '../Login/Login';
 import Favorites from './Favorites';
+import MovieDetails from '../Movies/MovieDetails'
+import TvSeriesDetails from '../TvSeries/TvSeriesDetails'
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -250,7 +252,8 @@ const ProfileStack = createNativeStackNavigator();
 const Profile = ({navigation, route}) => {
   React.useLayoutEffect(() => {
     const tabHiddenRoutes = [
-      //
+      'MovieDetails',
+      'TvSeriesDetails'
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -281,6 +284,16 @@ const Profile = ({navigation, route}) => {
         <ProfileStack.Screen
           name="Favorites"
           component={Favorites}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="MovieDetails"
+          component={MovieDetails}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="TvSeriesDetails"
+          component={TvSeriesDetails}
           options={{headerShown: false}}
         />
       </ProfileStack.Navigator>

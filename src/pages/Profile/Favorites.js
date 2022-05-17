@@ -18,8 +18,9 @@ import DefaultText from '../../components/DefaultText';
 import Stars from '../../components/Stars/Stars';
 import Collapse from '../../components/Collapse';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import useDidMountEffect from '../../hooks/useDidMountEffect';
 
-const Favorites = () => {
+const Favorites = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -30,9 +31,18 @@ const Favorites = () => {
   const prevSortRef = useRef();
   const childCompRef = useRef();
 
-  useEffect(() => {
+  // runs if 'key' changes, but not on initial render
+  useDidMountEffect(() => {
     getItems();
   }, [page, sort, mediaType]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getItems();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     //assign the ref's current value to the count Hook
@@ -94,7 +104,17 @@ const Favorites = () => {
   const renderItem = item => {
     return (
       <View>
-        <View style={styles.flatlistItems}>
+        <TouchableOpacity
+          style={styles.flatlistItems}
+          onPress={() =>
+            mediaType == 'movie'
+              ? navigation.navigate('MovieDetails', {
+                  itemId: item.id,
+                })
+              : navigation.navigate('TvSeriesDetails', {
+                  itemId: item.id,
+                })
+          }>
           <Image
             style={{width: 110, height: 160}}
             source={{
@@ -118,7 +138,7 @@ const Favorites = () => {
               </DefaultText>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
         <Hr />
       </View>
     );
@@ -333,6 +353,6 @@ const styles = StyleSheet.create({
     borderColor: '#58575D',
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 5,
   },
 });
