@@ -16,8 +16,18 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Login from '../Login/Login';
 import Favorites from './Favorites';
-import MovieDetails from '../Movies/MovieDetails'
-import TvSeriesDetails from '../TvSeries/TvSeriesDetails'
+import MovieDetails from '../Movies/MovieDetails';
+import TvSeriesDetails from '../TvSeries/TvSeriesDetails';
+import Genres from '../Genres';
+import ListCast from '../ListCast';
+import ListRecommends from '../ListRecommends';
+import Videos from '../Videos';
+import ListVideos from '../ListVideos';
+import PeopleDetails from '../PeopleDetails';
+import ListCredits from '../ListCredits';
+import StarItem from '../StarItem';
+import CreateList from '../CreateList';
+import CreatedLists from '../CreatedLists';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -253,7 +263,16 @@ const Profile = ({navigation, route}) => {
   React.useLayoutEffect(() => {
     const tabHiddenRoutes = [
       'MovieDetails',
-      'TvSeriesDetails'
+      'Genres',
+      'ListCast',
+      'ListRecommends',
+      'Videos',
+      'ListVideos',
+      'PeopleDetails',
+      'ListCredits',
+      'TvSeriesDetails',
+      'Login',
+      'StarItem',
     ];
     if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
       navigation.setOptions({tabBarStyle: {display: 'none'}});
@@ -294,6 +313,56 @@ const Profile = ({navigation, route}) => {
         <ProfileStack.Screen
           name="TvSeriesDetails"
           component={TvSeriesDetails}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="Genres"
+          component={Genres}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="ListCast"
+          component={ListCast}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="ListRecommends"
+          component={ListRecommends}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="Videos"
+          component={Videos}
+          options={{headerShown: false, orientation: 'landscape'}}
+        />
+        <ProfileStack.Screen
+          name="ListVideos"
+          component={ListVideos}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="PeopleDetails"
+          component={PeopleDetails}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="ListCredits"
+          component={ListCredits}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="StarItem"
+          component={StarItem}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="CreateList"
+          component={CreateList}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="CreatedLists"
+          component={CreatedLists}
           options={{headerShown: false}}
         />
       </ProfileStack.Navigator>

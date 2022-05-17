@@ -24,6 +24,7 @@ const Favorites = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const prevPage = usePrevious(page);
   const [isExtraLoading, setIsExtraLoading] = useState(true);
   const [mediaType, setMediaType] = useState('movie');
@@ -68,6 +69,7 @@ const Favorites = ({navigation}) => {
           setIsExtraLoading(false);
         } else {
           setData(response.data.results);
+          setTotalPages(response.data.total_pages);
         }
       } catch (error) {
         console.log(error.message);
@@ -101,6 +103,42 @@ const Favorites = ({navigation}) => {
     );
   };
 
+  const resetAndNavigateMovieDetails = itemId => {
+    navigation.reset({
+      index: 2,
+      routes: [
+        {
+          name: 'ProfileScreen',
+        },
+        {
+          name: 'Favorites',
+        },
+        {
+          name: 'MovieDetails',
+          params: {itemId: itemId},
+        },
+      ],
+    });
+  };
+
+  const resetAndNavigateTvSeriesDetails = itemId => {
+    navigation.reset({
+      index: 2,
+      routes: [
+        {
+          name: 'ProfileScreen',
+        },
+        {
+          name: 'Favorites',
+        },
+        {
+          name: 'TvSeriesDetails',
+          params: {itemId: itemId},
+        },
+      ],
+    });
+  };
+
   const renderItem = item => {
     return (
       <View>
@@ -108,12 +146,8 @@ const Favorites = ({navigation}) => {
           style={styles.flatlistItems}
           onPress={() =>
             mediaType == 'movie'
-              ? navigation.navigate('MovieDetails', {
-                  itemId: item.id,
-                })
-              : navigation.navigate('TvSeriesDetails', {
-                  itemId: item.id,
-                })
+              ? resetAndNavigateMovieDetails(item.id)
+              : resetAndNavigateTvSeriesDetails(item.id)
           }>
           <Image
             style={{width: 110, height: 160}}
@@ -297,13 +331,17 @@ const Favorites = ({navigation}) => {
           </Collapse>
           <FlatList
             data={data}
-            style={{marginBottom: 230}}
-            // onEndReached={() => {
-            //   setPage(page + 1);
-            //   setIsExtraLoading(true);
-            // }}
+            style={{marginBottom: 180}}
+            onEndReached={() => {
+              if (page < totalPages) {
+                setPage(page + 1);
+                setIsExtraLoading(true);
+              } else {
+                setIsExtraLoading(false);
+              }
+            }}
             keyExtractor={({id}) => id}
-            // ListFooterComponent={RenderFooter(isExtraLoading)}
+            ListFooterComponent={RenderFooter(isExtraLoading)}
             renderItem={({item}) => renderItem(item)}
             onScroll={() => childCompRef.current.setExpand()}
           />
