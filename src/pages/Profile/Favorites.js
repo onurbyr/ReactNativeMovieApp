@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  Text,
   View,
   ActivityIndicator,
   FlatList,
@@ -211,11 +210,13 @@ const Favorites = ({navigation}) => {
             <View style={styles.collapseContainer}>
               <TouchableOpacity
                 style={styles.collapseButtons}
-                onPress={() =>
+                onPress={() => {
+                  setLoading(true);
+                  setPage(1);
                   prevSortRef.current === 'created_at.desc'
                     ? setSort('created_at.asc')
-                    : setSort('created_at.desc')
-                }>
+                    : setSort('created_at.desc');
+                }}>
                 {(sort === 'created_at.asc' || sort === 'created_at.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
@@ -240,11 +241,13 @@ const Favorites = ({navigation}) => {
               <Hr />
               <TouchableOpacity
                 style={styles.collapseButtons}
-                onPress={() =>
+                onPress={() => {
+                  setLoading(true);
+                  setPage(1);
                   prevSortRef.current === 'release_date.desc'
                     ? setSort('release_date.asc')
-                    : setSort('release_date.desc')
-                }>
+                    : setSort('release_date.desc');
+                }}>
                 {(sort === 'release_date.asc' ||
                   sort === 'release_date.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
@@ -270,11 +273,13 @@ const Favorites = ({navigation}) => {
               <Hr />
               <TouchableOpacity
                 style={styles.collapseButtons}
-                onPress={() =>
+                onPress={() => {
+                  setLoading(true);
+                  setPage(1);
                   prevSortRef.current === 'title.asc'
                     ? setSort('title.desc')
-                    : setSort('title.asc')
-                }>
+                    : setSort('title.asc');
+                }}>
                 {(sort === 'title.asc' || sort === 'title.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
@@ -299,11 +304,13 @@ const Favorites = ({navigation}) => {
               <Hr />
               <TouchableOpacity
                 style={styles.collapseButtons}
-                onPress={() =>
+                onPress={() => {
+                  setLoading(true);
+                  setPage(1);
                   prevSortRef.current === 'vote_average.desc'
                     ? setSort('vote_average.asc')
-                    : setSort('vote_average.desc')
-                }>
+                    : setSort('vote_average.desc');
+                }}>
                 {(sort === 'vote_average.asc' ||
                   sort === 'vote_average.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
