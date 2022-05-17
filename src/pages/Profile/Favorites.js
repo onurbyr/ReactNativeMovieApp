@@ -25,13 +25,14 @@ const Favorites = () => {
   const [page, setPage] = useState(1);
   const prevPage = usePrevious(page);
   const [isExtraLoading, setIsExtraLoading] = useState(true);
+  const [mediaType, setMediaType] = useState('movie');
   const [sort, setSort] = useState('created_at.desc');
   const prevSortRef = useRef();
   const childCompRef = useRef();
 
   useEffect(() => {
     getItems();
-  }, [page, sort]);
+  }, [page, sort, mediaType]);
 
   useEffect(() => {
     //assign the ref's current value to the count Hook
@@ -44,7 +45,7 @@ const Favorites = () => {
       try {
         const accountId = await AsyncStorage.getItem('@account_id');
         const response = await apiv4.get(
-          `/account/${accountId}/movie/favorites`,
+          `/account/${accountId}/${mediaType}/favorites`,
           {
             params: {
               page,
@@ -70,6 +71,12 @@ const Favorites = () => {
     const d = new Date(dt);
     const date = d.getFullYear();
     return date;
+  };
+
+  const onPressMediaType = mediaType => {
+    setLoading(true);
+    setPage(1);
+    setMediaType(mediaType);
   };
 
   const Hr = () => {
@@ -98,9 +105,11 @@ const Favorites = () => {
             resizeMode={item.poster_path ? 'cover' : 'center'}
           />
           <View style={styles.itemDetails}>
-            <BoldText>{item.title}</BoldText>
+            <BoldText>{mediaType == 'movie' ? item.title : item.name}</BoldText>
             <DefaultText style={{marginTop: 8}}>
-              {dateConvert(item.release_date)}
+              {dateConvert(
+                mediaType == 'movie' ? item.release_date : item.first_air_date,
+              )}
             </DefaultText>
             <View style={{flexDirection: 'row', marginTop: 8}}>
               <Stars count={item.vote_average} size={14} />
@@ -124,6 +133,26 @@ const Favorites = () => {
         </View>
       ) : (
         <View>
+          <View style={styles.mediaTypeView}>
+            <TouchableOpacity
+              disabled={mediaType == 'movie' ? true : false}
+              style={[
+                styles.mediaTypeBox,
+                mediaType == 'movie' && {backgroundColor: '#151517'},
+              ]}
+              onPress={() => onPressMediaType('movie')}>
+              <DefaultText>Movies</DefaultText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={mediaType == 'tv' ? true : false}
+              style={[
+                styles.mediaTypeBox,
+                mediaType == 'tv' && {backgroundColor: '#151517'},
+              ]}
+              onPress={() => onPressMediaType('tv')}>
+              <DefaultText>Tv Series</DefaultText>
+            </TouchableOpacity>
+          </View>
           <Collapse ref={childCompRef}>
             <View style={styles.collapseContainer}>
               <TouchableOpacity
@@ -248,7 +277,7 @@ const Favorites = () => {
           </Collapse>
           <FlatList
             data={data}
-            style={{marginBottom: 180}}
+            style={{marginBottom: 230}}
             // onEndReached={() => {
             //   setPage(page + 1);
             //   setIsExtraLoading(true);
@@ -278,6 +307,7 @@ const styles = StyleSheet.create({
   itemDetails: {
     padding: 10,
     justifyContent: 'center',
+    flex: 1,
   },
   collapseContainer: {
     backgroundColor: '#202020',
@@ -288,5 +318,21 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: 'center',
     padding: 10,
+  },
+  mediaTypeView: {
+    flexDirection: 'row',
+    padding: 10,
+    justifyContent: 'center',
+  },
+  mediaTypeBox: {
+    width: 100,
+    height: 36,
+    backgroundColor: '#212028',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#58575D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10,
   },
 });
