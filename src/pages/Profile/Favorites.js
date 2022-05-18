@@ -38,6 +38,10 @@ const Favorites = ({navigation}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      setLoading(true);
+      setPage(1);
+      setMediaType('movie');
+      setSort('created_at.desc');
       getItems();
     });
 
@@ -102,39 +106,15 @@ const Favorites = ({navigation}) => {
     );
   };
 
-  const resetAndNavigateMovieDetails = itemId => {
-    navigation.reset({
-      index: 2,
-      routes: [
-        {
-          name: 'ProfileScreen',
-        },
-        {
-          name: 'Favorites',
-        },
-        {
-          name: 'MovieDetails',
-          params: {itemId: itemId},
-        },
-      ],
+  const navigateMovieDetails = itemId => {
+    navigation.navigate('MovieDetails', {
+      itemId: itemId,
     });
   };
 
-  const resetAndNavigateTvSeriesDetails = itemId => {
-    navigation.reset({
-      index: 2,
-      routes: [
-        {
-          name: 'ProfileScreen',
-        },
-        {
-          name: 'Favorites',
-        },
-        {
-          name: 'TvSeriesDetails',
-          params: {itemId: itemId},
-        },
-      ],
+  const navigateTvSeriesDetails = itemId => {
+    navigation.navigate('TvSeriesDetails', {
+      itemId: itemId,
     });
   };
 
@@ -145,8 +125,8 @@ const Favorites = ({navigation}) => {
           style={styles.flatlistItems}
           onPress={() =>
             mediaType == 'movie'
-              ? resetAndNavigateMovieDetails(item.id)
-              : resetAndNavigateTvSeriesDetails(item.id)
+              ? navigateMovieDetails(item.id)
+              : navigateTvSeriesDetails(item.id)
           }>
           <Image
             style={{width: 110, height: 160}}
