@@ -16,6 +16,7 @@ import BoldText from '../../components/BoldText';
 import DefaultText from '../../components/DefaultText';
 import Stars from '../../components/Stars/Stars';
 import Collapse from '../../components/Collapse';
+import CustomDialogBox from '../../components/CustomDialogBox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Favorites = ({navigation}) => {
@@ -28,6 +29,7 @@ const Favorites = ({navigation}) => {
   const [mediaType, setMediaType] = useState('movie');
   const [sort, setSort] = useState('created_at.desc');
   const [refreshing, setRefreshing] = useState(false);
+  const [isDialogBoxHidden, setIsDialogBoxHidden] = useState(true);
   const prevSortRef = useRef();
   const childCompRef = useRef();
 
@@ -119,6 +121,14 @@ const Favorites = ({navigation}) => {
     });
   };
 
+  const deleteItem = () => {
+    setIsDialogBoxHidden(false);
+  };
+
+  const cancel = () => {
+    setIsDialogBoxHidden(true);
+  };
+
   const renderItem = item => {
     return (
       <View>
@@ -152,6 +162,9 @@ const Favorites = ({navigation}) => {
               </DefaultText>
             </View>
           </View>
+          <TouchableOpacity style={styles.deleteButton} onPress={deleteItem}>
+            <MaterialIcons name="delete-outline" color={'#dddddd'} size={24} />
+          </TouchableOpacity>
         </TouchableOpacity>
         <Hr />
       </View>
@@ -161,6 +174,9 @@ const Favorites = ({navigation}) => {
   return (
     <View style={styles.container}>
       <HeaderWithBack>Favorites</HeaderWithBack>
+      <CustomDialogBox isHidden={isDialogBoxHidden} cancel={cancel}>
+        Are you sure want to delete ?
+      </CustomDialogBox>
       {isLoading ? (
         <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>
           <ActivityIndicator />
@@ -356,6 +372,11 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'center',
     flex: 1,
+  },
+  deleteButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
   },
   collapseContainer: {
     backgroundColor: '#202020',
