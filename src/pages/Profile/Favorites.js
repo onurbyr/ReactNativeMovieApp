@@ -174,8 +174,11 @@ const Favorites = ({navigation}) => {
   return (
     <View style={styles.container}>
       <HeaderWithBack>Favorites</HeaderWithBack>
-      <CustomDialogBox isHidden={isDialogBoxHidden} cancel={cancel}>
-        Are you sure want to delete ?
+      <CustomDialogBox
+        isHidden={isDialogBoxHidden}
+        cancel={cancel}
+        title="Confirm Delete">
+        Are you sure you want to delete this?
       </CustomDialogBox>
       {isLoading ? (
         <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>

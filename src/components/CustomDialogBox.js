@@ -4,15 +4,51 @@ import {
   View,
   TouchableOpacity,
   useWindowDimensions,
+  Animated,
 } from 'react-native';
-import React from 'react';
+import React, {useRef} from 'react';
+import useDidMountEffect from '../hooks/useDidMountEffect';
 
 const CustomDialogBox = props => {
   const {width} = useWindowDimensions();
   const height = 150;
+  const animationDuration = 200;
+
+  // fadeAnim will be used as the value for opacity. Initial Value: 0
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const fadeIn = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: animationDuration,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const fadeOut = () => {
+    // Will change fadeAnim value to 0
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: animationDuration,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  useDidMountEffect(() => {
+    if (props.isHidden === false) {
+      fadeIn();
+    }
+  }, [props.isHidden]);
+
+  const cancel = () => {
+    fadeOut();
+    setTimeout(() => {
+      props.cancel();
+    }, animationDuration);
+  };
 
   return props.isHidden ? null : (
-    <View
+    <Animated.View
       style={[
         styles.dialogBox,
         {
@@ -22,19 +58,24 @@ const CustomDialogBox = props => {
             {translateX: (-width * 0.8) / 2},
             {translateY: -height / 2},
           ],
+          opacity: fadeAnim,
         },
       ]}>
-      <Text style={styles.title}>Title</Text>
+      {props.title ? (
+        <Text style={styles.title}>{props.title}</Text>
+      ) : (
+        <Text style={styles.title}>Title</Text>
+      )}
       <Text style={styles.messageText}>{props.children}</Text>
       <View style={styles.buttonsView}>
-        <TouchableOpacity onPress={props.cancel}>
+        <TouchableOpacity onPress={cancel}>
           <Text style={[styles.buttons, {marginRight: 30}]}>CANCEL</Text>
         </TouchableOpacity>
         <TouchableOpacity>
           <Text style={styles.buttons}>OK</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
