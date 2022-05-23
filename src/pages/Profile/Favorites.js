@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiv4Authorized, apiImgUrl} from '../../../services/api/api';
 import usePrevious from '../../hooks/usePrevious';
@@ -17,7 +17,6 @@ import DefaultText from '../../components/DefaultText';
 import Stars from '../../components/Stars/Stars';
 import Collapse from '../../components/Collapse';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import useDidMountEffect from '../../hooks/useDidMountEffect';
 
 const Favorites = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -25,28 +24,30 @@ const Favorites = ({navigation}) => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const prevPage = usePrevious(page);
-  const [isExtraLoading, setIsExtraLoading] = useState(true);
+  const [isExtraLoading, setIsExtraLoading] = useState(false);
   const [mediaType, setMediaType] = useState('movie');
   const [sort, setSort] = useState('created_at.desc');
+  const [refreshing, setRefreshing] = useState(false);
   const prevSortRef = useRef();
   const childCompRef = useRef();
 
-  // runs if 'key' changes, but not on initial render
-  useDidMountEffect(() => {
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    resetList();
+  }, []);
+
+  const resetList = () => {
+    setLoading(true);
+    setPage(1);
+    setMediaType('movie');
+    setSort('created_at.desc');
     getItems();
-  }, [page, sort, mediaType]);
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      setLoading(true);
-      setPage(1);
-      setMediaType('movie');
-      setSort('created_at.desc');
-      getItems();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
+    getItems();
+  }, [page, sort, mediaType]);
 
   useEffect(() => {
     //assign the ref's current value to the count Hook
@@ -331,6 +332,8 @@ const Favorites = ({navigation}) => {
             ListFooterComponent={RenderFooter(isExtraLoading)}
             renderItem={({item}) => renderItem(item)}
             onScroll={() => childCompRef.current.setExpand()}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
           />
         </View>
       )}
