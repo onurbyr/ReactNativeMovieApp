@@ -5,10 +5,11 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {apiv4Authorized, apiImgUrl} from '../../../services/api/api';
+import {apiv4Authorized, apiImgUrl, api} from '../../../services/api/api';
 import usePrevious from '../../hooks/usePrevious';
 import HeaderWithBack from '../../components/HeaderWithBack';
 import RenderFooter from '../../components/RenderFooter';
@@ -30,6 +31,7 @@ const Favorites = ({navigation}) => {
   const [sort, setSort] = useState('created_at.desc');
   const [refreshing, setRefreshing] = useState(false);
   const [isDialogBoxHidden, setIsDialogBoxHidden] = useState(true);
+  const [idIndex, setIdIndex] = useState({});
   const prevSortRef = useRef();
   const childCompRef = useRef();
 
@@ -121,15 +123,44 @@ const Favorites = ({navigation}) => {
     });
   };
 
-  const deleteItem = () => {
-    setIsDialogBoxHidden(false);
+  const removeFavorite = async () => {
+    data.splice(idIndex.index, 1);
+    try {
+      const sessionId = await AsyncStorage.getItem('@session_id');
+      const result = await api.post(
+        `/account/{account_id}/favorite`,
+        {
+          media_type: mediaType,
+          media_id: idIndex.itemId,
+          favorite: false,
+        },
+        {
+          params: {
+            session_id: sessionId,
+          },
+        },
+      );
+      if (result.data.success == true) {
+        ToastAndroid.show(
+          'Successfully Removed from Favorites',
+          ToastAndroid.SHORT,
+        );
+      }
+    } catch (err) {
+      ToastAndroid.show(err.message, ToastAndroid.SHORT);
+    }
   };
 
   const cancel = () => {
     setIsDialogBoxHidden(true);
   };
 
-  const renderItem = item => {
+  const ok = () => {
+    setIsDialogBoxHidden(true);
+    removeFavorite();
+  };
+
+  const renderItem = (item, index) => {
     return (
       <View>
         <TouchableOpacity
@@ -162,7 +193,12 @@ const Favorites = ({navigation}) => {
               </DefaultText>
             </View>
           </View>
-          <TouchableOpacity style={styles.deleteButton} onPress={deleteItem}>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => {
+              setIsDialogBoxHidden(false);
+              setIdIndex({itemId: item.id, index});
+            }}>
             <MaterialIcons name="delete-outline" color={'#dddddd'} size={24} />
           </TouchableOpacity>
         </TouchableOpacity>
@@ -177,6 +213,7 @@ const Favorites = ({navigation}) => {
       <CustomDialogBox
         isHidden={isDialogBoxHidden}
         cancel={cancel}
+        ok={ok}
         title="Confirm Delete">
         Are you sure you want to delete this?
       </CustomDialogBox>
@@ -349,7 +386,7 @@ const Favorites = ({navigation}) => {
             }}
             keyExtractor={({id}) => id}
             ListFooterComponent={RenderFooter(isExtraLoading)}
-            renderItem={({item}) => renderItem(item)}
+            renderItem={({item, index}) => renderItem(item, index)}
             onScroll={() => childCompRef.current.setExpand()}
             refreshing={refreshing}
             onRefresh={onRefresh}

@@ -81,7 +81,7 @@ const CustomDialogBox = props => {
             <TouchableOpacity onPress={cancel}>
               <Text style={[styles.buttons, {marginRight: 30}]}>CANCEL</Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={props.ok}>
               <Text style={styles.buttons}>OK</Text>
             </TouchableOpacity>
           </View>
