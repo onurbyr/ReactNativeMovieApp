@@ -5,12 +5,13 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   Animated,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useRef} from 'react';
 import useDidMountEffect from '../hooks/useDidMountEffect';
 
 const CustomDialogBox = props => {
-  const {width} = useWindowDimensions();
+  const window = useWindowDimensions();
   const height = 150;
   const animationDuration = 200;
 
@@ -21,7 +22,7 @@ const CustomDialogBox = props => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: animationDuration,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -30,7 +31,7 @@ const CustomDialogBox = props => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: animationDuration,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -48,34 +49,45 @@ const CustomDialogBox = props => {
   };
 
   return props.isHidden ? null : (
-    <Animated.View
-      style={[
-        styles.dialogBox,
-        {
-          width: width * 0.8, //%80 of the screen width
-          height,
-          transform: [
-            {translateX: (-width * 0.8) / 2},
-            {translateY: -height / 2},
-          ],
-          opacity: fadeAnim,
-        },
-      ]}>
-      {props.title ? (
-        <Text style={styles.title}>{props.title}</Text>
-      ) : (
-        <Text style={styles.title}>Title</Text>
-      )}
-      <Text style={styles.messageText}>{props.children}</Text>
-      <View style={styles.buttonsView}>
-        <TouchableOpacity onPress={cancel}>
-          <Text style={[styles.buttons, {marginRight: 30}]}>CANCEL</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.buttons}>OK</Text>
-        </TouchableOpacity>
-      </View>
-    </Animated.View>
+    <View
+      style={{
+        position: 'absolute',
+        width: window.width,
+        height: window.height,
+        zIndex: 1,
+      }}
+      onStartShouldSetResponder={cancel}>
+      <TouchableWithoutFeedback>
+        <Animated.View
+          style={[
+            styles.dialogBox,
+            {
+              width: window.width * 0.8, //%80 of the screen width
+              height,
+              transform: [
+                {translateX: (-window.width * 0.8) / 2},
+                {translateY: -height / 2},
+              ],
+              opacity: fadeAnim,
+            },
+          ]}>
+          {props.title ? (
+            <Text style={styles.title}>{props.title}</Text>
+          ) : (
+            <Text style={styles.title}>Title</Text>
+          )}
+          <Text style={styles.messageText}>{props.children}</Text>
+          <View style={styles.buttonsView}>
+            <TouchableOpacity onPress={cancel}>
+              <Text style={[styles.buttons, {marginRight: 30}]}>CANCEL</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={styles.buttons}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </TouchableWithoutFeedback>
+    </View>
   );
 };
 
