@@ -139,11 +139,7 @@ const star = async (data, navigation, setIsStarLoading) => {
   if (accountState)
     navigation.navigate('StarItem', {
       itemId: data.id,
-      name: data.title,
-      posterPath: data.poster_path,
-      backdropPath: data.backdrop_path,
       sessionId: accountState.sessionId,
-      ratedValue: accountState.result.data.rated.value,
       mediaType: 'movie',
     });
   setIsStarLoading(false);

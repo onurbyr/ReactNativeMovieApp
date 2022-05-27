@@ -231,7 +231,7 @@ const MovieDetails = ({navigation, route}) => {
               name="add"
               color="white"
               size={22}
-              onPress={() => list(data.id,navigation)}
+              onPress={() => list(data.id, navigation)}
             />
             <View style={{paddingLeft: 25}}>
               <BoldText style={styles.title}>{data.title}</BoldText>

@@ -133,21 +133,13 @@ const Ratings = ({navigation}) => {
       if (mediaType === 'movie') {
         navigation.navigate('StarItem', {
           itemId: item.id,
-          name: item.title,
-          posterPath: item.poster_path,
-          backdropPath: item.backdrop_path,
           sessionId: sessionId,
-          ratedValue: item.account_rating.value,
           mediaType: 'movie',
         });
       } else {
         navigation.navigate('StarItem', {
           itemId: item.id,
-          name: item.name,
-          posterPath: item.poster_path,
-          backdropPath: item.backdrop_path,
           sessionId: sessionId,
-          ratedValue: item.account_rating.value,
           mediaType: 'tv',
         });
       }

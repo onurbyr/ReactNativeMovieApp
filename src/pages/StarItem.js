@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {apiImgUrl} from '../../services/api/api';
@@ -17,15 +18,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {api} from '../../services/api/api';
 
 const StarItem = ({route, navigation}) => {
-  const {
-    itemId,
-    name,
-    posterPath,
-    backdropPath,
-    sessionId,
-    ratedValue,
-    mediaType,
-  } = route.params;
+  const {itemId, sessionId, mediaType} = route.params;
   const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
   const [imageWidth, setImageWidth] = useState(Dimensions.get('window').width);
   const [imageHeight, setImageHeight] = useState(
@@ -34,13 +27,44 @@ const StarItem = ({route, navigation}) => {
   const orientation = useOrientation(setImageWidth, setImageHeight);
   const [starIndex, setStarIndex] = useState(-1);
   const [isStarred, setIsStarred] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [details, setDetails] = useState([]);
 
   useEffect(() => {
-    if (ratedValue) {
-      setStarIndex(ratedValue - 1);
-      setIsStarred(true);
-    }
+    getItems();
   }, []);
+
+  const getItems = async () => {
+    let endpoints = [
+      `/${mediaType}/${itemId}`,
+      `/${mediaType}/${itemId}/account_states`,
+    ];
+
+    const concurrentRequests = endpoints.map(endpoint =>
+      api
+        .get(endpoint, {
+          params: {
+            session_id: sessionId,
+          },
+        })
+        .catch(err => {
+          ToastAndroid.show(err.message, ToastAndroid.SHORT);
+        }),
+    );
+
+    Promise.all(concurrentRequests)
+      .then(result => {
+        setDetails(result[0].data);
+        if (result[1].data.rated.value) {
+          setStarIndex(result[1].data.rated.value - 1);
+          setIsStarred(true);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        //console.log(err.message);
+      });
+  };
 
   const rateItem = async () => {
     if (starIndex < 0 || starIndex > 9) {
@@ -86,71 +110,83 @@ const StarItem = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        style={{
-          width: imageWidth,
-          height: imageHeight,
-          position: 'absolute',
-        }}
-        source={{
-          uri:
-            orientation == 'PORTRAIT' && posterPath
-              ? apiImgUrl.API_IMAGE_URL + '/w500' + posterPath
-              : orientation == 'LANDSCAPE' && backdropPath
-              ? apiImgUrl.API_IMAGE_URL + '/w500' + backdropPath
-              : NO_IMAGE,
-        }}
-        resizeMode={
-          orientation == 'PORTRAIT' && posterPath
-            ? 'cover'
-            : orientation == 'LANDSCAPE' && backdropPath
-            ? 'cover'
-            : 'center'
-        }
-        blurRadius={10}
-      />
       <BackButton style={styles.backButton} />
-      <ScrollView>
-        <Image
-          style={styles.posterImage}
-          source={{
-            uri: posterPath
-              ? apiImgUrl.API_IMAGE_URL + '/w500' + posterPath
-              : NO_IMAGE,
-          }}
-          resizeMode={posterPath ? 'stretch' : 'center'}
-        />
-        <Text style={styles.name}>Rate the {name}</Text>
-        <View style={styles.starsView}>
-          {[...Array(10)].map((x, i) => (
-            <TouchableOpacity key={i} onPress={() => setStarIndex(i)}>
-              {starIndex >= i ? (
-                <MaterialIcons
-                  name="star"
-                  color={'#F57800'}
-                  size={32}
-                  style={styles.starIcon}
-                />
-              ) : (
-                <MaterialIcons
-                  name="star-outline"
-                  color={'#424242'}
-                  size={32}
-                  style={styles.starIcon}
-                />
-              )}
-            </TouchableOpacity>
-          ))}
+      {isLoading ? (
+        <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>
+          <ActivityIndicator />
         </View>
-        <TouchableOpacity onPress={rateItem} style={styles.rateButton}>
-          <Text style={styles.rateButtonText}>Rate</Text>
-        </TouchableOpacity>
-        {isStarred && (
-          <TouchableOpacity onPress={deleteItem} style={styles.deleteButton}>
-            <Text style={styles.deleteButtonText}>Delete Rating</Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
+      ) : (
+        <View>
+          <Image
+            style={{
+              width: imageWidth,
+              height: imageHeight,
+              position: 'absolute',
+            }}
+            source={{
+              uri:
+                orientation == 'PORTRAIT' && details.poster_path
+                  ? apiImgUrl.API_IMAGE_URL + '/w500' + details.poster_path
+                  : orientation == 'LANDSCAPE' && details.backdrop_path
+                  ? apiImgUrl.API_IMAGE_URL + '/w500' + details.backdrop_path
+                  : NO_IMAGE,
+            }}
+            resizeMode={
+              orientation == 'PORTRAIT' && details.poster_path
+                ? 'cover'
+                : orientation == 'LANDSCAPE' && details.backdrop_path
+                ? 'cover'
+                : 'center'
+            }
+            blurRadius={10}
+          />
+          <ScrollView>
+            <Image
+              style={styles.posterImage}
+              source={{
+                uri: details.poster_path
+                  ? apiImgUrl.API_IMAGE_URL + '/w500' + details.poster_path
+                  : NO_IMAGE,
+              }}
+              resizeMode={details.poster_path ? 'stretch' : 'center'}
+            />
+            <Text style={styles.name}>
+              Rate the {mediaType === 'movie' ? details.title : details.name}
+            </Text>
+            <View style={styles.starsView}>
+              {[...Array(10)].map((x, i) => (
+                <TouchableOpacity key={i} onPress={() => setStarIndex(i)}>
+                  {starIndex >= i ? (
+                    <MaterialIcons
+                      name="star"
+                      color={'#F57800'}
+                      size={32}
+                      style={styles.starIcon}
+                    />
+                  ) : (
+                    <MaterialIcons
+                      name="star-outline"
+                      color={'#424242'}
+                      size={32}
+                      style={styles.starIcon}
+                    />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TouchableOpacity onPress={rateItem} style={styles.rateButton}>
+              <Text style={styles.rateButtonText}>Rate</Text>
+            </TouchableOpacity>
+            {isStarred && (
+              <TouchableOpacity
+                onPress={deleteItem}
+                style={styles.deleteButton}>
+                <Text style={styles.deleteButtonText}>Delete Rating</Text>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 };
