@@ -17,6 +17,7 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Login from '../Login/Login';
 import Favorites from './Favorites';
 import Watchlist from './Watchlist';
+import Ratings from './Ratings';
 import MovieDetails from '../Movies/MovieDetails';
 import TvSeriesDetails from '../TvSeries/TvSeriesDetails';
 import Genres from '../Genres';
@@ -144,8 +145,9 @@ const ProfileScreen = ({navigation}) => {
           </View>
         </TouchableOpacity>
         <Hr />
-        <TouchableOpacity style={styles.profileItem}
-        onPress={() => navigation.navigate('Watchlist')}>
+        <TouchableOpacity
+          style={styles.profileItem}
+          onPress={() => navigation.navigate('Watchlist')}>
           <MaterialIcons name="bookmark-border" color={'#593FEE'} size={36} />
           <Text style={styles.profileItemText}>Watchlist</Text>
           <View style={styles.rightArrow}>
@@ -157,7 +159,9 @@ const ProfileScreen = ({navigation}) => {
           </View>
         </TouchableOpacity>
         <Hr />
-        <TouchableOpacity style={styles.profileItem}>
+        <TouchableOpacity
+          style={styles.profileItem}
+          onPress={() => navigation.navigate('Ratings')}>
           <MaterialIcons name="star-border" color={'#593FEE'} size={36} />
           <Text style={styles.profileItemText}>Ratings</Text>
           <View style={styles.rightArrow}>
@@ -310,6 +314,11 @@ const Profile = ({navigation, route}) => {
         <ProfileStack.Screen
           name="Watchlist"
           component={Watchlist}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="Ratings"
+          component={Ratings}
           options={{headerShown: false}}
         />
         <ProfileStack.Screen
