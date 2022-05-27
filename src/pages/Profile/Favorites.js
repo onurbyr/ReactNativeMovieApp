@@ -43,15 +43,11 @@ const Favorites = ({navigation}) => {
   const resetList = () => {
     setLoading(true);
     setPage(1);
-    setMediaType('movie');
-    setSort('created_at.desc');
-    getItems();
-    setRefreshing(false);
   };
 
   useEffect(() => {
     getItems();
-  }, [page, sort, mediaType]);
+  }, [page, sort, mediaType, refreshing]);
 
   useEffect(() => {
     //assign the ref's current value to the count Hook
@@ -83,6 +79,7 @@ const Favorites = ({navigation}) => {
         console.log(error.message);
       } finally {
         setLoading(false);
+        setRefreshing(false);
       }
     }
   };
