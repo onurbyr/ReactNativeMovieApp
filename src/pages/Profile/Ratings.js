@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {apiv4Authorized, apiImgUrl, api} from '../../../services/api/api';
+import {apiv4Authorized, apiImgUrl} from '../../../services/api/api';
 import usePrevious from '../../hooks/usePrevious';
 import HeaderWithBack from '../../components/HeaderWithBack';
 import RenderFooter from '../../components/RenderFooter';
@@ -45,6 +45,16 @@ const Ratings = ({navigation}) => {
   useEffect(() => {
     getItems();
   }, [page, sort, mediaType, refreshing]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setRefreshing(true);
+      setLoading(true);
+      setPage(1);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     //assign the ref's current value to the count Hook
@@ -146,7 +156,7 @@ const Ratings = ({navigation}) => {
     }
   };
 
-  const renderItem = (item) => {
+  const renderItem = item => {
     return (
       <View>
         <TouchableOpacity
