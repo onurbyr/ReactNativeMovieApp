@@ -32,17 +32,16 @@ const CreatedLists = ({navigation, route}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getItems();
-      setData([]);
+      setLoading(true);
+      setPage(1);
     });
 
     return unsubscribe;
   }, [navigation]);
 
-  // runs if 'key' changes, but not on initial render
-  useDidMountEffect(() => {
+  useEffect(() => {
     getItems();
-  }, [page]);
+  }, [page, isLoading]);
 
   //getdata with axios
   const getItems = async () => {
@@ -60,7 +59,6 @@ const CreatedLists = ({navigation, route}) => {
         } else {
           setData(response.data.results);
           setTotalPages(response.data.total_pages);
-          setPage(1);
         }
       } catch (error) {
         console.log(error.message);
@@ -82,8 +80,13 @@ const CreatedLists = ({navigation, route}) => {
           items: [{media_type: mediaType, media_id: itemId}],
         });
         if (result.data.success == true) {
-          toTop();
-          getItems();
+          if (page === 1) {
+            getItems();
+            toTop();
+          } else {
+            setPage(1);
+            toTop();
+          }
           ToastAndroid.show('Successfully added', ToastAndroid.SHORT);
         }
       } catch (err) {
