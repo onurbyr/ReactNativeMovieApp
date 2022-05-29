@@ -17,7 +17,6 @@ import RenderFooter from '../components/RenderFooter';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import useDidMountEffect from '../hooks/useDidMountEffect';
 
 const CreatedLists = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
@@ -75,19 +74,35 @@ const CreatedLists = ({navigation, route}) => {
   const addItem = async item => {
     const apiv4 = await apiv4Authorized();
     if (apiv4) {
+      const isAdded = async () => {
+        try {
+          return await apiv4.get(`/list/${item.id}/item_status`, {
+            params: {
+              media_id: itemId,
+              media_type: mediaType,
+            },
+          });
+        } catch (err) {}
+      };
+
       try {
-        const result = await apiv4.post(`/list/${item.id}/items`, {
-          items: [{media_type: mediaType, media_id: itemId}],
-        });
-        if (result.data.success == true) {
-          if (page === 1) {
-            getItems();
-            toTop();
-          } else {
-            setPage(1);
-            toTop();
+        const isExists = await isAdded();
+        if (isExists) {
+          ToastAndroid.show('Media Already Added', ToastAndroid.SHORT);
+        } else {
+          const result = await apiv4.post(`/list/${item.id}/items`, {
+            items: [{media_type: mediaType, media_id: itemId}],
+          });
+          if (result.data.success == true) {
+            if (page === 1) {
+              getItems();
+              toTop();
+            } else {
+              setPage(1);
+              toTop();
+            }
+            ToastAndroid.show('Successfully added', ToastAndroid.SHORT);
           }
-          ToastAndroid.show('Successfully added', ToastAndroid.SHORT);
         }
       } catch (err) {
         ToastAndroid.show('An error occured', ToastAndroid.SHORT);
