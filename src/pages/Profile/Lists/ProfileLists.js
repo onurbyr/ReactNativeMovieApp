@@ -83,7 +83,7 @@ const ProfileLists = ({navigation, route}) => {
         <Hr />
         <TouchableOpacity
           style={styles.listView}
-          onPress={() => navigation.navigate('ProfileListDetails')}>
+          onPress={() => navigation.navigate('ProfileListDetails',{listId:item.id})}>
           <BoldText>{item.name}</BoldText>
           {item.public ? (
             <MaterialIcons
