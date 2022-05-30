@@ -5,27 +5,25 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  ToastAndroid,
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
-import BackButton from '../components/BackButton';
+import BackButton from '../../../components/BackButton';
 import Entypo from 'react-native-vector-icons/Entypo';
-import usePrevious from '../hooks/usePrevious';
-import {apiv4Authorized} from '../../services/api/api';
+import usePrevious from '../../../hooks/usePrevious';
+import {apiv4Authorized} from '../../../../services/api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RenderFooter from '../components/RenderFooter';
-import DefaultText from '../components/DefaultText';
-import BoldText from '../components/BoldText';
+import RenderFooter from '../../../components/RenderFooter';
+import DefaultText from '../../../components/DefaultText';
+import BoldText from '../../../components/BoldText';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const CreatedLists = ({navigation, route}) => {
+const ProfileLists = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const prevPage = usePrevious(page);
   const [isExtraLoading, setIsExtraLoading] = useState(false);
-  const {itemId, mediaType} = route.params;
 
   const flatListRef = useRef();
 
@@ -67,51 +65,6 @@ const CreatedLists = ({navigation, route}) => {
     }
   };
 
-  const toTop = () => {
-    flatListRef.current.scrollToOffset({animated: true, offset: 0});
-  };
-
-  const addItem = async item => {
-    const apiv4 = await apiv4Authorized();
-    if (apiv4) {
-      const isAdded = async () => {
-        try {
-          return await apiv4.get(`/list/${item.id}/item_status`, {
-            params: {
-              media_id: itemId,
-              media_type: mediaType,
-            },
-          });
-        } catch (err) {}
-      };
-
-      try {
-        const isExists = await isAdded();
-        if (isExists) {
-          ToastAndroid.show('Media Already Added', ToastAndroid.SHORT);
-        } else {
-          const result = await apiv4.post(`/list/${item.id}/items`, {
-            items: [{media_type: mediaType, media_id: itemId}],
-          });
-          if (result.data.success == true) {
-            if (page === 1) {
-              getItems();
-              toTop();
-            } else {
-              setPage(1);
-              toTop();
-            }
-            ToastAndroid.show('Successfully added', ToastAndroid.SHORT);
-          }
-        }
-      } catch (err) {
-        ToastAndroid.show('An error occured', ToastAndroid.SHORT);
-      }
-    } else {
-      navigation.navigate('Login');
-    }
-  };
-
   const Hr = () => {
     return (
       <View
@@ -128,29 +81,31 @@ const CreatedLists = ({navigation, route}) => {
     return (
       <View>
         <Hr />
-        <TouchableOpacity style={styles.listView} onPress={() => addItem(item)}>
-          <View style={styles.leftView}>
-            <BoldText>{item.name}</BoldText>
-            {item.public ? (
-              <MaterialIcons
-                style={styles.public}
-                name="public"
-                color={'#726C8D'}
-                size={12}
-              />
-            ) : (
-              <MaterialIcons
-                style={styles.public}
-                name="lock"
-                color={'#726C8D'}
-                size={12}
-              />
-            )}
+        <TouchableOpacity
+          style={styles.listView}
+          onPress={() => navigation.navigate('ProfileListDetails')}>
+          <BoldText>{item.name}</BoldText>
+          {item.public ? (
+            <MaterialIcons
+              style={styles.public}
+              name="public"
+              color={'#726C8D'}
+              size={12}
+            />
+          ) : (
+            <MaterialIcons
+              style={styles.public}
+              name="lock"
+              color={'#726C8D'}
+              size={12}
+            />
+          )}
+          <View style={{flex: 1}}>
+            <View style={styles.rightView}>
+              <DefaultText>{item.number_of_items}</DefaultText>
+              <MaterialIcons name="chevron-right" color={'white'} size={24} />
+            </View>
           </View>
-          <TouchableOpacity style={styles.rightView}>
-            <DefaultText>{item.number_of_items}</DefaultText>
-            <MaterialIcons name="chevron-right" color={'white'} size={24} />
-          </TouchableOpacity>
         </TouchableOpacity>
       </View>
     );
@@ -192,7 +147,7 @@ const CreatedLists = ({navigation, route}) => {
   );
 };
 
-export default CreatedLists;
+export default ProfileLists;
 
 const styles = StyleSheet.create({
   container: {
@@ -225,14 +180,10 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginTop: 2,
   },
-  leftView: {
-    flex: 0.8,
-    flexDirection: 'row',
-  },
   rightView: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    flex: 0.2,
+    alignSelf: 'flex-end',
+    flex: 1,
   },
 });

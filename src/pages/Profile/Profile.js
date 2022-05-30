@@ -18,6 +18,8 @@ import Login from '../Login/Login';
 import Favorites from './Favorites';
 import Watchlist from './Watchlist';
 import Ratings from './Ratings';
+import ProfileLists from './Lists/ProfileLists';
+import ProfileListDetails from './Lists/ProfileListDetails';
 import MovieDetails from '../Movies/MovieDetails';
 import TvSeriesDetails from '../TvSeries/TvSeriesDetails';
 import Genres from '../Genres';
@@ -173,7 +175,9 @@ const ProfileScreen = ({navigation}) => {
           </View>
         </TouchableOpacity>
         <Hr />
-        <TouchableOpacity style={styles.profileItem}>
+        <TouchableOpacity
+          style={styles.profileItem}
+          onPress={() => navigation.navigate('ProfileLists')}>
           <MaterialIcons
             name="format-list-bulleted"
             color={'#593FEE'}
@@ -319,6 +323,16 @@ const Profile = ({navigation, route}) => {
         <ProfileStack.Screen
           name="Ratings"
           component={Ratings}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="ProfileLists"
+          component={ProfileLists}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="ProfileListDetails"
+          component={ProfileListDetails}
           options={{headerShown: false}}
         />
         <ProfileStack.Screen
