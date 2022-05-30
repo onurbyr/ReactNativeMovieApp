@@ -19,6 +19,7 @@ import Stars from '../../components/Stars/Stars';
 import Collapse from '../../components/Collapse';
 import CustomDialogBox from '../../components/CustomDialogBox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import NoImage from '../../images/noimage.png';
 
 const Watchlist = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -34,6 +35,7 @@ const Watchlist = ({navigation}) => {
   const [idIndex, setIdIndex] = useState({});
   const prevSortRef = useRef();
   const childCompRef = useRef();
+  const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

@@ -18,6 +18,7 @@ import DefaultText from '../../components/DefaultText';
 import Stars from '../../components/Stars/Stars';
 import Collapse from '../../components/Collapse';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import NoImage from '../../images/noimage.png';
 
 const Ratings = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -31,6 +32,7 @@ const Ratings = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
   const prevSortRef = useRef();
   const childCompRef = useRef();
+  const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);

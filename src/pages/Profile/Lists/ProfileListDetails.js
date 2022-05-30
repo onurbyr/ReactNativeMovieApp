@@ -19,8 +19,9 @@ import Stars from '../../../components/Stars/Stars';
 import Collapse from '../../../components/Collapse';
 import CustomDialogBox from '../../../components/CustomDialogBox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import NoImage from '../../../images/noimage.png';
 
-const ProfileListDetails = ({navigation,route}) => {
+const ProfileListDetails = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -28,13 +29,14 @@ const ProfileListDetails = ({navigation,route}) => {
   const prevPage = usePrevious(page);
   const [isExtraLoading, setIsExtraLoading] = useState(false);
   const [mediaType, setMediaType] = useState('movie');
-  const [sort, setSort] = useState('created_at.desc');
+  const [sort, setSort] = useState('original_order.desc');
   const [refreshing, setRefreshing] = useState(false);
   const [isDialogBoxHidden, setIsDialogBoxHidden] = useState(true);
   const [idIndex, setIdIndex] = useState({});
   const prevSortRef = useRef();
   const childCompRef = useRef();
-  const {listId} = route.params;
+  const {listId, listName} = route.params;
+  const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -59,16 +61,12 @@ const ProfileListDetails = ({navigation,route}) => {
     const apiv4 = await apiv4Authorized();
     if (apiv4) {
       try {
-        const response = await apiv4.get(
-          `/list/${listId}`,
-          {
-            params: {
-              page,
-              sort_by: sort,
-            },
+        const response = await apiv4.get(`/list/${listId}`, {
+          params: {
+            page,
+            sort_by: sort,
           },
-        );
-        console.log(response)
+        });
         if (prevPage == page - 1) {
           setData([...data, ...response.data.results]);
           setIsExtraLoading(false);
@@ -93,7 +91,6 @@ const ProfileListDetails = ({navigation,route}) => {
 
   const onPressMediaType = mediaType => {
     setLoading(true);
-    setPage(1);
     setMediaType(mediaType);
   };
 
@@ -164,7 +161,7 @@ const ProfileListDetails = ({navigation,route}) => {
         <TouchableOpacity
           style={styles.flatlistItems}
           onPress={() =>
-            mediaType == 'movie'
+            item.media_type == 'movie'
               ? navigateMovieDetails(item.id)
               : navigateTvSeriesDetails(item.id)
           }>
@@ -178,10 +175,14 @@ const ProfileListDetails = ({navigation,route}) => {
             resizeMode={item.poster_path ? 'cover' : 'center'}
           />
           <View style={styles.itemDetails}>
-            <BoldText>{mediaType == 'movie' ? item.title : item.name}</BoldText>
+            <BoldText>
+              {item.media_type == 'movie' ? item.title : item.name}
+            </BoldText>
             <DefaultText style={{marginTop: 8}}>
               {dateConvert(
-                mediaType == 'movie' ? item.release_date : item.first_air_date,
+                item.media_type == 'movie'
+                  ? item.release_date
+                  : item.first_air_date,
               )}
             </DefaultText>
             <View style={{flexDirection: 'row', marginTop: 8}}>
@@ -207,7 +208,7 @@ const ProfileListDetails = ({navigation,route}) => {
 
   return (
     <View style={styles.container}>
-      <HeaderWithBack>Favorites</HeaderWithBack>
+      <HeaderWithBack>{listName}</HeaderWithBack>
       <CustomDialogBox
         isHidden={isDialogBoxHidden}
         cancel={cancel}
@@ -248,23 +249,24 @@ const ProfileListDetails = ({navigation,route}) => {
                 onPress={() => {
                   setLoading(true);
                   setPage(1);
-                  prevSortRef.current === 'created_at.desc'
-                    ? setSort('created_at.asc')
-                    : setSort('created_at.desc');
+                  prevSortRef.current === 'original_order.desc'
+                    ? setSort('original_order.asc')
+                    : setSort('original_order.desc');
                 }}>
-                {(sort === 'created_at.asc' || sort === 'created_at.desc') && (
+                {(sort === 'original_order.asc' ||
+                  sort === 'original_order.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Created At</BoldText>
+                <BoldText style={{marginLeft: 10}}>Original Order</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
-                  {sort === 'created_at.asc' && (
+                  {sort === 'original_order.asc' && (
                     <MaterialIcons
                       name="arrow-downward"
                       color={'#e0b422'}
                       size={24}
                     />
                   )}
-                  {sort === 'created_at.desc' && (
+                  {sort === 'original_order.desc' && (
                     <MaterialIcons
                       name="arrow-upward"
                       color={'#e0b422'}
@@ -382,7 +384,7 @@ const ProfileListDetails = ({navigation,route}) => {
                 setIsExtraLoading(false);
               }
             }}
-            keyExtractor={({id}) => id}
+            keyExtractor={(item, index) => String(index)}
             ListFooterComponent={RenderFooter(isExtraLoading)}
             renderItem={({item, index}) => renderItem(item, index)}
             onScroll={() => childCompRef.current.setExpand()}
