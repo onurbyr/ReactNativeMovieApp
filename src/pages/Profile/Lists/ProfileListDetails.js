@@ -17,6 +17,7 @@ import DefaultText from '../../../components/DefaultText';
 import Stars from '../../../components/Stars/Stars';
 import Collapse from '../../../components/Collapse';
 import CustomDialogBox from '../../../components/CustomDialogBox';
+import InfoBox from '../../../components/InfoBox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NoImage from '../../../images/noimage.png';
@@ -31,6 +32,7 @@ const ProfileListDetails = ({navigation, route}) => {
   const [sort, setSort] = useState('original_order.desc');
   const [refreshing, setRefreshing] = useState(false);
   const [isDialogBoxHidden, setIsDialogBoxHidden] = useState(true);
+  const [isInfoBoxHidden, setIsInfoBoxHidden] = useState(true);
   const [idIndexMediaType, setIdIndexMediaType] = useState({});
   const prevSortRef = useRef();
   const childCompRef = useRef();
@@ -205,19 +207,6 @@ const ProfileListDetails = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <BackButton />
-        <BoldText style={styles.headerText}>{listName}</BoldText>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ProfileListEdit', {listId})}
-          style={styles.editListIconView}>
-          <MaterialCommunityIcons
-            name="playlist-edit"
-            color={'white'}
-            size={32}
-          />
-        </TouchableOpacity>
-      </View>
       <CustomDialogBox
         isHidden={isDialogBoxHidden}
         cancel={cancel}
@@ -226,11 +215,43 @@ const ProfileListDetails = ({navigation, route}) => {
         Are you sure you want to delete this?
       </CustomDialogBox>
       {isLoading ? (
-        <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>
+        <View style={[styles.container, {justifyContent: 'center'}]}>
+          <BackButton style={{position: 'absolute', top: 20}} />
           <ActivityIndicator />
         </View>
       ) : (
         <View>
+          <InfoBox
+            isHidden={isInfoBoxHidden}
+            cancel={() => setIsInfoBoxHidden(true)}>
+            <View style={{flexDirection: 'row'}}>
+              <BoldText>Name: </BoldText>
+              <BoldText>
+                Adipisicing labore id anim aliqua sint adipisicing labore id
+                aliquip est officia.
+              </BoldText>
+            </View>
+          </InfoBox>
+          <View style={styles.header}>
+            <BackButton />
+            <BoldText style={styles.headerText}>{listName}</BoldText>
+            <View style={styles.headerIcons}>
+              <TouchableOpacity
+                onPress={() => setIsInfoBoxHidden(false)}
+                style={styles.infoListIconView}>
+                <MaterialIcons name="info-outline" color={'white'} size={32} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ProfileListEdit', {listId})}
+                style={styles.editListIconView}>
+                <MaterialCommunityIcons
+                  name="playlist-edit"
+                  color={'white'}
+                  size={32}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
           <Collapse ref={childCompRef}>
             <View style={styles.collapseContainer}>
               <TouchableOpacity
@@ -402,9 +423,15 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginLeft: 20,
   },
-  editListIconView: {
+  headerIcons: {
     flex: 1,
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  infoListIconView: {
+    paddingRight: 20,
+  },
+  editListIconView: {
     paddingRight: 20,
   },
   flatlistItems: {

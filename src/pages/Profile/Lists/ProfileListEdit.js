@@ -61,7 +61,7 @@ const ProfileListEdit = ({navigation, route}) => {
           });
           if (result.data.success == true) {
             ToastAndroid.show('List successfully updated', ToastAndroid.SHORT);
-            navigation.goBack();
+            navigation.navigate('ProfileListDetails', {listName: name});
           }
         } catch (err) {
           ToastAndroid.show('An error occured', ToastAndroid.SHORT);
