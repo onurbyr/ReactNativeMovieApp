@@ -127,13 +127,13 @@ const ProfileListDetails = ({navigation, route}) => {
   };
 
   const navigateMovieDetails = itemId => {
-    navigation.navigate('MovieDetails', {
+    navigation.push('MovieDetails', {
       itemId: itemId,
     });
   };
 
   const navigateTvSeriesDetails = itemId => {
-    navigation.navigate('TvSeriesDetails', {
+    navigation.push('TvSeriesDetails', {
       itemId: itemId,
     });
   };

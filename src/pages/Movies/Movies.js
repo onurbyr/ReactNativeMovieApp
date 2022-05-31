@@ -25,6 +25,8 @@ import Login from '../Login/Login';
 import StarItem from '../StarItem';
 import CreateList from '../CreateList';
 import CreatedLists from '../CreatedLists';
+import ProfileListDetails from '../Profile/Lists/ProfileListDetails';
+import ProfileListEdit from '../Profile/Lists/ProfileListEdit';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
@@ -326,6 +328,16 @@ const Movies = ({navigation, route}) => {
         <MoviesStack.Screen
           name="CreatedLists"
           component={CreatedLists}
+          options={{headerShown: false}}
+        />
+        <MoviesStack.Screen
+          name="ProfileListDetails"
+          component={ProfileListDetails}
+          options={{headerShown: false}}
+        />
+        <MoviesStack.Screen
+          name="ProfileListEdit"
+          component={ProfileListEdit}
           options={{headerShown: false}}
         />
       </MoviesStack.Navigator>

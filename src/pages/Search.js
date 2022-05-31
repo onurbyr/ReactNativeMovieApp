@@ -30,6 +30,8 @@ import Login from './Login/Login';
 import StarItem from './StarItem';
 import CreateList from './CreateList';
 import CreatedLists from './CreatedLists';
+import ProfileListDetails from './Profile/Lists/ProfileListDetails';
+import ProfileListEdit from './Profile/Lists/ProfileListEdit';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -426,6 +428,16 @@ const Search = ({navigation, route}) => {
         <SearchStack.Screen
           name="CreatedLists"
           component={CreatedLists}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="ProfileListDetails"
+          component={ProfileListDetails}
+          options={{headerShown: false}}
+        />
+        <SearchStack.Screen
+          name="ProfileListEdit"
+          component={ProfileListEdit}
           options={{headerShown: false}}
         />
       </SearchStack.Navigator>

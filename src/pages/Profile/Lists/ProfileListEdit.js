@@ -73,13 +73,17 @@ const ProfileListEdit = ({navigation, route}) => {
   };
 
   const del = async () => {
+    const routes = navigation.getState()?.routes;
+    const prevRoute = routes[routes.length - 3];
     const apiv4 = await apiv4Authorized();
     if (apiv4) {
       try {
         const result = await apiv4.delete(`/list/${listId}`, {});
         if (result.data.success == true) {
           ToastAndroid.show('List successfully deleted', ToastAndroid.SHORT);
-          navigation.navigate('ProfileLists');
+          prevRoute.params
+            ? navigation.navigate(prevRoute, prevRoute.params)
+            : navigation.navigate(prevRoute);
         }
       } catch (err) {
         ToastAndroid.show(err.message, ToastAndroid.SHORT);

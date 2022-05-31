@@ -147,7 +147,14 @@ const CreatedLists = ({navigation, route}) => {
               />
             )}
           </View>
-          <TouchableOpacity style={styles.rightView}>
+          <TouchableOpacity
+            style={styles.rightView}
+            onPress={() =>
+              navigation.navigate('ProfileListDetails', {
+                listId: item.id,
+                listName: item.name,
+              })
+            }>
             <DefaultText>{item.number_of_items}</DefaultText>
             <MaterialIcons name="chevron-right" color={'white'} size={24} />
           </TouchableOpacity>
