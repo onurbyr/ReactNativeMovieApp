@@ -290,7 +290,11 @@ const ProfileListDetails = ({navigation, route}) => {
           </InfoBox>
           <View style={styles.header}>
             <BackButton />
-            <BoldText style={styles.headerText}>{listName}</BoldText>
+            <BoldText style={styles.headerText}>
+              {listName.length > 12
+                ? listName.substring(0, 12) + '...'
+                : listName}
+            </BoldText>
             <View style={styles.headerIcons}>
               <TouchableOpacity
                 onPress={() => {
