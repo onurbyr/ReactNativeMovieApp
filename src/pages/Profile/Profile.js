@@ -20,6 +20,7 @@ import Watchlist from './Watchlist';
 import Ratings from './Ratings';
 import ProfileLists from './Lists/ProfileLists';
 import ProfileListDetails from './Lists/ProfileListDetails';
+import ProfileListEdit from './Lists/ProfileListEdit';
 import MovieDetails from '../Movies/MovieDetails';
 import TvSeriesDetails from '../TvSeries/TvSeriesDetails';
 import Genres from '../Genres';
@@ -332,6 +333,11 @@ const Profile = ({navigation, route}) => {
         <ProfileStack.Screen
           name="ProfileListDetails"
           component={ProfileListDetails}
+          options={{headerShown: false}}
+        />
+        <ProfileStack.Screen
+          name="ProfileListEdit"
+          component={ProfileListEdit}
           options={{headerShown: false}}
         />
         <ProfileStack.Screen

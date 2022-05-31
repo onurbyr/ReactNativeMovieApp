@@ -10,7 +10,7 @@ import {
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {apiv4Authorized, apiImgUrl} from '../../../../services/api/api';
 import usePrevious from '../../../hooks/usePrevious';
-import HeaderWithBack from '../../../components/HeaderWithBack';
+import BackButton from '../../../components/BackButton';
 import RenderFooter from '../../../components/RenderFooter';
 import BoldText from '../../../components/BoldText';
 import DefaultText from '../../../components/DefaultText';
@@ -18,6 +18,7 @@ import Stars from '../../../components/Stars/Stars';
 import Collapse from '../../../components/Collapse';
 import CustomDialogBox from '../../../components/CustomDialogBox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NoImage from '../../../images/noimage.png';
 
 const ProfileListDetails = ({navigation, route}) => {
@@ -204,7 +205,19 @@ const ProfileListDetails = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      <HeaderWithBack>{listName}</HeaderWithBack>
+      <View style={styles.header}>
+        <BackButton />
+        <BoldText style={styles.headerText}>{listName}</BoldText>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ProfileListEdit', {listId})}
+          style={styles.editListIconView}>
+          <MaterialCommunityIcons
+            name="playlist-edit"
+            color={'white'}
+            size={28}
+          />
+        </TouchableOpacity>
+      </View>
       <CustomDialogBox
         isHidden={isDialogBoxHidden}
         cancel={cancel}
@@ -351,7 +364,7 @@ const ProfileListDetails = ({navigation, route}) => {
           </Collapse>
           <FlatList
             data={data}
-            style={{marginBottom: 180}}
+            style={{marginBottom: 130}}
             onEndReached={() => {
               if (page < totalPages) {
                 setPage(page + 1);
@@ -379,6 +392,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#15141F',
+  },
+  header: {
+    flexDirection: 'row',
+    marginVertical: 20,
+    alignItems: 'center',
+  },
+  headerText: {
+    fontSize: 22,
+    marginLeft: 20,
+  },
+  editListIconView: {
+    flex: 1,
+    alignItems: 'flex-end',
+    paddingRight: 20,
   },
   flatlistItems: {
     flexDirection: 'row',
