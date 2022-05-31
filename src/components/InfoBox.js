@@ -11,7 +11,7 @@ const InfoBox = props => {
 
   const fadeIn = () => {
     Animated.timing(fadeAnim, {
-      toValue: 0.8,
+      toValue: 0.9,
       duration: animationDuration,
       useNativeDriver: true,
     }).start();
@@ -32,10 +32,10 @@ const InfoBox = props => {
     }
   }, [props.isHidden]);
 
-  const cancel = () => {
+  const hide = () => {
     fadeOut();
     setTimeout(() => {
-      props.cancel();
+      props.hide();
     }, animationDuration);
   };
 
@@ -49,7 +49,7 @@ const InfoBox = props => {
           opacity: fadeAnim,
         },
       ]}
-      onStartShouldSetResponder={cancel}>
+      onStartShouldSetResponder={hide}>
       {props.children}
     </Animated.View>
   );

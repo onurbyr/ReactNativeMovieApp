@@ -33,6 +33,7 @@ const ProfileListDetails = ({navigation, route}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isDialogBoxHidden, setIsDialogBoxHidden] = useState(true);
   const [isInfoBoxHidden, setIsInfoBoxHidden] = useState(true);
+  const [info, setInfo] = useState([]);
   const [idIndexMediaType, setIdIndexMediaType] = useState({});
   const prevSortRef = useRef();
   const childCompRef = useRef();
@@ -82,6 +83,29 @@ const ProfileListDetails = ({navigation, route}) => {
         setRefreshing(false);
       }
     }
+  };
+
+  const getDetails = async () => {
+    const apiv4 = await apiv4Authorized();
+    if (apiv4) {
+      try {
+        const response = await apiv4.get(`/list/${listId}`);
+        setInfo(response.data);
+      } catch (error) {
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      }
+    }
+  };
+
+  const toHoursAndMinutes = totalMinutes => {
+    const minutes = totalMinutes % 60;
+    const hours = Math.floor(totalMinutes / 60);
+
+    return `${padTo2Digits(hours)}h ${padTo2Digits(minutes)}m`;
+  };
+
+  const padTo2Digits = num => {
+    return num.toString().padStart(2, '0');
   };
 
   const dateConvert = dt => {
@@ -223,13 +247,45 @@ const ProfileListDetails = ({navigation, route}) => {
         <View>
           <InfoBox
             isHidden={isInfoBoxHidden}
-            cancel={() => setIsInfoBoxHidden(true)}>
-            <View style={{flexDirection: 'row'}}>
+            hide={() => setIsInfoBoxHidden(true)}>
+            <View style={styles.infoBoxItem}>
               <BoldText>Name: </BoldText>
-              <BoldText>
-                Adipisicing labore id anim aliqua sint adipisicing labore id
-                aliquip est officia.
-              </BoldText>
+              <DefaultText style={styles.infoBoxItemTextRight}>
+                {info.name}
+              </DefaultText>
+            </View>
+            {info.description ? (
+              <View style={styles.infoBoxItem}>
+                <BoldText>Description: </BoldText>
+                <DefaultText style={styles.infoBoxItemTextRight}>
+                  {info.description}
+                </DefaultText>
+              </View>
+            ) : null}
+            <View style={styles.infoBoxItem}>
+              <BoldText>Average Rating: </BoldText>
+              <DefaultText style={styles.infoBoxItemTextRight}>
+                {(Math.round(info.average_rating * 100) / 100).toFixed(2)}
+              </DefaultText>
+            </View>
+            <View style={styles.infoBoxItem}>
+              <BoldText>Total Runtime: </BoldText>
+              <DefaultText style={styles.infoBoxItemTextRight}>
+                {toHoursAndMinutes(info.runtime)}
+              </DefaultText>
+            </View>
+            <View style={styles.infoBoxItem}>
+              <BoldText>Items On This List: </BoldText>
+              <DefaultText style={styles.infoBoxItemTextRight}>
+                {info.total_results}
+              </DefaultText>
+            </View>
+            <View style={styles.infoBoxItem}>
+              {info.public ? (
+                <MaterialIcons name="public" color={'#726C8D'} size={26} />
+              ) : (
+                <MaterialIcons name="lock" color={'#726C8D'} size={26} />
+              )}
             </View>
           </InfoBox>
           <View style={styles.header}>
@@ -237,7 +293,9 @@ const ProfileListDetails = ({navigation, route}) => {
             <BoldText style={styles.headerText}>{listName}</BoldText>
             <View style={styles.headerIcons}>
               <TouchableOpacity
-                onPress={() => setIsInfoBoxHidden(false)}
+                onPress={() => {
+                  setIsInfoBoxHidden(false), getDetails();
+                }}
                 style={styles.infoListIconView}>
                 <MaterialIcons name="info-outline" color={'white'} size={32} />
               </TouchableOpacity>
@@ -413,6 +471,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#15141F',
+  },
+  infoBoxItem: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  infoBoxItemTextRight: {
+    flex: 1,
+    fontSize: 16,
   },
   header: {
     flexDirection: 'row',
