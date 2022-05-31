@@ -78,7 +78,7 @@ const Watchlist = ({navigation}) => {
           setTotalPages(response.data.total_pages);
         }
       } catch (error) {
-        console.log(error.message);
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
       } finally {
         setLoading(false);
         setRefreshing(false);

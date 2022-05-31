@@ -60,10 +60,9 @@ const ProfileScreen = ({navigation}) => {
           },
         });
         setData(response.data);
+        setLoading(false);
       } catch (error) {
         console.log(error.message);
-      } finally {
-        setLoading(false);
       }
     } else {
       navigation.navigate('Login');

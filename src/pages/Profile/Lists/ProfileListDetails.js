@@ -8,8 +8,7 @@ import {
   ToastAndroid,
 } from 'react-native';
 import React, {useEffect, useState, useRef, useCallback} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {apiv4Authorized, apiImgUrl, api} from '../../../../services/api/api';
+import {apiv4Authorized, apiImgUrl} from '../../../../services/api/api';
 import usePrevious from '../../../hooks/usePrevious';
 import HeaderWithBack from '../../../components/HeaderWithBack';
 import RenderFooter from '../../../components/RenderFooter';
@@ -28,11 +27,10 @@ const ProfileListDetails = ({navigation, route}) => {
   const [totalPages, setTotalPages] = useState(1);
   const prevPage = usePrevious(page);
   const [isExtraLoading, setIsExtraLoading] = useState(false);
-  const [mediaType, setMediaType] = useState('movie');
   const [sort, setSort] = useState('original_order.desc');
   const [refreshing, setRefreshing] = useState(false);
   const [isDialogBoxHidden, setIsDialogBoxHidden] = useState(true);
-  const [idIndex, setIdIndex] = useState({});
+  const [idIndexMediaType, setIdIndexMediaType] = useState({});
   const prevSortRef = useRef();
   const childCompRef = useRef();
   const {listId, listName} = route.params;
@@ -50,7 +48,7 @@ const ProfileListDetails = ({navigation, route}) => {
 
   useEffect(() => {
     getItems();
-  }, [page, sort, mediaType, refreshing]);
+  }, [page, sort, refreshing]);
 
   useEffect(() => {
     //assign the ref's current value to the count Hook
@@ -75,7 +73,7 @@ const ProfileListDetails = ({navigation, route}) => {
           setTotalPages(response.data.total_pages);
         }
       } catch (error) {
-        console.log(error.message);
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -87,11 +85,6 @@ const ProfileListDetails = ({navigation, route}) => {
     const d = new Date(dt);
     const date = d.getFullYear();
     return date;
-  };
-
-  const onPressMediaType = mediaType => {
-    setLoading(true);
-    setMediaType(mediaType);
   };
 
   const Hr = () => {
@@ -119,30 +112,29 @@ const ProfileListDetails = ({navigation, route}) => {
   };
 
   const removeFavorite = async () => {
-    data.splice(idIndex.index, 1);
-    try {
-      const sessionId = await AsyncStorage.getItem('@session_id');
-      const result = await api.post(
-        `/account/{account_id}/favorite`,
-        {
-          media_type: mediaType,
-          media_id: idIndex.itemId,
-          favorite: false,
-        },
-        {
-          params: {
-            session_id: sessionId,
+    data.splice(idIndexMediaType.index, 1);
+    const apiv4 = await apiv4Authorized();
+    if (apiv4) {
+      try {
+        const result = await apiv4.delete(`/list/${listId}/items`, {
+          data: {
+            items: [
+              {
+                media_type: idIndexMediaType.mediaType,
+                media_id: idIndexMediaType.itemId,
+              },
+            ],
           },
-        },
-      );
-      if (result.data.success == true) {
-        ToastAndroid.show(
-          'Successfully Removed from Favorites',
-          ToastAndroid.SHORT,
-        );
+        });
+        if (result.data.success == true) {
+          ToastAndroid.show(
+            'Successfully Removed from List',
+            ToastAndroid.SHORT,
+          );
+        }
+      } catch (err) {
+        ToastAndroid.show(err.message, ToastAndroid.SHORT);
       }
-    } catch (err) {
-      ToastAndroid.show(err.message, ToastAndroid.SHORT);
     }
   };
 
@@ -196,7 +188,11 @@ const ProfileListDetails = ({navigation, route}) => {
             style={styles.deleteButton}
             onPress={() => {
               setIsDialogBoxHidden(false);
-              setIdIndex({itemId: item.id, index});
+              setIdIndexMediaType({
+                itemId: item.id,
+                index,
+                mediaType: item.media_type,
+              });
             }}>
             <MaterialIcons name="delete-outline" color={'#dddddd'} size={24} />
           </TouchableOpacity>
@@ -222,26 +218,6 @@ const ProfileListDetails = ({navigation, route}) => {
         </View>
       ) : (
         <View>
-          <View style={styles.mediaTypeView}>
-            <TouchableOpacity
-              disabled={mediaType == 'movie' ? true : false}
-              style={[
-                styles.mediaTypeBox,
-                mediaType == 'movie' && {backgroundColor: '#151517'},
-              ]}
-              onPress={() => onPressMediaType('movie')}>
-              <DefaultText>Movies</DefaultText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              disabled={mediaType == 'tv' ? true : false}
-              style={[
-                styles.mediaTypeBox,
-                mediaType == 'tv' && {backgroundColor: '#151517'},
-              ]}
-              onPress={() => onPressMediaType('tv')}>
-              <DefaultText>Tv Series</DefaultText>
-            </TouchableOpacity>
-          </View>
           <Collapse ref={childCompRef}>
             <View style={styles.collapseContainer}>
               <TouchableOpacity
@@ -427,21 +403,5 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: 'center',
     padding: 10,
-  },
-  mediaTypeView: {
-    flexDirection: 'row',
-    padding: 10,
-    justifyContent: 'center',
-  },
-  mediaTypeBox: {
-    width: 100,
-    height: 36,
-    backgroundColor: '#212028',
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: '#58575D',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 5,
   },
 });

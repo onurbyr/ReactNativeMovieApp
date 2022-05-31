@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  ToastAndroid
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
 import BackButton from '../../../components/BackButton';
@@ -58,7 +59,7 @@ const ProfileLists = ({navigation, route}) => {
           setTotalPages(response.data.total_pages);
         }
       } catch (error) {
-        console.log(error.message);
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
       } finally {
         setLoading(false);
       }
