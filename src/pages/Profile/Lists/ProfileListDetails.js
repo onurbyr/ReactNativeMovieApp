@@ -214,7 +214,7 @@ const ProfileListDetails = ({navigation, route}) => {
           <MaterialCommunityIcons
             name="playlist-edit"
             color={'white'}
-            size={28}
+            size={32}
           />
         </TouchableOpacity>
       </View>

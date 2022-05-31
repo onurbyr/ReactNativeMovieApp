@@ -9,10 +9,12 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import HeaderWithBack from '../../../components/HeaderWithBack';
+import BackButton from '../../../components/BackButton';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {apiv4Authorized} from '../../../../services/api/api';
+import CustomDialogBox from '../../../components/CustomDialogBox';
 
 const ProfileListEdit = ({navigation, route}) => {
   const [name, setName] = useState('');
@@ -22,6 +24,7 @@ const ProfileListEdit = ({navigation, route}) => {
   const [isToggleEnabled, setIsToggleEnabled] = useState(false);
   const {listId} = route.params;
   const [isLoading, setLoading] = useState(true);
+  const [isDialogBoxHidden, setIsDialogBoxHidden] = useState(true);
 
   useEffect(() => {
     getItems();
@@ -51,30 +54,64 @@ const ProfileListEdit = ({navigation, route}) => {
       const apiv4 = await apiv4Authorized();
       if (apiv4) {
         try {
-          const result = await apiv4.post('/list', {
+          const result = await apiv4.put(`/list/${listId}`, {
             name,
             description,
-            iso_639_1: 'en',
             public: isToggleEnabled,
           });
           if (result.data.success == true) {
-            ToastAndroid.show('List successfully created', ToastAndroid.SHORT);
+            ToastAndroid.show('List successfully updated', ToastAndroid.SHORT);
             navigation.goBack();
           }
         } catch (err) {
           ToastAndroid.show('An error occured', ToastAndroid.SHORT);
         }
-      } else {
-        navigation.navigate('Login');
       }
     } else {
       ToastAndroid.show('List name cannot be empty', ToastAndroid.SHORT);
     }
   };
 
+  const del = async () => {
+    const apiv4 = await apiv4Authorized();
+    if (apiv4) {
+      try {
+        const result = await apiv4.delete(`/list/${listId}`, {});
+        if (result.data.success == true) {
+          ToastAndroid.show('List successfully deleted', ToastAndroid.SHORT);
+          navigation.navigate('ProfileLists');
+        }
+      } catch (err) {
+        ToastAndroid.show(err.message, ToastAndroid.SHORT);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <HeaderWithBack>Edit List</HeaderWithBack>
+      <View style={styles.header}>
+        <BackButton />
+        <Text style={styles.headerText}>Edit List</Text>
+        <TouchableOpacity
+          onPress={() => setIsDialogBoxHidden(false)}
+          style={styles.editListIconView}>
+          <MaterialCommunityIcons
+            name="delete-sweep-outline"
+            color={'white'}
+            size={32}
+          />
+        </TouchableOpacity>
+      </View>
+      <CustomDialogBox
+        isHidden={isDialogBoxHidden}
+        cancel={() => setIsDialogBoxHidden(true)}
+        ok={() => {
+          setIsDialogBoxHidden(true);
+          del();
+        }}
+        title="Confirm Delete">
+        Do you really want to delete this list?
+      </CustomDialogBox>
       {isLoading ? (
         <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>
           <ActivityIndicator />
@@ -151,6 +188,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#15141F',
+  },
+  header: {
+    flexDirection: 'row',
+    marginVertical: 20,
+    alignItems: 'center',
+  },
+  headerText: {
+    color: '#ffffff',
+    fontSize: 22,
+    fontFamily: 'Lato-Regular',
+    marginLeft: 20,
+  },
+  editListIconView: {
+    flex: 1,
+    alignItems: 'flex-end',
+    paddingRight: 20,
   },
   nameInputView: {
     flexDirection: 'row',
