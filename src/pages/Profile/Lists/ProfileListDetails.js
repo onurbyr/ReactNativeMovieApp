@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ToastAndroid,
+  Share,
 } from 'react-native';
 import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {apiv4Authorized, apiImgUrl} from '../../../../services/api/api';
@@ -75,6 +76,7 @@ const ProfileListDetails = ({navigation, route}) => {
         } else {
           setData(response.data.results);
           setTotalPages(response.data.total_pages);
+          setInfo(response.data);
         }
       } catch (error) {
         ToastAndroid.show(error.message, ToastAndroid.SHORT);
@@ -172,6 +174,23 @@ const ProfileListDetails = ({navigation, route}) => {
   const ok = () => {
     setIsDialogBoxHidden(true);
     removeFavorite();
+  };
+
+  const shareList = async () => {
+    if (info.public) {
+      try {
+        await Share.share({
+          message: `${info.name} | https://www.themoviedb.org/list/${info.id}`,
+        });
+      } catch (err) {
+        ToastAndroid.show(err.message, ToastAndroid.SHORT);
+      }
+    } else {
+      ToastAndroid.show(
+        'For sharing you have to set list as public',
+        ToastAndroid.SHORT,
+      );
+    }
   };
 
   const renderItem = (item, index) => {
@@ -301,7 +320,12 @@ const ProfileListDetails = ({navigation, route}) => {
                   setIsInfoBoxHidden(false), getDetails();
                 }}
                 style={styles.infoListIconView}>
-                <MaterialIcons name="info-outline" color={'white'} size={32} />
+                <MaterialIcons name="info-outline" color={'white'} size={26} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={shareList}
+                style={styles.shareListIconView}>
+                <MaterialIcons name="share" color={'white'} size={26} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ProfileListEdit', {listId})}
@@ -309,7 +333,7 @@ const ProfileListDetails = ({navigation, route}) => {
                 <MaterialCommunityIcons
                   name="playlist-edit"
                   color={'white'}
-                  size={32}
+                  size={26}
                 />
               </TouchableOpacity>
             </View>
@@ -492,6 +516,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 22,
     marginLeft: 20,
+    flex: 1,
   },
   headerIcons: {
     flex: 1,
@@ -499,10 +524,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   infoListIconView: {
-    paddingRight: 20,
+    paddingRight: 15,
+  },
+  shareListIconView: {
+    paddingRight: 15,
   },
   editListIconView: {
-    paddingRight: 20,
+    paddingRight: 15,
   },
   flatlistItems: {
     flexDirection: 'row',
