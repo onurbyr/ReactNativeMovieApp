@@ -23,6 +23,7 @@ import Hr from '../../components/Hr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {fav, watchlist, star, list} from './postItem';
 import CustomActivityIndicator from '../../components/CustomActivityIndicator';
+import strings from '../../localization/strings';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -60,10 +61,20 @@ const TvSeriesDetails = ({navigation, route}) => {
       const value = await AsyncStorage.getItem('@session_id');
       if (value !== null) {
         multipleRequests([
-          {req: req1},
+          {
+            req: req1,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
           {req: req2},
           {req: req3},
-          {req: req4},
+          {
+            req: req4,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
           {
             req: req5,
             params: {
@@ -72,7 +83,22 @@ const TvSeriesDetails = ({navigation, route}) => {
           },
         ]);
       } else {
-        multipleRequests([{req: req1}, {req: req2}, {req: req3}, {req: req4}]);
+        multipleRequests([
+          {
+            req: req1,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
+          {req: req2},
+          {req: req3},
+          {
+            req: req4,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
+        ]);
       }
     } catch (e) {
       // error reading value
@@ -121,7 +147,12 @@ const TvSeriesDetails = ({navigation, route}) => {
     ];
     const d = new Date(n);
     const date =
-      months[d.getMonth()] + ' ' + d.getDate() + ',' + ' ' + d.getFullYear();
+      strings.months[months[d.getMonth()]] +
+      ' ' +
+      d.getDate() +
+      ',' +
+      ' ' +
+      d.getFullYear();
     return date;
   };
 
@@ -244,11 +275,11 @@ const TvSeriesDetails = ({navigation, route}) => {
                 />
                 <DefaultText style={styles.info}>
                   {data.number_of_seasons == 1
-                    ? data.number_of_seasons + ' season'
-                    : data.number_of_seasons + ' seasons'}
+                    ? data.number_of_seasons + ' ' + strings.season
+                    : data.number_of_seasons + ' ' + strings.seasons}
                 </DefaultText>
                 <DefaultText style={styles.info}>
-                  {data.number_of_episodes + ' episodes'}
+                  {data.number_of_episodes + ' ' + strings.episodes}
                 </DefaultText>
                 <Ionicons
                   name="star"
@@ -263,13 +294,13 @@ const TvSeriesDetails = ({navigation, route}) => {
               <Hr />
               <View style={{flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
-                  <BoldText>First Air Date</BoldText>
+                  <BoldText>{strings.firstairdate}</BoldText>
                   <DefaultText style={styles.releaseDate}>
                     {dateConvert(data.first_air_date)}
                   </DefaultText>
                 </View>
                 <View style={{flex: 1}}>
-                  <BoldText>Genre</BoldText>
+                  <BoldText>{strings.genre}</BoldText>
                   <ScrollView horizontal={true} style={styles.genreScrollView}>
                     {data.genres &&
                       data.genres.map(n => (
@@ -293,7 +324,7 @@ const TvSeriesDetails = ({navigation, route}) => {
               {Object.keys(data.overview).length > 0 && (
                 //Overview
                 <View>
-                  <BoldText>Overview</BoldText>
+                  <BoldText>{strings.overview}</BoldText>
                   <DefaultText style={styles.overview}>
                     {data.overview}
                   </DefaultText>
@@ -304,7 +335,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                 //Cast
                 <View>
                   <View style={{flexDirection: 'row'}}>
-                    <BoldText>Cast</BoldText>
+                    <BoldText>{strings.cast}</BoldText>
                     {Object.keys(cast).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
@@ -314,7 +345,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
-                          See All
+                          {strings.seeall}
                         </DefaultText>
                         <Entypo
                           name="chevron-right"
@@ -377,7 +408,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                 //Videos
                 <View>
                   <View style={{flexDirection: 'row'}}>
-                    <BoldText>Videos</BoldText>
+                    <BoldText>{strings.videos}</BoldText>
                     {Object.keys(videos).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
@@ -387,7 +418,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
-                          See All
+                          {strings.seeall}
                         </DefaultText>
                         <Entypo
                           name="chevron-right"
@@ -438,7 +469,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                 //Recommendations
                 <View>
                   <View style={{flexDirection: 'row'}}>
-                    <BoldText>Recommendations</BoldText>
+                    <BoldText>{strings.recommendations}</BoldText>
                     {Object.keys(recommend).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
@@ -449,7 +480,7 @@ const TvSeriesDetails = ({navigation, route}) => {
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
-                          See All
+                          {strings.seeall}
                         </DefaultText>
                         <Entypo
                           name="chevron-right"

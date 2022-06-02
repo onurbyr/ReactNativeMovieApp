@@ -23,6 +23,7 @@ import Hr from '../../components/Hr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {fav, watchlist, star, list} from './postItem';
 import CustomActivityIndicator from '../../components/CustomActivityIndicator';
+import strings from '../../localization/strings';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
@@ -60,10 +61,20 @@ const MovieDetails = ({navigation, route}) => {
       const value = await AsyncStorage.getItem('@session_id');
       if (value !== null) {
         multipleRequests([
-          {req: req1},
+          {
+            req: req1,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
           {req: req2},
           {req: req3},
-          {req: req4},
+          {
+            req: req4,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
           {
             req: req5,
             params: {
@@ -72,7 +83,22 @@ const MovieDetails = ({navigation, route}) => {
           },
         ]);
       } else {
-        multipleRequests([{req: req1}, {req: req2}, {req: req3}, {req: req4}]);
+        multipleRequests([
+          {
+            req: req1,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
+          {req: req2},
+          {req: req3},
+          {
+            req: req4,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
+        ]);
       }
     } catch (e) {
       // error reading value
@@ -121,7 +147,12 @@ const MovieDetails = ({navigation, route}) => {
     ];
     const d = new Date(n);
     const date =
-      months[d.getMonth()] + ' ' + d.getDate() + ',' + ' ' + d.getFullYear();
+      strings.months[months[d.getMonth()]] +
+      ' ' +
+      d.getDate() +
+      ',' +
+      ' ' +
+      d.getFullYear();
     return date;
   };
 
@@ -243,7 +274,7 @@ const MovieDetails = ({navigation, route}) => {
                   style={styles.minutesIcon}
                 />
                 <DefaultText style={styles.minutes}>
-                  {data.runtime + ' minutes'}
+                  {data.runtime + ' ' + strings.minutes}
                 </DefaultText>
                 <Ionicons
                   name="star"
@@ -258,13 +289,13 @@ const MovieDetails = ({navigation, route}) => {
               <Hr />
               <View style={{flexDirection: 'row'}}>
                 <View style={{flex: 1}}>
-                  <BoldText>Release Date</BoldText>
+                  <BoldText>{strings.releasedate}</BoldText>
                   <DefaultText style={styles.releaseDate}>
                     {dateConvert(data.release_date)}
                   </DefaultText>
                 </View>
                 <View style={{flex: 1}}>
-                  <BoldText>Genre</BoldText>
+                  <BoldText>{strings.genre}</BoldText>
                   <ScrollView horizontal={true} style={styles.genreScrollView}>
                     {data.genres &&
                       data.genres.map(n => (
@@ -288,7 +319,7 @@ const MovieDetails = ({navigation, route}) => {
               {Object.keys(data.overview).length > 0 && (
                 //Overview
                 <View>
-                  <BoldText>Overview</BoldText>
+                  <BoldText>{strings.overview}</BoldText>
                   <DefaultText style={styles.overview}>
                     {data.overview}
                   </DefaultText>
@@ -299,7 +330,7 @@ const MovieDetails = ({navigation, route}) => {
                 //Cast
                 <View>
                   <View style={{flexDirection: 'row'}}>
-                    <BoldText>Cast</BoldText>
+                    <BoldText>{strings.cast}</BoldText>
                     {Object.keys(cast).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
@@ -309,7 +340,7 @@ const MovieDetails = ({navigation, route}) => {
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
-                          See All
+                          {strings.seeall}
                         </DefaultText>
                         <Entypo
                           name="chevron-right"
@@ -372,7 +403,7 @@ const MovieDetails = ({navigation, route}) => {
                 //Videos
                 <View>
                   <View style={{flexDirection: 'row'}}>
-                    <BoldText>Videos</BoldText>
+                    <BoldText>{strings.videos}</BoldText>
                     {Object.keys(videos).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
@@ -382,7 +413,7 @@ const MovieDetails = ({navigation, route}) => {
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
-                          See All
+                          {strings.seeall}
                         </DefaultText>
                         <Entypo
                           name="chevron-right"
@@ -433,7 +464,7 @@ const MovieDetails = ({navigation, route}) => {
                 //Recommendations
                 <View>
                   <View style={{flexDirection: 'row'}}>
-                    <BoldText>Recommendations</BoldText>
+                    <BoldText>{strings.recommendations}</BoldText>
                     {Object.keys(recommend).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
@@ -444,7 +475,7 @@ const MovieDetails = ({navigation, route}) => {
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
-                          See All
+                          {strings.seeall}
                         </DefaultText>
                         <Entypo
                           name="chevron-right"

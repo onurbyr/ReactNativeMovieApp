@@ -32,6 +32,7 @@ import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
 import Stars from '../../components/Stars/Stars';
 import NoImage from '../../images/noimage.png';
+import strings from '../../localization/strings';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
@@ -53,6 +54,7 @@ const TvSeriesScreen = ({navigation}) => {
       const response = await api.get('/tv/' + category, {
         params: {
           page,
+          language: strings.getLanguage(),
         },
       });
       if (prevPage == page - 1) {
@@ -85,12 +87,12 @@ const TvSeriesScreen = ({navigation}) => {
       <View style={styles.headerView}>
         <Text style={styles.headerText}>
           {category == 'popular'
-            ? 'Popular'
+            ? strings.popular
             : category == 'top_rated'
-            ? 'Top Rated'
-            : 'Airing Today'}
+            ? strings.toprated
+            : strings.airingtoday}
         </Text>
-        <Text style={styles.headerText2}> TV Shows</Text>
+        <Text style={styles.headerText2}> {strings.tvshows}</Text>
       </View>
       <View>
         <ScrollView horizontal={true} style={styles.categoryScrollView}>
@@ -101,7 +103,7 @@ const TvSeriesScreen = ({navigation}) => {
               category == 'popular' && {backgroundColor: '#151517'},
             ]}
             onPress={() => onPressCategory('popular')}>
-            <Text style={styles.categoryText}>Popular</Text>
+            <Text style={styles.categoryText}>{strings.popular}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             disabled={category == 'top_rated' ? true : false}
@@ -110,7 +112,7 @@ const TvSeriesScreen = ({navigation}) => {
               category == 'top_rated' && {backgroundColor: '#151517'},
             ]}
             onPress={() => onPressCategory('top_rated')}>
-            <Text style={styles.categoryText}>Top Rated</Text>
+            <Text style={styles.categoryText}>{strings.toprated}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             disabled={category == 'airing_today' ? true : false}
@@ -119,7 +121,7 @@ const TvSeriesScreen = ({navigation}) => {
               category == 'airing_today' && {backgroundColor: '#151517'},
             ]}
             onPress={() => onPressCategory('airing_today')}>
-            <Text style={styles.categoryText}>Airing Today</Text>
+            <Text style={styles.categoryText}>{strings.airingtoday}</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>
@@ -192,7 +194,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   categoryBox: {
-    width: 100,
+    width: 110,
     height: 36,
     backgroundColor: '#212028',
     borderRadius: 18,
