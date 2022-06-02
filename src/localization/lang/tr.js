@@ -17,6 +17,7 @@ export default {
     pleaseselectrating: 'Lütfen puanlama değerini seçiniz.',
     successfulyrated: 'Başarıyla Puanlandı.',
     ratingsuccessfullydeleted: 'Puanlama Başarıyla Silindi.',
+    checkyourconnection: 'Bağlantınızı kontrol edin ve tekrar deneyin.',
   },
   popular: 'Popüler',
   movies: 'Filmler',
@@ -50,4 +51,10 @@ export default {
   ratethe: '',
   rate: 'Puanla',
   deleterating: 'Puanlamayı Sil',
+  findmoviestvseries: 'Filmler, Diziler ve daha\nfazlasını ara...',
+  thereareno: 'Aramanızla eşleşen',
+  thatmatchedyourquery: 'yok.',
+  people: 'İnsanlar',
+  tvseries: 'Diziler',
+  search: 'Ara',
 };

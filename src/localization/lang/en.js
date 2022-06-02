@@ -17,6 +17,7 @@ export default {
     pleaseselectrating: 'Please select your rating value.',
     successfulyrated: 'Successfuly Rated',
     ratingsuccessfullydeleted: 'Rating Successfully Deleted',
+    checkyourconnection: 'Check your connection and try again.',
   },
   popular: 'Popular',
   movies: 'Movies',
@@ -50,4 +51,10 @@ export default {
   ratethe: 'Rate the',
   rate: 'Rate',
   deleterating: 'Delete Rating',
+  findmoviestvseries: 'Find Movies, Tv series,\nand more...',
+  thereareno: 'There are no',
+  thatmatchedyourquery: 'that matched your query.',
+  people: 'People',
+  tvseries: 'TvSeries',
+  search: 'Search',
 };

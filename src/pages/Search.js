@@ -34,6 +34,7 @@ import ProfileListDetails from './Profile/Lists/ProfileListDetails';
 import ProfileListEdit from './Profile/Lists/ProfileListEdit';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
+import strings from '../localization/strings';
 
 const InputContext = createContext();
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
@@ -45,9 +46,7 @@ const SearchScreen = () => {
   return (
     <InputContext.Provider value={{value: value, setCloseButtonVisible}}>
       <SafeAreaView style={styles.container}>
-        <Text style={styles.textHeader}>
-          Find Movies, Tv series,{'\n'}and more...
-        </Text>
+        <Text style={styles.textHeader}>{strings.findmoviestvseries}</Text>
         <View style={styles.searchSection}>
           <Feather
             style={styles.searchIcon}
@@ -58,7 +57,7 @@ const SearchScreen = () => {
           <TextInput
             style={styles.input}
             placeholderTextColor="#BBBBBB"
-            placeholder="Search"
+            placeholder={strings.search}
             //onChangeText={text => navigation.jumpTo(type, {input: text})}
             onChangeText={text => onChangeText(text)}
             value={value}
@@ -91,9 +90,9 @@ const SearchScreen = () => {
               marginLeft: 27,
             },
           }}>
-          <Tab.Screen name="Movies" component={Movies} />
-          <Tab.Screen name="TvSeries" component={TvSeries} />
-          <Tab.Screen name="People" component={People} />
+          <Tab.Screen name={strings.movies} component={Movies} />
+          <Tab.Screen name={strings.tvseries} component={TvSeries} />
+          <Tab.Screen name={strings.people} component={People} />
         </Tab.Navigator>
       </SafeAreaView>
     </InputContext.Provider>
@@ -137,6 +136,7 @@ const RenderItems = ({apiType, navigation}) => {
         params: {
           query: value,
           page,
+          language: strings.getLanguage(),
         },
       });
       //console.log(response.data);
@@ -225,13 +225,13 @@ const RenderItems = ({apiType, navigation}) => {
             <View
               style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
               <Text style={{color: 'white', paddingBottom: 50}}>
-                There are no
+                {strings.thereareno}
                 {apiType == 'movie'
-                  ? ' movies '
+                  ? ' ' + strings.movies.toLowerCase() + ' '
                   : apiType == 'tv'
-                  ? ' TV series '
-                  : ' people '}
-                that matched your query.
+                  ? ' ' + strings.tvshows.toLowerCase() + ' '
+                  : ' ' + strings.people.toLowerCase() + ' '}
+                {strings.thatmatchedyourquery}
               </Text>
             </View>
           )}
@@ -256,7 +256,7 @@ const RenderItems = ({apiType, navigation}) => {
           {alignItems: 'center', justifyContent: 'center', paddingBottom: 50},
         ]}>
         <Text style={{color: 'white'}}>
-          Check your connection and try again.
+          {strings.messages.checkyourconnection}
         </Text>
       </SafeAreaView>
     );
