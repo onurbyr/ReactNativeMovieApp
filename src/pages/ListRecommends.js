@@ -14,6 +14,7 @@ import HeaderWithBack from '../components/HeaderWithBack';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
 import NoImage from '../images/noimage.png';
+import strings from '../localization/strings';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
@@ -40,6 +41,7 @@ const ListRecommends = ({navigation, route}) => {
         {
           params: {
             page,
+            language: strings.getLanguage(),
           },
         },
       );
@@ -67,7 +69,7 @@ const ListRecommends = ({navigation, route}) => {
     <ActivityIndicator style={styles.container} />
   ) : (
     <SafeAreaView style={styles.container}>
-      <HeaderWithBack>Recommendations</HeaderWithBack>
+      <HeaderWithBack>{strings.recommendations}</HeaderWithBack>
       <FlatList
         data={data}
         onEndReached={() => {

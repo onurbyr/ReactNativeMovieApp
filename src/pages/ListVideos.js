@@ -11,6 +11,7 @@ import HeaderWithBack from '../components/HeaderWithBack';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
 import useOrientation from '../hooks/useOrientation';
+import strings from '../localization/strings';
 
 const ListVideos = ({route, navigation}) => {
   const {videos} = route.params;
@@ -19,7 +20,7 @@ const ListVideos = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <HeaderWithBack>Videos</HeaderWithBack>
+      <HeaderWithBack>{strings.videos}</HeaderWithBack>
       <FlatList
         data={videos}
         keyExtractor={({id}) => id}

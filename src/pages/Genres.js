@@ -13,6 +13,7 @@ import usePrevious from '../hooks/usePrevious';
 import HeaderWithBack from '../components/HeaderWithBack';
 import RenderFooter from '../components/RenderFooter';
 import Stars from '../components/Stars/Stars';
+import strings from '../localization/strings';
 
 const Genres = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -33,6 +34,7 @@ const Genres = ({route, navigation}) => {
         params: {
           page,
           with_genres: itemId,
+          language: strings.getLanguage(),
         },
       });
       if (prevPage == page - 1) {

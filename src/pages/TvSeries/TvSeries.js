@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   categoryBox: {
-    width: 110,
+    width: 100,
     height: 36,
     backgroundColor: '#212028',
     borderRadius: 18,

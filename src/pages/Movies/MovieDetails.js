@@ -67,7 +67,12 @@ const MovieDetails = ({navigation, route}) => {
               language: strings.getLanguage(),
             },
           },
-          {req: req2},
+          {
+            req: req2,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
           {req: req3},
           {
             req: req4,
@@ -90,7 +95,12 @@ const MovieDetails = ({navigation, route}) => {
               language: strings.getLanguage(),
             },
           },
-          {req: req2},
+          {
+            req: req2,
+            params: {
+              language: strings.getLanguage(),
+            },
+          },
           {req: req3},
           {
             req: req4,
