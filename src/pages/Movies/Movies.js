@@ -32,6 +32,8 @@ import usePrevious from '../../hooks/usePrevious';
 import RenderFooter from '../../components/RenderFooter';
 import Stars from '../../components/Stars/Stars';
 import NoImage from '../../images/noimage.png';
+import strings from '../../localization/strings';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NO_IMAGE = Image.resolveAssetSource(NoImage).uri;
 
@@ -47,12 +49,27 @@ const MoviesScreen = ({navigation}) => {
     getItems();
   }, [category, page]);
 
+  useEffect(() => {
+    setLanguage();
+  }, []);
+
+  const setLanguage = async () => {
+    const preferredLanguage = await AsyncStorage.getItem('@preferred_lang');
+    if (preferredLanguage !== null) {
+      strings.setLanguage(preferredLanguage);
+    }
+  };
+
   //getdata with axios
   const getItems = async () => {
+    const preferredLanguage = await AsyncStorage.getItem('@preferred_lang');
     try {
       const response = await api.get('/movie/' + category, {
         params: {
           page,
+          language: preferredLanguage
+            ? preferredLanguage
+            : strings.getLanguage(),
         },
       });
       if (prevPage == page - 1) {
@@ -85,12 +102,12 @@ const MoviesScreen = ({navigation}) => {
       <View style={styles.headerView}>
         <Text style={styles.headerText}>
           {category == 'popular'
-            ? 'Popular'
+            ? strings.popular
             : category == 'top_rated'
-            ? 'Top Rated'
-            : 'Upcoming'}
+            ? strings.toprated
+            : strings.upcoming}
         </Text>
-        <Text style={styles.headerText2}> Movies</Text>
+        <Text style={styles.headerText2}> {strings.movies}</Text>
       </View>
       <View>
         <ScrollView horizontal={true} style={styles.categoryScrollView}>
@@ -101,7 +118,7 @@ const MoviesScreen = ({navigation}) => {
               category == 'popular' && {backgroundColor: '#151517'},
             ]}
             onPress={() => onPressCategory('popular')}>
-            <Text style={styles.categoryText}>Popular</Text>
+            <Text style={styles.categoryText}>{strings.popular}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             disabled={category == 'top_rated' ? true : false}
@@ -110,7 +127,7 @@ const MoviesScreen = ({navigation}) => {
               category == 'top_rated' && {backgroundColor: '#151517'},
             ]}
             onPress={() => onPressCategory('top_rated')}>
-            <Text style={styles.categoryText}>Top Rated</Text>
+            <Text style={styles.categoryText}>{strings.toprated}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             disabled={category == 'upcoming' ? true : false}
@@ -119,7 +136,7 @@ const MoviesScreen = ({navigation}) => {
               category == 'upcoming' && {backgroundColor: '#151517'},
             ]}
             onPress={() => onPressCategory('upcoming')}>
-            <Text style={styles.categoryText}>Upcoming</Text>
+            <Text style={styles.categoryText}>{strings.upcoming}</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>

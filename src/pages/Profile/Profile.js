@@ -12,6 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiv4, api} from '../../../services/api/api';
 import LetterProfileImage from '../../components/LetterProfileImage';
 import BoldText from '../../components/BoldText';
+import TransparentBox from '../../components/TransparentBox';
+import CustomButton from '../../components/CustomButton/CustomButton';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Login from '../Login/Login';
@@ -35,6 +37,7 @@ import CreateList from '../CreateList';
 import CreatedLists from '../CreatedLists';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {Dimensions} from 'react-native';
 const windowWidth = Dimensions.get('window').width;
@@ -42,6 +45,7 @@ const windowWidth = Dimensions.get('window').width;
 const ProfileScreen = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [isTransparentBoxHidden, setIsTransparentBoxHidden] = useState(true);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -102,6 +106,27 @@ const ProfileScreen = ({navigation}) => {
     }
   };
 
+  const setLang = async lang => {
+    try {
+      await AsyncStorage.setItem('@preferred_lang', lang);
+      setIsTransparentBoxHidden(true);
+      ToastAndroid.show(
+        'You need to restart application for the changes to take effect',
+        ToastAndroid.SHORT,
+      );
+    } catch (e) {}
+  };
+  const clearLang = async () => {
+    try {
+      await AsyncStorage.removeItem('@preferred_lang');
+      setIsTransparentBoxHidden(true);
+      ToastAndroid.show(
+        'You need to restart application for the changes to take effect',
+        ToastAndroid.SHORT,
+      );
+    } catch (e) {}
+  };
+
   const Hr = () => {
     return (
       <View
@@ -120,9 +145,43 @@ const ProfileScreen = ({navigation}) => {
     </View>
   ) : (
     <View style={styles.container}>
-      <BoldText style={styles.userName}>
-        {data.username.charAt(0).toUpperCase() + data.username.slice(1)}
-      </BoldText>
+      <TransparentBox
+        isHidden={isTransparentBoxHidden}
+        hide={() => setIsTransparentBoxHidden(true)}>
+        <TouchableOpacity
+          style={styles.languageButtons}
+          onPress={() => setLang('en')}>
+          <BoldText style={{fontSize: 28}}>English</BoldText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.languageButtons}
+          onPress={() => setLang('tr')}>
+          <BoldText style={{fontSize: 28}}>Türkçe</BoldText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.languageButtons}
+          onPress={() => clearLang()}>
+          <BoldText style={{fontSize: 28}}>System Language</BoldText>
+        </TouchableOpacity>
+        <CustomButton
+          type="MaterialIcons"
+          name="close"
+          color="#4736AE"
+          style={{backgroundColor: 'white'}}
+          size={22}
+          onPress={() => setIsTransparentBoxHidden(true)}
+        />
+      </TransparentBox>
+      <View style={styles.profileContainerItems}>
+        <BoldText style={styles.userName}>
+          {data.username.charAt(0).toUpperCase() + data.username.slice(1)}
+        </BoldText>
+        <TouchableOpacity
+          style={{marginTop: 10}}
+          onPress={() => setIsTransparentBoxHidden(false)}>
+          <Ionicons name="language" color={'#ffffff'} size={26} />
+        </TouchableOpacity>
+      </View>
       <LinearGradient
         colors={['#4736AE', '#9761C6']}
         start={{x: 0.3, y: 0.5}}
@@ -212,10 +271,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#15141F',
   },
+  languageButtons: {
+    marginBottom: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  profileContainerItems: {
+    position: 'absolute',
+    zIndex: 1,
+    marginTop: 40,
+    alignSelf: 'center',
+    alignItems: 'center',
+  },
   profileContainer: {
     width: windowWidth + 100,
     height: windowWidth + 100,
-    backgroundColor: '#714EBB',
     borderRadius: (windowWidth + 100) / 2,
     marginTop: -(windowWidth / 2 + 120),
     marginLeft: -50,
@@ -225,10 +295,6 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 28,
-    position: 'absolute',
-    zIndex: 1,
-    alignSelf: 'center',
-    marginTop: 50,
   },
   letterProfileImage: {
     top: 35,

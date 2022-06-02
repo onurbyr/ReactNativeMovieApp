@@ -1,0 +1,69 @@
+import {StyleSheet, useWindowDimensions, Animated} from 'react-native';
+import React, {useRef} from 'react';
+import useDidMountEffect from '../hooks/useDidMountEffect';
+
+const TransParentBox = props => {
+  const window = useWindowDimensions();
+  const animationDuration = 200;
+
+  // fadeAnim will be used as the value for opacity. Initial Value: 0
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const fadeIn = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 0.9,
+      duration: animationDuration,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const fadeOut = () => {
+    // Will change fadeAnim value to 0
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: animationDuration,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  useDidMountEffect(() => {
+    if (props.isHidden === false) {
+      fadeIn();
+    }
+  }, [props.isHidden]);
+
+  const hide = () => {
+    fadeOut();
+    setTimeout(() => {
+      props.hide();
+    }, animationDuration);
+  };
+
+  return props.isHidden ? null : (
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          width: window.width,
+          height: window.height,
+          opacity: fadeAnim,
+        },
+      ]}
+      onStartShouldSetResponder={hide}>
+      {props.children}
+    </Animated.View>
+  );
+};
+
+export default TransParentBox;
+
+const styles = StyleSheet.create({
+  container: {
+    zIndex: 2,
+    backgroundColor: '#15141F',
+    position: 'absolute',
+    alignItems:'center',
+    justifyContent:'center',
+    padding:50
+  },
+});
