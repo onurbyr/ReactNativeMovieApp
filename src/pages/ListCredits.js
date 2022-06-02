@@ -12,6 +12,7 @@ import {api, apiImgUrl} from '../../services/api/api';
 import HeaderWithBack from '../components/HeaderWithBack';
 import Stars from '../components/Stars/Stars';
 import NoImage from '../images/noimage.png';
+import strings from '../localization/strings';
 
 const ListCredits = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -26,7 +27,14 @@ const ListCredits = ({route, navigation}) => {
   //getdata with axios
   const getItems = async () => {
     try {
-      const response = await api.get(`/person/${itemId}/${creditType}_credits`);
+      const response = await api.get(
+        `/person/${itemId}/${creditType}_credits`,
+        {
+          params: {
+            language: strings.getLanguage(),
+          },
+        },
+      );
       setData(response.data.cast);
     } catch (error) {
       console.log(error.message);
@@ -44,7 +52,7 @@ const ListCredits = ({route, navigation}) => {
   return (
     <View style={styles.container}>
       <HeaderWithBack>
-        {creditType == 'movie' ? 'Movie Credits' : 'Tv Credits'}
+        {creditType == 'movie' ? strings.moviecredits : strings.tvcredits}
       </HeaderWithBack>
       {isLoading ? (
         <ActivityIndicator />

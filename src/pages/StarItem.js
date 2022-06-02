@@ -16,6 +16,7 @@ import useOrientation from '../hooks/useOrientation';
 import BackButton from '../components/BackButton';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {api} from '../../services/api/api';
+import strings from '../localization/strings';
 
 const StarItem = ({route, navigation}) => {
   const {itemId, sessionId, mediaType} = route.params;
@@ -45,6 +46,7 @@ const StarItem = ({route, navigation}) => {
         .get(endpoint, {
           params: {
             session_id: sessionId,
+            language: strings.getLanguage(),
           },
         })
         .catch(err => {
@@ -68,7 +70,7 @@ const StarItem = ({route, navigation}) => {
 
   const rateItem = async () => {
     if (starIndex < 0 || starIndex > 9) {
-      ToastAndroid.show('Please select your rating value', ToastAndroid.SHORT);
+      ToastAndroid.show(strings.messages.pleaseselectrating, ToastAndroid.SHORT);
     } else {
       try {
         const result = await api.post(
@@ -83,7 +85,7 @@ const StarItem = ({route, navigation}) => {
           },
         );
         if (result.data.success == true) {
-          ToastAndroid.show('Successfuly Rated', ToastAndroid.SHORT);
+          ToastAndroid.show(strings.messages.successfulyrated, ToastAndroid.SHORT);
           navigation.goBack();
         }
       } catch (err) {
@@ -100,7 +102,7 @@ const StarItem = ({route, navigation}) => {
         },
       });
       if (result.data.success == true) {
-        ToastAndroid.show('Rating Successfully Deleted', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.messages.ratingsuccessfullydeleted, ToastAndroid.SHORT);
         navigation.goBack();
       }
     } catch (err) {
@@ -151,7 +153,7 @@ const StarItem = ({route, navigation}) => {
               resizeMode={details.poster_path ? 'stretch' : 'center'}
             />
             <Text style={styles.name}>
-              Rate the {mediaType === 'movie' ? details.title : details.name}
+              {strings.ratethe} {mediaType === 'movie' ? details.title : details.name}
             </Text>
             <View style={styles.starsView}>
               {[...Array(10)].map((x, i) => (
@@ -175,13 +177,13 @@ const StarItem = ({route, navigation}) => {
               ))}
             </View>
             <TouchableOpacity onPress={rateItem} style={styles.rateButton}>
-              <Text style={styles.rateButtonText}>Rate</Text>
+              <Text style={styles.rateButtonText}>{strings.rate}</Text>
             </TouchableOpacity>
             {isStarred && (
               <TouchableOpacity
                 onPress={deleteItem}
                 style={styles.deleteButton}>
-                <Text style={styles.deleteButtonText}>Delete Rating</Text>
+                <Text style={styles.deleteButtonText}>{strings.deleterating}</Text>
               </TouchableOpacity>
             )}
           </ScrollView>

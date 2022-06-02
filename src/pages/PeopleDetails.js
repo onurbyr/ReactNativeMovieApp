@@ -18,6 +18,7 @@ import NoAvatar from '../images/noavatar.png';
 import NoImage from '../images/noimage.png';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Hr from '../components/Hr';
+import strings from '../localization/strings';
 
 const PeopleDetails = ({route, navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -43,15 +44,33 @@ const PeopleDetails = ({route, navigation}) => {
 
   const multipleRequests = () => {
     const concurrentRequests = [
-      api.get('/person/' + itemId).catch(err => {
-        ToastAndroid.show(err.message, ToastAndroid.SHORT);
-      }),
-      api.get('/person/' + itemId + '/movie_credits').catch(err => {
-        //console.log(err.message);
-      }),
-      api.get('/person/' + itemId + '/tv_credits').catch(err => {
-        //console.log(err.message);
-      }),
+      api
+        .get('/person/' + itemId, {
+          params: {
+            language: strings.getLanguage(),
+          },
+        })
+        .catch(err => {
+          ToastAndroid.show(err.message, ToastAndroid.SHORT);
+        }),
+      api
+        .get('/person/' + itemId + '/movie_credits', {
+          params: {
+            language: strings.getLanguage(),
+          },
+        })
+        .catch(err => {
+          //console.log(err.message);
+        }),
+      api
+        .get('/person/' + itemId + '/tv_credits', {
+          params: {
+            language: strings.getLanguage(),
+          },
+        })
+        .catch(err => {
+          //console.log(err.message);
+        }),
     ];
 
     Promise.all(concurrentRequests)
@@ -129,7 +148,7 @@ const PeopleDetails = ({route, navigation}) => {
                   <BoldText>{data.name}</BoldText>
                   <View style={styles.imageLeftPanelItems}>
                     <DefaultText style={{color: '#B6B6B6'}}>
-                      Known For:
+                      {strings.knownfor}:
                     </DefaultText>
                     <DefaultText style={styles.imageLeftPanelItemsText}>
                       {data.known_for_department}
@@ -137,14 +156,16 @@ const PeopleDetails = ({route, navigation}) => {
                   </View>
                   <View style={styles.imageLeftPanelItems}>
                     <DefaultText style={{color: '#B6B6B6'}}>
-                      Gender:
+                      {strings.gender}:
                     </DefaultText>
                     <DefaultText style={styles.imageLeftPanelItemsText}>
-                      {data.gender == 1 ? 'Female' : ' Male'}
+                      {data.gender == 1 ? strings.female : strings.male}
                     </DefaultText>
                   </View>
                   <View style={styles.imageLeftPanelItems}>
-                    <DefaultText style={{color: '#B6B6B6'}}>Age:</DefaultText>
+                    <DefaultText style={{color: '#B6B6B6'}}>
+                      {strings.age}:
+                    </DefaultText>
                     <DefaultText style={styles.imageLeftPanelItemsText}>
                       {data.deathday
                         ? data.birthday &&
@@ -154,7 +175,7 @@ const PeopleDetails = ({route, navigation}) => {
                   </View>
                   <View style={styles.imageLeftPanelItems}>
                     <DefaultText style={{color: '#B6B6B6'}}>
-                      Place of Birth:
+                      {strings.placeofbirth}:
                     </DefaultText>
                     <DefaultText style={styles.imageLeftPanelItemsText}>
                       {data.place_of_birth ? data.place_of_birth : '-'}
@@ -164,7 +185,9 @@ const PeopleDetails = ({route, navigation}) => {
               </View>
               {Object.keys(data.biography).length > 0 && (
                 <View>
-                  <BoldText style={{marginTop: 20}}>Biography</BoldText>
+                  <BoldText style={{marginTop: 20}}>
+                    {strings.biography}
+                  </BoldText>
                   <Text
                     onTextLayout={onTextLayout}
                     numberOfLines={textShown ? undefined : 5}
@@ -176,7 +199,9 @@ const PeopleDetails = ({route, navigation}) => {
                     <Text
                       onPress={toggleNumberOfLines}
                       style={styles.seeMoreText2}>
-                      {textShown ? 'Read less...' : 'Read more...'}
+                      {textShown
+                        ? `${strings.readless}...`
+                        : `${strings.readmore}...`}
                     </Text>
                   ) : null}
                 </View>
@@ -186,7 +211,7 @@ const PeopleDetails = ({route, navigation}) => {
                 <View>
                   <Hr />
                   <View style={{flexDirection: 'row'}}>
-                    <BoldText>Movie Credits</BoldText>
+                    <BoldText>{strings.moviecredits}</BoldText>
                     {Object.keys(movieCredits).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
@@ -197,7 +222,7 @@ const PeopleDetails = ({route, navigation}) => {
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
-                          See All
+                          {strings.seeall}
                         </DefaultText>
                         <Entypo
                           name="chevron-right"
@@ -248,7 +273,7 @@ const PeopleDetails = ({route, navigation}) => {
                 <View>
                   <Hr />
                   <View style={{flexDirection: 'row'}}>
-                    <BoldText>Tv Credits</BoldText>
+                    <BoldText>{strings.tvcredits}</BoldText>
                     {Object.keys(tvCredits).length > 5 && (
                       <TouchableOpacity
                         style={styles.seeAllButton}
@@ -259,7 +284,7 @@ const PeopleDetails = ({route, navigation}) => {
                           })
                         }>
                         <DefaultText style={{fontSize: 14}}>
-                          See All
+                          {strings.seeall}
                         </DefaultText>
                         <Entypo
                           name="chevron-right"
