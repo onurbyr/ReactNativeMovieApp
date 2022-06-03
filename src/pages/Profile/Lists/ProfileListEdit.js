@@ -15,6 +15,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {apiv4Authorized} from '../../../../services/api/api';
 import CustomDialogBox from '../../../components/CustomDialogBox';
+import strings from '../../../localization/strings';
 
 const ProfileListEdit = ({navigation, route}) => {
   const [name, setName] = useState('');
@@ -34,7 +35,11 @@ const ProfileListEdit = ({navigation, route}) => {
     const apiv4 = await apiv4Authorized();
     if (apiv4) {
       try {
-        const response = await apiv4.get(`/list/${listId}`);
+        const response = await apiv4.get(`/list/${listId}`, {
+          params: {
+            language: strings.getLanguage(),
+          },
+        });
         setName(response.data.name);
         setDescription(response.data.description);
         setIsToggleEnabled(response.data.public);
@@ -60,15 +65,24 @@ const ProfileListEdit = ({navigation, route}) => {
             public: isToggleEnabled,
           });
           if (result.data.success == true) {
-            ToastAndroid.show('List successfully updated', ToastAndroid.SHORT);
+            ToastAndroid.show(
+              strings.messages.listsuccessfullyupdated,
+              ToastAndroid.SHORT,
+            );
             navigation.navigate('ProfileListDetails', {listId, listName: name});
           }
         } catch (err) {
-          ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+          ToastAndroid.show(
+            strings.messages.anerroroccured,
+            ToastAndroid.SHORT,
+          );
         }
       }
     } else {
-      ToastAndroid.show('List name cannot be empty', ToastAndroid.SHORT);
+      ToastAndroid.show(
+        strings.messages.listnamecannotbeempty,
+        ToastAndroid.SHORT,
+      );
     }
   };
 
@@ -80,7 +94,10 @@ const ProfileListEdit = ({navigation, route}) => {
       try {
         const result = await apiv4.delete(`/list/${listId}`, {});
         if (result.data.success == true) {
-          ToastAndroid.show('List successfully deleted', ToastAndroid.SHORT);
+          ToastAndroid.show(
+            strings.messages.listsuccessfullydeleted,
+            ToastAndroid.SHORT,
+          );
           prevRoute.params
             ? navigation.navigate(prevRoute, prevRoute.params)
             : navigation.navigate(prevRoute);
@@ -95,7 +112,7 @@ const ProfileListEdit = ({navigation, route}) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <BackButton />
-        <Text style={styles.headerText}>Edit List</Text>
+        <Text style={styles.headerText}>{strings.editlist}</Text>
         <TouchableOpacity
           onPress={() => setIsDialogBoxHidden(false)}
           style={styles.editListIconView}>
@@ -113,8 +130,8 @@ const ProfileListEdit = ({navigation, route}) => {
           setIsDialogBoxHidden(true);
           del();
         }}
-        title="Confirm Delete">
-        Do you really want to delete this list?
+        title={strings.confirmdelete}>
+        {strings.messages.doyoureallywantdeletelist}
       </CustomDialogBox>
       {isLoading ? (
         <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>
@@ -136,7 +153,7 @@ const ProfileListEdit = ({navigation, route}) => {
             />
             <TextInput
               style={styles.nameInput}
-              placeholder="Name *"
+              placeholder={`${strings.name} *`}
               placeholderTextColor="#BBBBBB"
               onChangeText={text => setName(text)}
               value={name}
@@ -159,7 +176,7 @@ const ProfileListEdit = ({navigation, route}) => {
             />
             <TextInput
               style={styles.descriptionInput}
-              placeholder="Description"
+              placeholder={strings.description}
               placeholderTextColor="#BBBBBB"
               onChangeText={text => setDescription(text)}
               value={description}
@@ -169,7 +186,7 @@ const ProfileListEdit = ({navigation, route}) => {
             />
           </View>
           <View style={styles.toggleView}>
-            <Text style={styles.toggleText}>Public</Text>
+            <Text style={styles.toggleText}>{strings.public}</Text>
             <Switch
               trackColor={{false: '#767577', true: '#81b0ff'}}
               thumbColor={isToggleEnabled ? '#f5dd4b' : '#f4f3f4'}
@@ -178,7 +195,7 @@ const ProfileListEdit = ({navigation, route}) => {
             />
           </View>
           <TouchableOpacity style={styles.saveButton} onPress={save}>
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text style={styles.saveButtonText}>{strings.save}</Text>
           </TouchableOpacity>
         </View>
       )}

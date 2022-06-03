@@ -22,6 +22,7 @@ import InfoBox from '../../../components/InfoBox';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NoImage from '../../../images/noimage.png';
+import strings from '../../../localization/strings';
 
 const ProfileListDetails = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
@@ -68,6 +69,7 @@ const ProfileListDetails = ({navigation, route}) => {
           params: {
             page,
             sort_by: sort,
+            language: strings.getLanguage(),
           },
         });
         if (prevPage == page - 1) {
@@ -91,7 +93,11 @@ const ProfileListDetails = ({navigation, route}) => {
     const apiv4 = await apiv4Authorized();
     if (apiv4) {
       try {
-        const response = await apiv4.get(`/list/${listId}`);
+        const response = await apiv4.get(`/list/${listId}`, {
+          params: {
+            language: strings.getLanguage(),
+          },
+        });
         setInfo(response.data);
       } catch (error) {
         ToastAndroid.show(error.message, ToastAndroid.SHORT);
@@ -157,7 +163,7 @@ const ProfileListDetails = ({navigation, route}) => {
         });
         if (result.data.success == true) {
           ToastAndroid.show(
-            'Successfully Removed from List',
+            strings.messages.successfullyremovedfromlist,
             ToastAndroid.SHORT,
           );
         }
@@ -186,10 +192,7 @@ const ProfileListDetails = ({navigation, route}) => {
         ToastAndroid.show(err.message, ToastAndroid.SHORT);
       }
     } else {
-      ToastAndroid.show(
-        'For sharing you have to set list as public',
-        ToastAndroid.SHORT,
-      );
+      ToastAndroid.show(strings.messages.forsharingpublic, ToastAndroid.LONG);
     }
   };
 
@@ -254,8 +257,8 @@ const ProfileListDetails = ({navigation, route}) => {
         isHidden={isDialogBoxHidden}
         cancel={cancel}
         ok={ok}
-        title="Confirm Delete">
-        Are you sure you want to delete this?
+        title={strings.confirmdelete}>
+        {strings.messages.areyousuredelete}
       </CustomDialogBox>
       {isLoading ? (
         <View style={[styles.container, {justifyContent: 'center'}]}>
@@ -268,33 +271,33 @@ const ProfileListDetails = ({navigation, route}) => {
             isHidden={isInfoBoxHidden}
             hide={() => setIsInfoBoxHidden(true)}>
             <View style={styles.infoBoxItem}>
-              <BoldText>Name: </BoldText>
+              <BoldText>{strings.name}: </BoldText>
               <DefaultText style={styles.infoBoxItemTextRight}>
                 {info.name}
               </DefaultText>
             </View>
             {info.description ? (
               <View style={styles.infoBoxItem}>
-                <BoldText>Description: </BoldText>
+                <BoldText>{strings.description}: </BoldText>
                 <DefaultText style={styles.infoBoxItemTextRight}>
                   {info.description}
                 </DefaultText>
               </View>
             ) : null}
             <View style={styles.infoBoxItem}>
-              <BoldText>Average Rating: </BoldText>
+              <BoldText>{strings.averagerating}: </BoldText>
               <DefaultText style={styles.infoBoxItemTextRight}>
                 {(Math.round(info.average_rating * 100) / 100).toFixed(2)}
               </DefaultText>
             </View>
             <View style={styles.infoBoxItem}>
-              <BoldText>Total Runtime: </BoldText>
+              <BoldText>{strings.totalruntime}: </BoldText>
               <DefaultText style={styles.infoBoxItemTextRight}>
                 {toHoursAndMinutes(info.runtime)}
               </DefaultText>
             </View>
             <View style={styles.infoBoxItem}>
-              <BoldText>Items On This List: </BoldText>
+              <BoldText>{strings.itemsonthislist}: </BoldText>
               <DefaultText style={styles.infoBoxItemTextRight}>
                 {info.total_results}
               </DefaultText>
@@ -353,7 +356,9 @@ const ProfileListDetails = ({navigation, route}) => {
                   sort === 'original_order.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Original Order</BoldText>
+                <BoldText style={{marginLeft: 10}}>
+                  {strings.originalorder}
+                </BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
                   {sort === 'original_order.asc' && (
                     <MaterialIcons
@@ -385,7 +390,9 @@ const ProfileListDetails = ({navigation, route}) => {
                   sort === 'release_date.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Date</BoldText>
+                <BoldText style={{marginLeft: 10}}>
+                  {strings.releasedate}
+                </BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
                   {sort === 'release_date.asc' && (
                     <MaterialIcons
@@ -416,7 +423,7 @@ const ProfileListDetails = ({navigation, route}) => {
                 {(sort === 'title.asc' || sort === 'title.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Title</BoldText>
+                <BoldText style={{marginLeft: 10}}>{strings.title}</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
                   {sort === 'title.asc' && (
                     <MaterialIcons
@@ -448,7 +455,7 @@ const ProfileListDetails = ({navigation, route}) => {
                   sort === 'vote_average.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Vote</BoldText>
+                <BoldText style={{marginLeft: 10}}>{strings.vote}</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
                   {sort === 'vote_average.asc' && (
                     <MaterialIcons

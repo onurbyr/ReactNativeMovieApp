@@ -29,6 +29,12 @@ export default {
     youneedtorestartapp:
       'You need to restart application for the changes to take effect',
     areyousuredelete: 'Are you sure you want to delete this?',
+    listsuccessfullyupdated: 'List successfully updated',
+    listnamecannotbeempty: 'List name cannot be empty',
+    listsuccessfullydeleted: 'List successfully deleted',
+    doyoureallywantdeletelist: 'Do you really want to delete this list?',
+    successfullyremovedfromlist: 'Successfully Removed from List',
+    forsharingpublic: 'For sharing you have to set list as public',
   },
   popular: 'Popular',
   movies: 'Movies',
@@ -89,4 +95,9 @@ export default {
   confirmdelete: 'Confirm Delete',
   createdat: 'Created At',
   vote: 'Vote',
+  editlist: 'Edit List',
+  averagerating: 'Average Rating',
+  totalruntime: 'Total Runtime',
+  itemsonthislist: 'Items On This List',
+  originalorder: 'Original Order',
 };

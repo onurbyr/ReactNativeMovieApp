@@ -29,6 +29,13 @@ export default {
     youneedtorestartapp:
       'Değişikliklerin etkili olması için uygulamayı yeniden başlatmalısınız.',
     areyousuredelete: 'Bu öğeyi silmek istediğine emin misin?',
+    listsuccessfullyupdated: 'Liste başarıyla güncellendi.',
+    listnamecannotbeempty: 'Liste adı boş bırakılamaz.',
+    listsuccessfullydeleted: 'Liste başarıyla siindi.',
+    doyoureallywantdeletelist: 'Bu listeyi silmek isteğine emin misin?',
+    successfullyremovedfromlist: 'Listeden çıkarıldı.',
+    forsharingpublic:
+      'Paylaşabilmek için listeyi herkese açık olarak ayarlamalısınız.',
   },
   popular: 'Popüler',
   movies: 'Filmler',
@@ -89,4 +96,9 @@ export default {
   confirmdelete: 'Silme Onayı',
   createdat: 'Eklenme Tarihi',
   vote: 'Puan',
+  editlist: 'Listeyi Düzenle',
+  averagerating: 'Ortalama Puan',
+  totalruntime: 'Toplam Süre',
+  itemsonthislist: 'Listedeki Öğe Sayısı',
+  originalorder: 'Orijinal Sıra',
 };
