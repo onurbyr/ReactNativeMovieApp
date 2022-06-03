@@ -1,6 +1,7 @@
 import {ToastAndroid} from 'react-native';
 import {apiv4, api} from '../../../services/api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import strings from '../../localization/strings';
 
 let requestToken = '';
 
@@ -14,7 +15,7 @@ const createRequestToken = async setUrl => {
     }
   } catch (err) {
     //console.log(err);
-    ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+    ToastAndroid.show(strings.messages.anerroroccured, ToastAndroid.SHORT);
   }
 };
 
@@ -34,7 +35,7 @@ const afterApproved = async (navigation) => {
       }
     } catch (err) {
       //console.log(err);
-      ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+      ToastAndroid.show(strings.messages.anerroroccured, ToastAndroid.SHORT);
     }
     //Convert v4 session
     if (accessToken) {
@@ -47,7 +48,7 @@ const afterApproved = async (navigation) => {
         }
       } catch (err) {
         //console.log(err);
-        ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.messages.anerroroccured, ToastAndroid.SHORT);
       }
     }
     try {

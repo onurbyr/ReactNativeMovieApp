@@ -12,6 +12,7 @@ import HeaderWithBack from '../components/HeaderWithBack';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {apiv4Authorized} from '../../services/api/api';
+import strings from '../localization/strings';
 
 const CreateList = ({navigation}) => {
   const [name, onChangeName] = useState('');
@@ -31,28 +32,27 @@ const CreateList = ({navigation}) => {
           const result = await apiv4.post('/list', {
             name,
             description,
-            iso_639_1: 'en',
+            iso_639_1: strings.getLanguage(),
             public: isToggleEnabled,
           });
           if (result.data.success == true) {
-            ToastAndroid.show('List successfully created', ToastAndroid.SHORT);
+            ToastAndroid.show(strings.messages.listsuccessfullycreated, ToastAndroid.SHORT);
             navigation.goBack();
           }
         } catch (err) {
-          ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+          ToastAndroid.show(strings.messages.anerroroccured, ToastAndroid.SHORT);
         }
-      }
-      else {
-        navigation.navigate('Login')
+      } else {
+        navigation.navigate('Login');
       }
     } else {
-      ToastAndroid.show('List name cannot be empty', ToastAndroid.SHORT);
+      ToastAndroid.show(strings.messages.listnamecannotbeempty, ToastAndroid.SHORT);
     }
   };
 
   return (
     <View style={styles.container}>
-      <HeaderWithBack>Create List</HeaderWithBack>
+      <HeaderWithBack>{strings.createlist}</HeaderWithBack>
       <View style={{paddingHorizontal: 20}}>
         <View
           style={
@@ -68,7 +68,7 @@ const CreateList = ({navigation}) => {
           />
           <TextInput
             style={styles.nameInput}
-            placeholder="Name *"
+            placeholder={`${strings.name} *`}
             placeholderTextColor="#BBBBBB"
             onChangeText={text => onChangeName(text)}
             value={name}
@@ -91,7 +91,7 @@ const CreateList = ({navigation}) => {
           />
           <TextInput
             style={styles.descriptionInput}
-            placeholder="Description"
+            placeholder={strings.description}
             placeholderTextColor="#BBBBBB"
             onChangeText={text => onChangeDescription(text)}
             value={description}
@@ -101,7 +101,7 @@ const CreateList = ({navigation}) => {
           />
         </View>
         <View style={styles.toggleView}>
-          <Text style={styles.toggleText}>Public</Text>
+          <Text style={styles.toggleText}>{strings.public}</Text>
           <Switch
             trackColor={{false: '#767577', true: '#81b0ff'}}
             thumbColor={isToggleEnabled ? '#f5dd4b' : '#f4f3f4'}
@@ -110,7 +110,7 @@ const CreateList = ({navigation}) => {
           />
         </View>
         <TouchableOpacity style={styles.saveButton} onPress={save}>
-          <Text style={styles.saveButtonText}>Save</Text>
+          <Text style={styles.saveButtonText}>{strings.save}</Text>
         </TouchableOpacity>
       </View>
     </View>

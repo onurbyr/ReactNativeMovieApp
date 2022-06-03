@@ -17,6 +17,7 @@ import RenderFooter from '../components/RenderFooter';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import strings from '../localization/strings';
 
 const CreatedLists = ({navigation, route}) => {
   const [isLoading, setLoading] = useState(true);
@@ -172,7 +173,7 @@ const CreatedLists = ({navigation, route}) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <BackButton />
-        <Text style={styles.headerText}>Created Lists</Text>
+        <Text style={styles.headerText}>{strings.createdlists}</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('CreateList')}
           style={styles.addListIconView}>

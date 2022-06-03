@@ -11,6 +11,7 @@ import HeaderWithBack from '../components/HeaderWithBack';
 import DefaultText from '../components/DefaultText';
 import BoldText from '../components/BoldText';
 import NoAvatar from '../images/noavatar.png';
+import strings from '../localization/strings';
 
 const NO_AVATAR_IMAGE = Image.resolveAssetSource(NoAvatar).uri;
 
@@ -19,7 +20,7 @@ const ListCast = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <HeaderWithBack>Cast</HeaderWithBack>
+      <HeaderWithBack>{strings.cast}</HeaderWithBack>
       <FlatList
         data={cast}
         keyExtractor={({id}) => id}

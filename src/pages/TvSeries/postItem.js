@@ -1,6 +1,7 @@
 import {ToastAndroid} from 'react-native';
 import {api} from '../../../services/api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import strings from '../../localization/strings';
 
 const getSessionId = async navigation => {
   try {
@@ -61,7 +62,7 @@ const fav = async (itemId, navigation, setIsFavorited, setIsFavLoading) => {
         );
         if (result.data.success) {
           setIsFavorited(false);
-          ToastAndroid.show('Removed from favorites', ToastAndroid.SHORT);
+          ToastAndroid.show(strings.messages.removedfromfavorites, ToastAndroid.SHORT);
         }
       } catch (err) {
         console.log(err);
@@ -77,7 +78,7 @@ const fav = async (itemId, navigation, setIsFavorited, setIsFavLoading) => {
         );
         if (result.data.success) {
           setIsFavorited(true);
-          ToastAndroid.show('Added to Favorites', ToastAndroid.SHORT);
+          ToastAndroid.show(strings.messages.addedtofavorites, ToastAndroid.SHORT);
         }
       } catch (err) {
         console.log(err);
@@ -107,7 +108,7 @@ const watchlist = async (
         );
         if (result.data.success) {
           setIsWatchList(false);
-          ToastAndroid.show('Removed from watchlist', ToastAndroid.SHORT);
+          ToastAndroid.show(strings.messages.removedfromwatchlist, ToastAndroid.SHORT);
         }
       } catch (err) {
         console.log(err);
@@ -123,7 +124,7 @@ const watchlist = async (
         );
         if (result.data.success) {
           setIsWatchList(true);
-          ToastAndroid.show('Added to watchlist', ToastAndroid.SHORT);
+          ToastAndroid.show(strings.messages.addedtowatchlist, ToastAndroid.SHORT);
         }
       } catch (err) {
         console.log(err);
