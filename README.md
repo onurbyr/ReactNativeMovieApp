@@ -23,4 +23,4 @@ TOKEN=your_tdmb_token_here
 Get api key [TMDB](https://www.themoviedb.org/)
 
 Download APK file
-[APK File](https://drive.google.com/file/d/174mC5s6eWdvj595NiJ0MqXWsFcVZWkxa/view?usp=sharing)
+[APK File](https://drive.google.com/file/d/1CF6J9nWawqJPTcdUCbcwQYJJ7iipDiW-/view?usp=sharing)
