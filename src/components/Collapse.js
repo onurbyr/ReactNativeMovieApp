@@ -3,6 +3,7 @@ import {Text, View, StyleSheet, Animated, TouchableOpacity} from 'react-native';
 import BoldText from './BoldText';
 import DefaultText from './DefaultText';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import strings from '../localization/strings'
 
 const Collapse = forwardRef((props, ref) => {
   const [animatedHeight] = useState(new Animated.Value(50));
@@ -47,7 +48,7 @@ const Collapse = forwardRef((props, ref) => {
       <TouchableOpacity
         onPress={() => toggleDropdown()}
         style={styles.toggleBtn}>
-        <BoldText>Sort By</BoldText>
+        <BoldText>{strings.sortby}</BoldText>
         <MaterialIcons name="sort" color={'white'} size={24} />
       </TouchableOpacity>
       {expanded == true ? props.children : null}

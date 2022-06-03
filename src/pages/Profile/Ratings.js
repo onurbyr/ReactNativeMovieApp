@@ -19,6 +19,7 @@ import Stars from '../../components/Stars/Stars';
 import Collapse from '../../components/Collapse';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import NoImage from '../../images/noimage.png';
+import strings from '../../localization/strings';
 
 const Ratings = ({navigation}) => {
   const [isLoading, setLoading] = useState(true);
@@ -74,6 +75,7 @@ const Ratings = ({navigation}) => {
             params: {
               page,
               sort_by: sort,
+              language: strings.getLanguage(),
             },
           },
         );
@@ -196,7 +198,7 @@ const Ratings = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <HeaderWithBack>Ratings</HeaderWithBack>
+      <HeaderWithBack>{strings.ratings}</HeaderWithBack>
       {isLoading ? (
         <View style={{flex: 1, justifyContent: 'center', marginBottom: 50}}>
           <ActivityIndicator />
@@ -211,7 +213,7 @@ const Ratings = ({navigation}) => {
                 mediaType == 'movie' && {backgroundColor: '#151517'},
               ]}
               onPress={() => onPressMediaType('movie')}>
-              <DefaultText>Movies</DefaultText>
+              <DefaultText>{strings.movies}</DefaultText>
             </TouchableOpacity>
             <TouchableOpacity
               disabled={mediaType == 'tv' ? true : false}
@@ -220,7 +222,7 @@ const Ratings = ({navigation}) => {
                 mediaType == 'tv' && {backgroundColor: '#151517'},
               ]}
               onPress={() => onPressMediaType('tv')}>
-              <DefaultText>Tv Series</DefaultText>
+              <DefaultText>{strings.tvseries}</DefaultText>
             </TouchableOpacity>
           </View>
           <Collapse ref={childCompRef}>
@@ -237,7 +239,7 @@ const Ratings = ({navigation}) => {
                 {(sort === 'created_at.asc' || sort === 'created_at.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Created At</BoldText>
+                <BoldText style={{marginLeft: 10}}>{strings.createdat}</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
                   {sort === 'created_at.asc' && (
                     <MaterialIcons
@@ -269,7 +271,7 @@ const Ratings = ({navigation}) => {
                   sort === 'release_date.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Date</BoldText>
+                <BoldText style={{marginLeft: 10}}>{strings.releasedate}</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
                   {sort === 'release_date.asc' && (
                     <MaterialIcons
@@ -300,7 +302,7 @@ const Ratings = ({navigation}) => {
                 {(sort === 'title.asc' || sort === 'title.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Title</BoldText>
+                <BoldText style={{marginLeft: 10}}>{strings.title}</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
                   {sort === 'title.asc' && (
                     <MaterialIcons
@@ -332,7 +334,7 @@ const Ratings = ({navigation}) => {
                   sort === 'vote_average.desc') && (
                   <MaterialIcons name="check" color={'#e0b422'} size={24} />
                 )}
-                <BoldText style={{marginLeft: 10}}>Vote</BoldText>
+                <BoldText style={{marginLeft: 10}}>{strings.vote}</BoldText>
                 <View style={{flex: 1, alignItems: 'flex-end'}}>
                   {sort === 'vote_average.asc' && (
                     <MaterialIcons

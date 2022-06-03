@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import React, {useRef} from 'react';
 import useDidMountEffect from '../hooks/useDidMountEffect';
+import strings from '../localization/strings'
 
 const CustomDialogBox = props => {
   const window = useWindowDimensions();
@@ -74,15 +75,15 @@ const CustomDialogBox = props => {
           {props.title ? (
             <Text style={styles.title}>{props.title}</Text>
           ) : (
-            <Text style={styles.title}>Title</Text>
+            <Text style={styles.title}>{strings.title}</Text>
           )}
           <Text style={styles.messageText}>{props.children}</Text>
           <View style={styles.buttonsView}>
             <TouchableOpacity onPress={cancel}>
-              <Text style={[styles.buttons, {marginRight: 30}]}>CANCEL</Text>
+              <Text style={[styles.buttons, {marginRight: 30}]}>{strings.cancel.toUpperCase()}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={props.ok}>
-              <Text style={styles.buttons}>OK</Text>
+              <Text style={styles.buttons}>{strings.ok.toUpperCase()}</Text>
             </TouchableOpacity>
           </View>
         </Animated.View>

@@ -38,6 +38,7 @@ import CreatedLists from '../CreatedLists';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import strings from '../../localization/strings';
 
 import {Dimensions} from 'react-native';
 const windowWidth = Dimensions.get('window').width;
@@ -92,7 +93,7 @@ const ProfileScreen = ({navigation}) => {
               await AsyncStorage.removeItem('@access_token');
               await AsyncStorage.removeItem('@account_id');
               navigation.navigate('Movies', {screen: 'MoviesScreen'});
-              ToastAndroid.show('Successful Logout', ToastAndroid.SHORT);
+              ToastAndroid.show(strings.messages.successfullogout, ToastAndroid.SHORT);
             } catch (e) {
               // remove error
             }
@@ -111,7 +112,7 @@ const ProfileScreen = ({navigation}) => {
       await AsyncStorage.setItem('@preferred_lang', lang);
       setIsTransparentBoxHidden(true);
       ToastAndroid.show(
-        'You need to restart application for the changes to take effect',
+        strings.messages.youneedtorestartapp,
         ToastAndroid.SHORT,
       );
     } catch (e) {}
@@ -121,7 +122,7 @@ const ProfileScreen = ({navigation}) => {
       await AsyncStorage.removeItem('@preferred_lang');
       setIsTransparentBoxHidden(true);
       ToastAndroid.show(
-        'You need to restart application for the changes to take effect',
+        strings.messages.youneedtorestartapp,
         ToastAndroid.SHORT,
       );
     } catch (e) {}
@@ -151,17 +152,17 @@ const ProfileScreen = ({navigation}) => {
         <TouchableOpacity
           style={styles.languageButtons}
           onPress={() => setLang('en')}>
-          <BoldText style={{fontSize: 28}}>English</BoldText>
+          <BoldText style={{fontSize: 28}}>{strings.english}</BoldText>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.languageButtons}
           onPress={() => setLang('tr')}>
-          <BoldText style={{fontSize: 28}}>Türkçe</BoldText>
+          <BoldText style={{fontSize: 28}}>{strings.turkish}</BoldText>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.languageButtons}
           onPress={() => clearLang()}>
-          <BoldText style={{fontSize: 28}}>System Language</BoldText>
+          <BoldText style={{fontSize: 28}}>{strings.systemlanguage}</BoldText>
         </TouchableOpacity>
         <CustomButton
           type="MaterialIcons"
@@ -196,7 +197,7 @@ const ProfileScreen = ({navigation}) => {
           style={styles.profileItem}
           onPress={() => navigation.navigate('Favorites')}>
           <MaterialIcons name="favorite-border" color={'#593FEE'} size={36} />
-          <Text style={styles.profileItemText}>Favorites</Text>
+          <Text style={styles.profileItemText}>{strings.favorites}</Text>
           <View style={styles.rightArrow}>
             <MaterialIcons
               name="keyboard-arrow-right"
@@ -210,7 +211,7 @@ const ProfileScreen = ({navigation}) => {
           style={styles.profileItem}
           onPress={() => navigation.navigate('Watchlist')}>
           <MaterialIcons name="bookmark-border" color={'#593FEE'} size={36} />
-          <Text style={styles.profileItemText}>Watchlist</Text>
+          <Text style={styles.profileItemText}>{strings.watchlist}</Text>
           <View style={styles.rightArrow}>
             <MaterialIcons
               name="keyboard-arrow-right"
@@ -224,7 +225,7 @@ const ProfileScreen = ({navigation}) => {
           style={styles.profileItem}
           onPress={() => navigation.navigate('Ratings')}>
           <MaterialIcons name="star-border" color={'#593FEE'} size={36} />
-          <Text style={styles.profileItemText}>Ratings</Text>
+          <Text style={styles.profileItemText}>{strings.ratings}</Text>
           <View style={styles.rightArrow}>
             <MaterialIcons
               name="keyboard-arrow-right"
@@ -242,7 +243,7 @@ const ProfileScreen = ({navigation}) => {
             color={'#593FEE'}
             size={36}
           />
-          <Text style={styles.profileItemText}>Lists</Text>
+          <Text style={styles.profileItemText}>{strings.lists}</Text>
           <View style={styles.rightArrow}>
             <MaterialIcons
               name="keyboard-arrow-right"
@@ -258,7 +259,7 @@ const ProfileScreen = ({navigation}) => {
           end={{x: 1.0, y: 1.0}}
           style={styles.logoutGradient}>
           <TouchableOpacity style={styles.logoutButton} onPress={Logout}>
-            <Text style={styles.logoutText}>Logout</Text>
+            <Text style={styles.logoutText}>{strings.logout}</Text>
           </TouchableOpacity>
         </LinearGradient>
       </ScrollView>
