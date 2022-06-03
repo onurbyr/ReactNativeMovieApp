@@ -35,6 +35,8 @@ export default {
     doyoureallywantdeletelist: 'Do you really want to delete this list?',
     successfullyremovedfromlist: 'Successfully Removed from List',
     forsharingpublic: 'For sharing you have to set list as public',
+    mediaalreadyadded: 'Media Already Added',
+    successfullyadded: 'Successfully added',
   },
   popular: 'Popular',
   movies: 'Movies',
@@ -100,4 +102,5 @@ export default {
   totalruntime: 'Total Runtime',
   itemsonthislist: 'Items On This List',
   originalorder: 'Original Order',
+  mytmdbprofile: 'My TMDB Profile',
 };

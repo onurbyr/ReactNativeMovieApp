@@ -36,6 +36,8 @@ export default {
     successfullyremovedfromlist: 'Listeden çıkarıldı.',
     forsharingpublic:
       'Paylaşabilmek için listeyi herkese açık olarak ayarlamalısınız.',
+    mediaalreadyadded: 'Medya Zaten Ekli',
+    successfullyadded: 'Başarıyla Eklendi',
   },
   popular: 'Popüler',
   movies: 'Filmler',
@@ -101,4 +103,5 @@ export default {
   totalruntime: 'Toplam Süre',
   itemsonthislist: 'Listedeki Öğe Sayısı',
   originalorder: 'Orijinal Sıra',
+  mytmdbprofile: 'TMDB Profilim',
 };

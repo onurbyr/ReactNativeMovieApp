@@ -89,7 +89,10 @@ const CreatedLists = ({navigation, route}) => {
       try {
         const isExists = await isAdded();
         if (isExists) {
-          ToastAndroid.show('Media Already Added', ToastAndroid.SHORT);
+          ToastAndroid.show(
+            strings.messages.mediaalreadyadded,
+            ToastAndroid.SHORT,
+          );
         } else {
           const result = await apiv4.post(`/list/${item.id}/items`, {
             items: [{media_type: mediaType, media_id: itemId}],
@@ -102,11 +105,14 @@ const CreatedLists = ({navigation, route}) => {
               setPage(1);
               toTop();
             }
-            ToastAndroid.show('Successfully added', ToastAndroid.SHORT);
+            ToastAndroid.show(
+              strings.messages.successfullyadded,
+              ToastAndroid.SHORT,
+            );
           }
         }
       } catch (err) {
-        ToastAndroid.show('An error occured', ToastAndroid.SHORT);
+        ToastAndroid.show(strings.messages.anerroroccured, ToastAndroid.SHORT);
       }
     } else {
       navigation.navigate('Login');

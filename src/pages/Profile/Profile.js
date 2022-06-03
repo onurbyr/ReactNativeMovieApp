@@ -6,6 +6,7 @@ import {
   ToastAndroid,
   ActivityIndicator,
   ScrollView,
+  Share,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,7 +38,6 @@ import CreateList from '../CreateList';
 import CreatedLists from '../CreatedLists';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import strings from '../../localization/strings';
 
 import {Dimensions} from 'react-native';
@@ -93,7 +93,10 @@ const ProfileScreen = ({navigation}) => {
               await AsyncStorage.removeItem('@access_token');
               await AsyncStorage.removeItem('@account_id');
               navigation.navigate('Movies', {screen: 'MoviesScreen'});
-              ToastAndroid.show(strings.messages.successfullogout, ToastAndroid.SHORT);
+              ToastAndroid.show(
+                strings.messages.successfullogout,
+                ToastAndroid.SHORT,
+              );
             } catch (e) {
               // remove error
             }
@@ -126,6 +129,16 @@ const ProfileScreen = ({navigation}) => {
         ToastAndroid.SHORT,
       );
     } catch (e) {}
+  };
+
+  const shareProfile = async () => {
+    try {
+      await Share.share({
+        message: `${strings.mytmdbprofile} | https://www.themoviedb.org/u/${data.username}`,
+      });
+    } catch (err) {
+      ToastAndroid.show(err.message, ToastAndroid.SHORT);
+    }
   };
 
   const Hr = () => {
@@ -173,24 +186,35 @@ const ProfileScreen = ({navigation}) => {
           onPress={() => setIsTransparentBoxHidden(true)}
         />
       </TransparentBox>
-      <View style={styles.profileContainerItems}>
-        <BoldText style={styles.userName}>
-          {data.username.charAt(0).toUpperCase() + data.username.slice(1)}
-        </BoldText>
-        <TouchableOpacity
-          style={{marginTop: 10}}
-          onPress={() => setIsTransparentBoxHidden(false)}>
-          <Ionicons name="language" color={'#ffffff'} size={26} />
-        </TouchableOpacity>
-      </View>
+      <BoldText style={styles.userName}>
+        {data.username.charAt(0).toUpperCase() + data.username.slice(1)}
+      </BoldText>
       <LinearGradient
         colors={['#4736AE', '#9761C6']}
         start={{x: 0.3, y: 0.5}}
         end={{x: 1.0, y: 1.0}}
         style={styles.profileContainer}>
-        <LetterProfileImage style={styles.letterProfileImage}>
-          {data.username}
-        </LetterProfileImage>
+        <View style={{flexDirection: 'row'}}>
+          <CustomButton
+            onPress={shareProfile}
+            style={styles.profileContainerButtons}
+            type="MaterialIcons"
+            name="share"
+            color="#dddddd"
+            size={26}
+          />
+          <LetterProfileImage style={styles.letterProfileImage}>
+            {data.username}
+          </LetterProfileImage>
+          <CustomButton
+            onPress={() => setIsTransparentBoxHidden(false)}
+            style={styles.profileContainerButtons}
+            type="Ionicons"
+            name="language"
+            color="#dddddd"
+            size={26}
+          />
+        </View>
       </LinearGradient>
       <ScrollView style={{marginBottom: 50}}>
         <TouchableOpacity
@@ -277,13 +301,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  profileContainerItems: {
-    position: 'absolute',
-    zIndex: 1,
-    marginTop: 40,
-    alignSelf: 'center',
-    alignItems: 'center',
-  },
   profileContainer: {
     width: windowWidth + 100,
     height: windowWidth + 100,
@@ -294,8 +311,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 50,
   },
+  profileContainerButtons: {
+    top: 50,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#593FEE',
+  },
   userName: {
     fontSize: 28,
+    position: 'absolute',
+    zIndex: 1,
+    alignSelf: 'center',
+    marginTop: 50,
   },
   letterProfileImage: {
     top: 35,
