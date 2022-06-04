@@ -20,6 +20,9 @@ const apiv4Authorized = async () => {
     if (accessToken !== null) {
       const api = axios.create({
         baseURL: API_URL_V4,
+        params: {
+          timestamp: new Date().getTime(),
+        },
         headers: {Authorization: 'Bearer ' + accessToken},
       });
       return api;
